@@ -164,5 +164,8 @@
     </ClCompile>
     <ClCompile Include="src\thriftl.cc" />
     <ClCompile Include="src\thrifty.cc" />
+    <ClCompile Include="src\generate\t_delphi7_generator.cc">
+      <Filter>generate</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

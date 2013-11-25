@@ -55,6 +55,7 @@
     <ClCompile Include="src\generate\t_cpp_generator.cc" />
     <ClCompile Include="src\generate\t_csharp_generator.cc" />
     <ClCompile Include="src\generate\t_c_glib_generator.cc" />
+    <ClCompile Include="src\generate\t_delphi7_generator.cc" />
     <ClCompile Include="src\generate\t_d_generator.cc" />
     <ClCompile Include="src\generate\t_delphi_generator.cc" />
     <ClCompile Include="src\generate\t_erl_generator.cc" />
@@ -127,6 +128,7 @@
     <IncludePath>$(ProjectDir)\src\;$(ProjectDir)\src\windows\;$(IncludePath)</IncludePath>
     <TargetName>thrift</TargetName>
     <ExecutablePath>$(ExecutablePath);C:\Program Files (x86)\Git\bin</ExecutablePath>
+    <OutDir>..\bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
