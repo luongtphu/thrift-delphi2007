@@ -17,8 +17,7 @@ uses
   Thrift.Protocol in 'delphi2007Lib\Thrift.Protocol.pas',
   Thrift.Protocol.Multiplex in 'delphi2007Lib\Thrift.Protocol.Multiplex.pas',
   Thrift.Serializer in 'delphi2007Lib\Thrift.Serializer.pas',
-  Thrift in 'delphi2007Lib\Thrift.pas',
-  Thrift.Processor.Multiplex in 'delphi2007Lib\Thrift.Processor.Multiplex.pas';
+  Thrift in 'delphi2007Lib\Thrift.pas';
 
 {$R *.res}
 
