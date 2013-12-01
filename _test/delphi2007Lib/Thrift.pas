@@ -18,7 +18,10 @@
  *)
 
 unit Thrift;
-
+ //#MODIFY NEW
+{begin}
+{$I uDefine.inc}
+{end}
 interface
 
 uses
@@ -29,14 +32,24 @@ const
 
 type
   IProcessor = interface
-    ['{B1538A07-6CAC-4406-8A4C-AFED07C70A89}']
+    ['{BE0B29D4-B186-436B-BA40-83F9299732FB}']
     function Process( const iprot :IProtocol; const oprot: IProtocol): Boolean;
   end;
 
-  TApplicationException = class( SysUtils.Exception )
-  public
-    type
+ //#MODIFY NEW
+{begin} //Move type in class TApplicationException
+ //#MODIFY NEW
+{begin}
+{$ifdef YES_SCOPEDENUMS}
 {$SCOPEDENUMS ON}
+{$endif}
+{end}
+ //#MODIFY SAVE
+ {begin}
+// {$SCOPEDENUMS ON}
+{end}
+
+    type
       TExceptionType = (
         Unknown,
         UnknownMethod,
@@ -50,7 +63,22 @@ type
         InvalidProtocol,
         UnsupportedClientType
       );
+
+
+
+
+
+ //#MODIFY NEW
+{begin}
+{$ifdef YES_SCOPEDENUMS}
 {$SCOPEDENUMS OFF}
+{$endif}
+{end}
+ //#MODIFY SAVE
+ {begin}
+// {$SCOPEDENUMS OFF}
+{end}
+  TApplicationException = class( SysUtils.Exception )
   private
     FType : TExceptionType;
   public
@@ -77,14 +105,30 @@ function TException.Message;
 // allow read (exception summary), but prevent accidental writes
 // read will return the exception summary
 begin
-  result := Self.ToString;
+ //#MODIFY SAVE
+ {begin}
+//   result := Self.ToString;
+{end}
+
+ //#MODIFY NEW
+ {begin}
+  result := Self.Message;
+{end}
+
 end;
 
 procedure TException.UpdateMessageProperty;
 // Update the inherited Message property to better conform to standard behaviour.
 // Nice benefit: The IDE is now able to show the exception message again.
 begin
-  inherited Message := Self.ToString;  // produces a summary text
+ //#MODIFY NEW
+ {begin}
+  //inherited Message := Self.ToString;  // produces a summary text
+{end}
+ //#MODIFY NEW
+ {begin}
+  inherited Message := Self.Message;  // produces a summary text
+{end}
 end;
 
 { TApplicationException }
@@ -114,18 +158,18 @@ var
   typ : TExceptionType;
 begin
   msg := '';
-  typ := TExceptionType.Unknown;
+  typ := {TExceptionType.}Unknown;
   while ( True ) do
   begin
     field := iprot.ReadFieldBegin;
-    if ( field.Type_ = TType.Stop) then
+    if ( field.Type_ = {TType.}Stop) then
     begin
       Break;
     end;
 
     case field.Id of
       1 : begin
-        if ( field.Type_ = TType.String_) then
+        if ( field.Type_ = {TType.}String_) then
         begin
           msg := iprot.ReadString;
         end else
@@ -135,7 +179,7 @@ begin
       end;
 
       2 : begin
-        if ( field.Type_ = TType.I32) then
+        if ( field.Type_ = {TType.}I32) then
         begin
           typ := TExceptionType( iprot.ReadI32 );
         end else
@@ -166,7 +210,7 @@ begin
   if Message <> '' then
   begin
     field.Name := 'message';
-    field.Type_ := TType.String_;
+    field.Type_ := {TType.}String_;
     field.Id := 1;
     oprot.WriteFieldBegin( field );
     oprot.WriteString( Message );
@@ -174,7 +218,7 @@ begin
   end;
 
   field.Name := 'type';
-  field.Type_ := TType.I32;
+  field.Type_ := {TType.}I32;
   field.Id := 2;
   oprot.WriteFieldBegin(field);
   oprot.WriteI32(Integer(FType));

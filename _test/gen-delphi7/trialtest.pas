@@ -11,7 +11,7 @@ interface
 uses
   Classes,
   SysUtils,
-  Generics.Collections,
+  uCollections,
   Thrift,
   Thrift.Utils,
   Thrift.Collections,
@@ -1383,7 +1383,7 @@ begin
       ret.Ouch := E.InvalidOperationFactory;
     end;
   end;
-  msg := TMessageImpl.Create('calculate', TMessageType.Reply, seqid); 
+  msg := TMessageImpl.Create('calculate', TMessageType.Reply, seqid);
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();

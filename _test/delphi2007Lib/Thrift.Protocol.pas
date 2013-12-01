@@ -47,7 +47,8 @@ uses
 {$endif}
 {end}
   Thrift.Stream,
-  Thrift.Collections,
+  uCollections,
+  uSysUtils,
   Thrift.Transport;
 
 type
@@ -89,7 +90,7 @@ type
     function Append(const Value: IThriftContainer): TStringBuilder; overload;
   end;
 
-  TProtocolException = class( Exception )
+  TProtocolException = class(Sysutils.Exception )
   public
     const
       UNKNOWN : Integer = 0;
@@ -607,7 +608,17 @@ end;
 
 function TProtocolImpl.ReadString: string;
 begin
+//MODIFY SAVE
+{begim}
+{
   Result := TEncoding.UTF8.GetString( ReadBinary );
+}
+{end}
+//MODIFY new
+{begim}
+
+Result := Utf8ToAnsi(BytesToString(ReadBinary));
+
 end;
 
 procedure TProtocolImpl.WriteAnsiString(const s: AnsiString);
@@ -628,61 +639,71 @@ procedure TProtocolImpl.WriteString(const s: string);
 var
   b : TBytes;
 begin
-  b := TEncoding.UTF8.GetBytes(s);
+//MODIFY SAVE
+{begim}
+{
+  Result := TEncoding.UTF8.GetString( ReadBinary );
+}
+{end}
+//MODIFY new
+{begim}
+  b := StringBytesOf(s);
   WriteBinary( b );
+  setlength(b,0);
+{end}
 end;
 
 { TProtocolUtil }
 
 class procedure TProtocolUtil.Skip( prot: IProtocol; type_: TType);
 var field : IField;
-    map   : IMap;
-    set_  : ISet;
-    list  : IList;
+    _tmap   : IMap;
+    _tset_  : ISet;
+    _tlist  : IList;
     i     : Integer;
 begin
   case type_ of
     // simple types
-    TType.Bool_   :  prot.ReadBool();
-    TType.Byte_   :  prot.ReadByte();
-    TType.I16     :  prot.ReadI16();
-    TType.I32     :  prot.ReadI32();
-    TType.I64     :  prot.ReadI64();
-    TType.Double_ :  prot.ReadDouble();
-    TType.String_ :  prot.ReadBinary();// Don't try to decode the string, just skip it.
+    {TType.}Bool_   :  prot.ReadBool();
+    {TType.}Byte_   :  prot.ReadByte();
+    {TType.}I16     :  prot.ReadI16();
+    {TType.}I32     :  prot.ReadI32();
+    {TType.}I64     :  prot.ReadI64();
+    {TType.}Double_ :  prot.ReadDouble();
+    {TType.}String_ :  prot.ReadBinary();// Don't try to decode the string, just skip it.
 
     // structured types
-    TType.Struct :  begin
+    {TType.}Struct :  begin
       prot.ReadStructBegin();
       while TRUE do begin
         field := prot.ReadFieldBegin();
-        if (field.Type_ = TType.Stop) then Break;
+        if (field.Type_ = {TType.}Stop) then Break;
         Skip(prot, field.Type_);
         prot.ReadFieldEnd();
       end;
       prot.ReadStructEnd();
     end;
 
-    TType.Map :  begin
-      map := prot.ReadMapBegin();
-      for i := 0 to map.Count-1 do begin
-        Skip(prot, map.KeyType);
-        Skip(prot, map.ValueType);
+    {TType.}Map :  begin
+      _tmap := prot.ReadMapBegin();
+      for i := 0 to _tmap.Count-1 do begin
+        Skip(prot, _tmap.KeyType);
+        Skip(prot, _tmap.ValueType);
       end;
       prot.ReadMapEnd();
     end;
 
-    TType.Set_ :  begin
-      set_ := prot.ReadSetBegin();
-      for i := 0 to set_.Count-1
-      do Skip( prot, set_.ElementType);
+    {TType.}Set_ :  begin
+      _tset_ := prot.ReadSetBegin();
+      for i := 0 to _tset_.Count-1
+      do Skip( prot, _tset_.ElementType);
       prot.ReadSetEnd();
     end;
 
-    TType.List :  begin
-      list := prot.ReadListBegin();
-      for i := 0 to list.Count-1
-      do Skip( prot, list.ElementType);
+    {TType.}List :  begin
+      _tlist := prot.ReadListBegin();
+      for i := 0 to _tlist.Count-1
+      do Skip( prot, _tlist.ElementType);
       prot.ReadListEnd();
     end;
 
@@ -925,7 +946,7 @@ var
 begin
   field := TFieldImpl.Create;
   field.Type_ := TType( ReadByte);
-  if ( field.Type_ <> TType.Stop ) then
+  if ( field.Type_ <> {TType.}Stop ) then
   begin
     field.Id := ReadI16;
   end;
@@ -1067,7 +1088,16 @@ var
 begin
   SetLength( buf, size );
   FTrans.ReadAll( buf, 0, size );
+//MODIFY SAVE
+{begin}
+{
   Result := TEncoding.UTF8.GetString( buf);
+}
+{end}
+//MODIFY SAVE
+{begin}
+  Result := BytesToString( buf);
+{end}
 end;
 
 function TBinaryProtocolImpl.ReadStructBegin: IStruct;
@@ -1127,7 +1157,7 @@ end;
 
 procedure TBinaryProtocolImpl.WriteFieldStop;
 begin
-  WriteByte(ShortInt(TType.Stop));
+  WriteByte(ShortInt({TType.}Stop));
 end;
 
 procedure TBinaryProtocolImpl.WriteI16(i16: SmallInt);
@@ -1259,7 +1289,16 @@ end;
 
 function TThriftStringBuilder.Append(const Value: TBytes): TStringBuilder;
 begin
+//MODIFY SAVE
+{begin}
+{
   Result := Append( string( RawByteString(Value)) );
+}
+{end}
+//MODIFY NEW
+{begin}
+  Result := Append( string( BytesToString(Value)) );
+{end}
 end;
 
 function TThriftStringBuilder.Append(

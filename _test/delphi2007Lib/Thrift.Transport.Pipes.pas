@@ -23,7 +23,7 @@ unit Thrift.Transport.Pipes;
 interface
 
 uses
-  Windows, SysUtils, Math, AccCtrl, AclAPI, SyncObjs,
+  uTypes,Windows, SysUtils, Math, AccCtrl, AclAPI, SyncObjs,
   Thrift.Transport,
   Thrift.Stream;
 
@@ -88,7 +88,7 @@ type
 
 
   IPipeTransport = interface( IStreamTransport)
-    ['{5E05CC85-434F-428F-BFB2-856A168B5558}']
+    ['{E6EDF097-D058-446B-9E25-C159FACCEE0C}']
   end;
 
 
@@ -133,7 +133,7 @@ type
 
 
   IAnonymousPipeServerTransport = interface( IServerTransport)
-    ['{7AEE6793-47B9-4E49-981A-C39E9108E9AD}']
+    ['{B834869B-A041-4A65-BD69-300B33CE7062}']
     // Server side anonymous pipe ends
     function ReadHandle : THandle;
     function WriteHandle : THandle;
@@ -144,7 +144,7 @@ type
 
 
   INamedPipeServerTransport = interface( IServerTransport)
-    ['{9DF9EE48-D065-40AF-8F67-D33037D3D960}']
+    ['{82A985D7-1EC1-4CB0-9AFB-71019A5A11D6}']
     function Handle : THandle;
   end;
 
@@ -216,6 +216,10 @@ type
 
 implementation
 
+function InterlockedExchangePointer(var Target: Pointer; Value: Pointer): Pointer;
+begin
+  Result := Pointer(InterlockedExchange(Integer(Target), Integer(Value)));
+end;
 
 procedure ClosePipeHandle( var hPipe : THandle);
 begin
@@ -233,7 +237,7 @@ begin
   if not DuplicateHandle( GetCurrentProcess, hSource,
                           GetCurrentProcess, @result,
                           0, FALSE, DUPLICATE_SAME_ACCESS)
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'DuplicateHandle: '+SysErrorMessage(GetLastError));
 end;
 
@@ -282,11 +286,11 @@ procedure TPipeStreamBase.Write(const buffer: TBytes; offset, count: Integer);
 var cbWritten : DWORD;
 begin
   if not IsOpen
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'Called write on non-open pipe');
 
   if not WriteFile( FPipe, buffer[offset], count, cbWritten, nil)
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'Write to pipe failed');
 end;
 
@@ -298,7 +302,7 @@ var cbRead, dwErr  : DWORD;
 const INTERVAL = 10;  // ms
 begin
   if not IsOpen
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'Called read on non-open pipe');
 
   // MSDN: Handle can be a handle to a named pipe instance,
@@ -324,7 +328,7 @@ begin
       Dec( retries);
       if retries > 0
       then Sleep( INTERVAL)
-      else raise TTransportException.Create( TTransportException.TExceptionType.TimedOut,
+      else raise TTransportException.Create( {TTransportException.TExceptionType.}TimedOut,
                                              'Pipe read timed out');
     end;
   end;
@@ -380,7 +384,7 @@ begin
   // open that thingy
 
   if not WaitNamedPipe( PChar(FPipeName), FTimeout)
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'Unable to open pipe, '+SysErrorMessage(GetLastError));
 
   hPipe := CreateFile( PChar( FPipeName),
@@ -392,14 +396,14 @@ begin
                        0);                // no template file
 
   if hPipe = INVALID_HANDLE_VALUE
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'Unable to open pipe, '+SysErrorMessage(GetLastError));
 
   // pipe connected; change to message-read mode.
   dwMode := PIPE_READMODE_MESSAGE;
   if not SetNamedPipeHandleState( hPipe, dwMode, nil, nil) then begin
     Close;
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                       'SetNamedPipeHandleState failed');
   end;
 
@@ -553,7 +557,7 @@ begin
   // pass the handles on to the client before the serve (acceptImpl)
   // blocking call.
   if not CreateAnonPipe
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          ClassName+'.Create() failed');
 end;
 
@@ -565,7 +569,7 @@ begin
   // This 0-byte read serves merely as a blocking call.
   if not ReadFile( FReadHandle, buf, 0, br, nil)
   and (GetLastError() <> ERROR_MORE_DATA)
-  then raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+  then raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                          'TServerPipe unable to initiate pipe communication');
 
   // create the transport impl
@@ -623,7 +627,7 @@ begin
     sa.bInheritHandle       := TRUE; //allow passing handle to child
 
     if not CreatePipe( hCAR, hPipeW, @sa, FBufSize) then begin   //create stdin pipe
-      raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+      raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                         'TServerPipe CreatePipe (anon) failed, '+SysErrorMessage(GetLastError));
       Exit;
     end;
@@ -631,7 +635,7 @@ begin
     if not CreatePipe( hPipe, hCAW, @sa, FBufSize) then begin  //create stdout pipe
       CloseHandle( hCAR);
       CloseHandle( hPipeW);
-      raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+      raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                         'TServerPipe CreatePipe (anon) failed, '+SysErrorMessage(GetLastError));
       Exit;
     end;
@@ -706,7 +710,7 @@ begin
 
         else
           InternalClose;
-          raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+          raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
                                             'Client connection failed');
         end;
       end;
@@ -818,8 +822,8 @@ begin
 
     if( result <> INVALID_HANDLE_VALUE)
     then InterlockedExchangePointer( Pointer(FHandle), Pointer(result))
-    else raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
-                                           'CreateNamedPipe() failed ' + IntToStr(GetLastError));
+    else raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
+                                             'CreateNamedPipe() failed ' + IntToStr(GetLastError));
 
   finally
     if sd <> nil then LocalFree( Cardinal( sd));

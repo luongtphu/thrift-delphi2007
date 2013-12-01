@@ -1,15 +1,13 @@
 unit uStringBuilder;
 
 interface
-uses SysUtils,classes,uRTLConsts,uSysUtils;
+uses SysUtils,classes,uRTLConsts,uSysUtils,uTypes;
 
 {$I uDefine.inc}
 {$ifdef NO_TStringBuilder}
 
-type
-  TCharArray = array of char;
-  MarshaledString = PWideChar;
-  
+
+
 type
 TStringBuilder = class
   private const
@@ -59,7 +57,7 @@ TStringBuilder = class
     function Append(const Value: TCharArray; StartIndex: Integer; CharCount: Integer): TStringBuilder; overload;
     function Append(const Value: string; StartIndex: Integer; Count: Integer): TStringBuilder; overload;
 
-    function AppendFormat(const Format: string; const Args: array of const): TStringBuilder; overload;
+    function AppendFormat(const sFormat: string; const Args: array of const): TStringBuilder; overload;
     function AppendLine: TStringBuilder; overload;
     function AppendLine(const Value: string): TStringBuilder; overload;
     procedure Clear;
@@ -93,7 +91,7 @@ TStringBuilder = class
     function Replace(const OldChar: Char; const NewChar: Char; StartIndex: Integer; Count: Integer): TStringBuilder; overload;
     function Replace(const OldValue: string; const NewValue: string; StartIndex: Integer; Count: Integer): TStringBuilder; overload;
 
-    function ToString: string; overload; override;
+    function ToString: string; overload;
     function ToString(StartIndex: Integer; StrLength: Integer): string; reintroduce; overload;
 
     property Capacity: Integer read GetCapacity write SetCapacity;
@@ -169,7 +167,7 @@ begin
     raise ERangeError.CreateResFmt(@SListIndexError, [StartIndex]);
 
   Length := Length + Count;
-  Move(Value[StartIndex + Low(string)], FData[Length - Count], Count * SizeOf(Char));
+  Move(Value[StartIndex+1], FData[Length - Count], Count * SizeOf(Char));
   Result := Self;
 end;
 
@@ -254,9 +252,9 @@ begin
   Result := Self;
 end;
 
-function TStringBuilder.AppendFormat(const Format: string; const Args: array of const): TStringBuilder;
+function TStringBuilder.AppendFormat(const sFormat: string; const Args: array of const): TStringBuilder;
 begin
-  Append(Format(Format, Args));
+  Append(Format(sFormat, Args));
   Result := Self;
 end;
 
@@ -325,8 +323,14 @@ end;
 constructor TStringBuilder.Create(const Value: string; StartIndex, length,
   aCapacity: Integer);
 begin
+ //#MODIFY OLD
+{begin}
   //Create(Copy(Value, StartIndex + 1, length), aCapacity);
-  Create(Value.Substring( StartIndex, length), aCapacity);
+{end}
+ //#MODIFY NEW
+{begin}
+  Create(copy(Value,StartIndex, length), aCapacity);
+{end}
 end;
 
 constructor TStringBuilder.Create(aCapacity, aMaxCapacity: Integer);
@@ -431,7 +435,7 @@ begin
 
   Length := Length + System.Length(Value);
   Move(FData[Index], FData[Index + System.Length(Value)], (Length - System.Length(Value) - Index) * SizeOf(Char));
-  Move(Value[Low(string)], FData[Index], System.Length(Value) * SizeOf(Char));
+  Move(Value[1], FData[Index], System.Length(Value) * SizeOf(Char));
   Result := Self;
 end;
 
@@ -618,7 +622,7 @@ begin
 
     while CurPtr <= EndPtr do
     begin
-      if CurPtr^ = OldValue[Low(string)] then
+      if CurPtr^ = OldValue[1] then
       begin
         if StrLComp(CurPtr, PChar(OldValue), OldLen) = 0 then
         begin
@@ -733,7 +737,7 @@ end;
 
 function TStringBuilder.ToString: string;
 begin
-  SetString(Result, MarshaledString(FData), Length);
+  SetString(Result, pchar(@FData[0]), Length);
 end;
 
 function TStringBuilder.ToString(StartIndex, StrLength: Integer): string;
@@ -746,8 +750,17 @@ begin
       raise ERangeError.CreateResFmt(@SParamIsNegative, ['StrLength']); // DO NOT LOCALIZE
     CheckBounds(StartIndex);
     CheckBounds(StartIndex + StrLength - 1);
-
+    //MODIFY OLD
+    {begin}{
     Result := string.Create(FData, StartIndex, StrLength);
+    }
+    {end}
+    //MODIFY NEW
+    {begin}
+    System.Setlength(Result,StrLength+1);
+    Move(Result,FData[StartIndex],StrLength);
+    {end}
+
   end else
     Result := '';
 end;
@@ -763,7 +776,7 @@ begin
 
   if SizeChange = 0 then
   begin
-    Move(New[Low(string)], FData[Index], System.Length(New) * SizeOf(Char));
+    Move(New[1], FData[Index], System.Length(New) * SizeOf(Char));
   end
   else
   begin
@@ -778,7 +791,7 @@ begin
 
     Move(FData[Index + System.Length(Old)], FData[Index + System.Length(New)],
       (OldLength - (System.Length(Old) + Index)) * SizeOf(Char));
-    Move(New[Low(String)], FData[Index], System.Length(New) * SizeOf(Char));
+    Move(New[1], FData[Index], System.Length(New) * SizeOf(Char));
 
     if SizeChange < 0 then
       Length := Length + SizeChange;

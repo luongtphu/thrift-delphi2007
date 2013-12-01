@@ -91,8 +91,8 @@ procedure TMultiplexedProtocol.WriteMessageBegin( const msg: IMessage);
 var newMsg : IMessage;
 begin
   case msg.Type_ of
-    TMessageType.Call,
-    TMessageType.Oneway : begin
+    {TMessageType.}Call,
+    {TMessageType.}Oneway : begin
       newMsg := TMessageImpl.Create( FServiceName + SEPARATOR + msg.Name, msg.Type_, msg.SeqID);
       inherited WriteMessageBegin( newMsg);
     end;

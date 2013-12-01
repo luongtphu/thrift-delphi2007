@@ -17,7 +17,19 @@
  * under the License.
  *)
 
- {$SCOPEDENUMS ON}
+ //#MODIFY NEW
+{begin}
+{$I uDefine.inc}
+{$ifdef YES_SCOPEDENUMS}
+{$SCOPEDENUMS ON}
+{$endif}
+{end}
+
+ //#MODIFY SAVE
+ {begin}
+// {$SCOPEDENUMS ON}
+{end}
+
 
 unit Thrift.Transport;
 
@@ -28,8 +40,8 @@ uses
   SysUtils,
   Math,
   Sockets,
-  Generics.Collections,
-  Thrift.Collections,
+  uTypes,
+  uCollections,
   Thrift.Utils,
   Thrift.Stream,
   ActiveX,
@@ -89,11 +101,11 @@ type
     function GetConnectionTimeout: Integer;
     procedure SetReadTimeout(const Value: Integer);
     function GetReadTimeout: Integer;
-    function GetCustomHeaders: IThriftDictionary<string,string>;
+    function GetCustomHeaders: IThriftDictionary_V_V;
     procedure SendRequest;
     property ConnectionTimeout: Integer read GetConnectionTimeout write SetConnectionTimeout;
     property ReadTimeout: Integer read GetReadTimeout write SetReadTimeout;
-    property CustomHeaders: IThriftDictionary<string,string> read GetCustomHeaders;
+    property CustomHeaders: IThriftDictionary_V_V read GetCustomHeaders;
   end;
 
   THTTPClientImpl = class( TTransportImpl, IHTTPClient)
@@ -103,7 +115,7 @@ type
     FOutputStream : IThriftStream;
     FConnectionTimeout : Integer;
     FReadTimeout : Integer;
-    FCustomHeaders : IThriftDictionary<string,string>;
+    FCustomHeaders : IThriftDictionary_V_V;
 
     function CreateRequest: IXMLHTTPRequest;
   protected
@@ -118,11 +130,11 @@ type
     function GetConnectionTimeout: Integer;
     procedure SetReadTimeout(const Value: Integer);
     function GetReadTimeout: Integer;
-    function GetCustomHeaders: IThriftDictionary<string,string>;
+    function GetCustomHeaders: IThriftDictionary_V_V;
     procedure SendRequest;
     property ConnectionTimeout: Integer read GetConnectionTimeout write SetConnectionTimeout;
     property ReadTimeout: Integer read GetReadTimeout write SetReadTimeout;
-    property CustomHeaders: IThriftDictionary<string,string> read GetCustomHeaders;
+    property CustomHeaders: IThriftDictionary_V_V read GetCustomHeaders;
   public
     constructor Create( const AUri: string);
     destructor Destroy; override;
@@ -304,9 +316,12 @@ type
         function GetTransport( const ATrans: ITransport): ITransport; override;
       end;
 
-{$IF CompilerVersion >= 21.0}
+//{$IF CompilerVersion >= 21.0}
+{$IFDEF CompilerVersion_g21}
+
     class constructor Create;
-{$IFEND}
+{$ENDIF}
+//{$IFEND}
     constructor Create; overload;
     constructor Create( const ATrans: ITransport); overload;
     destructor Destroy; override;
@@ -320,9 +335,11 @@ type
     procedure Flush; override;
   end;
 
-{$IF CompilerVersion < 21.0}
+//{$IF CompilerVersion < 21.0}
+{$IFDEF CompilerVersion_l21}
 procedure TFramedTransportImpl_Initialize;
-{$IFEND}
+{$ENDIF}
+//{$IFEND}
 
 implementation
 
@@ -373,29 +390,66 @@ constructor THTTPClientImpl.Create(const AUri: string);
 begin
   inherited Create;
   FUri := AUri;
-  FCustomHeaders := TThriftDictionaryImpl<string,string>.Create;
+  FCustomHeaders := TThriftDictionary_V_VImpl.Create;
   FOutputStream := TThriftStreamAdapterDelphi.Create( TMemoryStream.Create, True);
 end;
 
 function THTTPClientImpl.CreateRequest: IXMLHTTPRequest;
 var
+ //#MODIFY SAVE
+ {begin}
+{
   pair : TPair<string,string>;
+}
+{end}
+
+ //#MODIFY NEW
+ {begin}
+i,n:integer;
+pair:TPair_V_V;
+{end}
 begin
-{$IF CompilerVersion >= 21.0}
-  Result := CoXMLHTTP.Create;
-{$ELSE}
+ //#MODIFY SAVE
+ {begin}
+{
+//{$IF CompilerVersion >= 21.0}
+//  Result := CoXMLHTTP.Create;
+//{$ELSE}
+//  Result := CoXMLHTTPRequest.Create;
+//{$IFEND}
+{end}
+
+ //#MODIFY NEW
+ {begin}
   Result := CoXMLHTTPRequest.Create;
-{$IFEND}
+{end}
+
 
   Result.open('POST', FUri, False, '', '');
   Result.setRequestHeader( 'Content-Type', 'application/x-thrift');
   Result.setRequestHeader( 'Accept', 'application/x-thrift');
   Result.setRequestHeader( 'User-Agent', 'Delphi/IHTTPClient');
-
+ //#MODIFY SAVE
+ {begin}
+{
   for pair in FCustomHeaders do
   begin
     Result.setRequestHeader( pair.Key, pair.Value );
   end;
+}
+ {end}
+ //#MODIFY NEW
+ {begin}
+  n:=FCustomHeaders.Count;
+  for i := 0 to n - 1 do
+  begin
+    pair:=FCustomHeaders.GetPair(i);
+    if assigned(pair) then
+    begin
+      Result.setRequestHeader( pair.Key, pair.Value );
+    end;
+  end;
+ {end}
 end;
 
 destructor THTTPClientImpl.Destroy;
@@ -419,7 +473,7 @@ begin
   Result := FConnectionTimeout;
 end;
 
-function THTTPClientImpl.GetCustomHeaders: IThriftDictionary<string,string>;
+function THTTPClientImpl.GetCustomHeaders: IThriftDictionary_V_V;
 begin
   Result := FCustomHeaders;
 end;
@@ -443,15 +497,14 @@ function THTTPClientImpl.Read( var buf: TBytes; off, len: Integer): Integer;
 begin
   if FInputStream = nil then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
-      'No request has been sent');
+    raise TTransportException.Create({TTransportException.TExceptionType.}NotOpen,'No request has been sent');
   end;
   try
     Result := FInputStream.Read( buf, off, len )
   except
     on E: Exception do
     begin
-      raise TTransportException.Create( TTransportException.TExceptionType.Unknown,
+      raise TTransportException.Create( {TTransportException.TExceptionType.}Unknown,
         E.Message);
     end;
   end;
@@ -561,7 +614,7 @@ var
 begin
   if FServer = nil then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
       'No underlying server socket.');
   end;
 
@@ -593,7 +646,14 @@ begin
   except
     on E: Exception do
     begin
-      raise TTransportException.Create( E.ToString );
+      //MODIFY SAVE
+      {begin}
+      //raise TTransportException.Create( E.ToString );
+      {end}
+      //MODIFY NEW
+      {begin}
+      raise TTransportException.Create( E.Message );
+      {end}      
     end;
   end;
 end;
@@ -622,11 +682,13 @@ begin
   FOwnsServer := True;
   FServer := TTcpServer.Create( nil );
   FServer.BlockMode := bmBlocking;
-{$IF CompilerVersion >= 21.0}
+//{$IF CompilerVersion >= 21.0}
+{$IFDEF CompilerVersion_g21}
   FServer.LocalPort := AnsiString( IntToStr( FPort));
 {$ELSE}
   FServer.LocalPort := IntToStr( FPort);
-{$IFEND}
+{$ENDIF}  
+//{$IFEND}
 end;
 
 destructor TServerSocketImpl.Destroy;
@@ -736,19 +798,19 @@ procedure TSocketImpl.Open;
 begin
   if IsOpen then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.AlreadyOpen,
+    raise TTransportException.Create( {TTransportException.TExceptionType.}AlreadyOpen,
       'Socket already connected');
   end;
 
   if FHost =  '' then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
       'Cannot open null host');
   end;
 
   if Port <= 0 then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen,
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen,
       'Cannot open without port');
   end;
 
@@ -829,7 +891,7 @@ var
   nRead : Integer;
   tempbuf : TBytes;
 begin
-  inherited;
+  inherited Read(buffer,offset,count);
   Result := 0;
   if IsOpen then
   begin
@@ -931,7 +993,7 @@ procedure TStreamTransportImpl.Flush;
 begin
   if FOutputStream = nil then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen, 'Cannot flush null outputstream' );
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen, 'Cannot flush null outputstream' );
   end;
 
   FOutputStream.Flush;
@@ -961,7 +1023,7 @@ function TStreamTransportImpl.Read(var buf: TBytes; off, len: Integer): Integer;
 begin
   if FInputStream = nil then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen, 'Cannot read from null inputstream' );
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen, 'Cannot read from null inputstream' );
   end;
   Result := FInputStream.Read( buf, off, len );
 end;
@@ -970,7 +1032,7 @@ procedure TStreamTransportImpl.Write(const buf: TBytes; off, len: Integer);
 begin
   if FOutputStream = nil then
   begin
-    raise TTransportException.Create( TTransportException.TExceptionType.NotOpen, 'Cannot write to null outputstream' );
+    raise TTransportException.Create( {TTransportException.TExceptionType.}NotOpen, 'Cannot write to null outputstream' );
   end;
 
   FOutputStream.Write( buf, off, len );
@@ -1050,7 +1112,15 @@ end;
 
 { TFramedTransportImpl }
 
-{$IF CompilerVersion < 21.0}
+//MODIFY SAVE
+{begin}
+//{$IF CompilerVersion < 21.0}
+{end}
+//MODIFY NEW
+{begin}
+{$IFDEF CompilerVersion_l21}
+{end}
+
 procedure TFramedTransportImpl_Initialize;
 begin
   SetLength( TFramedTransportImpl.FHeader_Dummy, TFramedTransportImpl.FHeaderSize);
@@ -1063,7 +1133,8 @@ begin
   SetLength( FHeader_Dummy, FHeaderSize);
   FillChar( FHeader_Dummy[0], Length( FHeader_Dummy) * SizeOf( Byte ), 0);
 end;
-{$IFEND}
+{$ENDIF}
+//{$IFEND}
 
 constructor TFramedTransportImpl.Create;
 begin
@@ -1227,7 +1298,7 @@ end;
 function TTcpSocketStreamImpl.Read(var buffer: TBytes; offset,
   count: Integer): Integer;
 begin
-  inherited;
+  inherited Read(buffer,offset,count);
   Result := FTcpClient.ReceiveBuf( Pointer(@buffer[offset])^, count);
 end;
 
@@ -1255,12 +1326,20 @@ begin
   FTcpClient.SendBuf( Pointer(@buffer[offset])^, count);
 end;
 
-{$IF CompilerVersion < 21.0}
+//MODIFY SAVE
+{begin}
+//{$IF CompilerVersion < 21.0}
+{end}
+//MODIFY NEW
+{begin}
+{$IFDEF CompilerVersion_l21}
+{end}
 initialization
 begin
   TFramedTransportImpl_Initialize;
 end;
-{$IFEND}
+{$ENDIF}
+//{$IFEND}
 
 
 end.

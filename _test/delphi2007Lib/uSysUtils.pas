@@ -16,11 +16,13 @@ const
      '80','81','82','83','84','85','86','87','88','89',
      '90','91','92','93','94','95','96','97','98','99');
 
-  function UIntToStr(Value: Cardinal): string;
-  function UIntToStr(Value: UInt64): string;
+  function UIntToStr(Value: Cardinal): string;overload;
+  function UIntToStr(Value: UInt64): string;overload;
   function _IntToStr32(Value: Cardinal; Negative: Boolean): string;
   function _IntToStr64(Value: UInt64; Negative: Boolean): string;
-
+  function BytesToString(t:TBytes):string;
+  function BytesOf(const Val: Pointer; const Len: integer): TBytes; overload;
+  function StringBytesOf(const Val: string): TBytes; overload;
 
 implementation
 function _IntToStr32(Value: Cardinal; Negative: Boolean): string;
@@ -56,10 +58,10 @@ begin
       K  := I - K;               {Dividend mod 100}
       I  := J;                   {Next Dividend}
       Dec(Digits, 2);
-      PDWord(P + Digits)^ := DWord(TwoDigitLookup[K]);
+      PDWord(P + Digits)^ := PDWord(@TwoDigitLookup[K])^;
     until Digits <= 2;
   if Digits = 2 then
-    PDWord(P+ Digits-2)^ := DWord(TwoDigitLookup[I])
+    PDWord(P+ Digits-2)^ := PDWord(@TwoDigitLookup[I])^
   else
     PChar(P)^ := Char(I or ord('0'));
 end;
@@ -75,7 +77,11 @@ begin
   {Within Integer Range - Use Faster Integer Version}
   if (Negative and (Value <= High(Integer))) or
      (not Negative and (Value <= High(Cardinal))) then
-    Exit(_IntToStr32(Value, Negative));
+     begin
+       result:=_IntToStr32(Value, Negative);
+       Exit;
+     end;
+
 
   I64 := Value;
   if I64 >= 100000000000000 then
@@ -136,16 +142,16 @@ begin
   J32 := I32 div 100;
   K32 := J32 * 100;
   K32 := I32 - K32;
-  PDWord(P + Digits - 2)^ := DWord(TwoDigitLookup[K32]);
+  PDWord(P + Digits - 2)^ := PDWord(@TwoDigitLookup[K32])^;
   I32 := J32 div 100;
   L32 := I32 * 100;
   L32 := J32 - L32;
-  PDWord(P + Digits - 4)^ := DWord(TwoDigitLookup[L32]);
+  PDWord(P + Digits - 4)^ := PDWord(@TwoDigitLookup[L32])^;
   J32 := I32 div 100;
   K32 := J32 * 100;
   K32 := I32 - K32;
-  PDWord(P + Digits - 6)^ := DWord(TwoDigitLookup[K32]);
-  PDWord(P + Digits - 8)^ := DWord(TwoDigitLookup[J32]);
+  PDWord(P + Digits - 6)^ := PDWord(@TwoDigitLookup[K32])^;
+  PDWord(P + Digits - 8)^ := PDWord(@TwoDigitLookup[J32])^;
   Dec(Digits, 8);
   I32 := J64; {Dividend now Fits within Integer - Use Faster Version}
   if Digits > 2 then
@@ -155,10 +161,10 @@ begin
       K32 := I32 - K32;
       I32 := J32;
       Dec(Digits, 2);
-      PDWord(P + Digits)^ := DWord(TwoDigitLookup[K32]);
+      PDWord(P + Digits)^ := PDWord(@TwoDigitLookup[K32])^;
     until Digits <= 2;
   if Digits = 2 then
-    PDWord(P + Digits-2)^ := DWord(TwoDigitLookup[I32])
+    PDWord(P + Digits-2)^ := PDWord(@TwoDigitLookup[I32])^
   else
     P^ := Char(I32 or ord('0'));
 end;
@@ -171,5 +177,29 @@ end;
 function UIntToStr(Value: UInt64): string;
 begin
   Result := _IntToStr64(Value, False);
+end;
+
+function BytesToString(t:TBytes):string;
+begin
+  result:=string(t);
+end;
+
+function BytesOf(const Val: Pointer; const Len: integer): TBytes;
+begin
+  SetLength(Result, Len);
+  Move(PByte(Val)^, Result[0], Len);
+end;
+
+function StringBytesOf(const Val: string): TBytes; overload;
+var
+n:integer;
+begin
+setlength(result,0);
+n:=length(Val);
+if (n<=0) then exit;
+result:=BytesOf(pchar(Val),n);
+
+
+
 end;
 end.

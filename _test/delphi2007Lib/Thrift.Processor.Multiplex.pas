@@ -24,7 +24,7 @@ interface
 
 uses
   SysUtils,
-  Generics.Collections,
+  uCollections,
   Thrift,
   Thrift.Protocol,
   Thrift.Protocol.Multiplex;
@@ -53,7 +53,7 @@ uses
 
 type
   IMultiplexedProcessor = interface( IProcessor)
-    ['{810FF32D-22A2-4D58-B129-B0590703ECEC}']
+    ['{AC9DE3F5-0F08-406B-86D8-A8D1DF1E30C1}']
     // Register a service with this TMultiplexedProcessor.  This allows us
     // to broker requests to individual services by using the service name
     // to select them at request time.
@@ -78,7 +78,7 @@ type
     FServiceProcessorMap : TDictionary<String, IProcessor>;
 
     procedure Error( const oprot : IProtocol; const msg : IMessage;
-                     extype : TApplicationException.TExceptionType; const etxt : string);
+                     extype : {TApplicationException.}TExceptionType; const etxt : string);
 
   public
     constructor Create;

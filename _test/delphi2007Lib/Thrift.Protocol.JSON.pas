@@ -17,7 +17,19 @@
  * under the License.
  *)
 
+ //#MODIFY NEW
+{begin}
+{$I uDefine.inc}
+{$ifdef YES_SCOPEDENUMS}
 {$SCOPEDENUMS ON}
+{$endif}
+{end}
+
+
+ //#MODIFY SAVE
+ {begin}
+// {$SCOPEDENUMS ON}
+{end}
 
 unit Thrift.Protocol.JSON;
 
@@ -28,13 +40,13 @@ uses
   SysUtils,
   Math,
   IdCoderMIME,
-  Generics.Collections,
+  uCollections,
   Thrift.Transport,
   Thrift.Protocol;
 
 type
   IJSONProtocol = interface( IProtocol)
-    ['{F0DAFDBD-692A-4B71-9736-F5D485A2178F}']
+    ['{F239EF43-162E-4778-80D9-3792F5D0795A}']
     // Read a byte that must match b; otherwise an exception is thrown.
     procedure ReadJSONSyntaxChar( b : Byte);
   end;
