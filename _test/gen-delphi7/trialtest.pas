@@ -8,13 +8,35 @@ unit trialtest;
 
 interface
 
+//{$I uDefine.inc}
+{$ifdef CompilerVersion}
+{$IF CompilerVersion >= 21}
+{$DEFINE CompilerVersion_g21}
+{$ELSE}
+{$DEFINE CompilerVersion_l21}  
+{$IFEND}
+{$IF CompilerVersion >= 19} // From Tiburon / Delphi 2009 has support generic collection
+{$DEFINE GEN_SUPPORT}
+{$DEFINE YES_SCOPEDENUMS}
+{$ELSE}
+{$DEFINE GEN_NOSUPPORT} //No support Generic
+{$DEFINE NO_TStringBuilder}//No Support TStringBuilder
+{$DEFINE NO_SCOPEDENUMS}//No Support TStringBuilder
+{$IFEND}
+{$else}
+{$DEFINE GEN_NOSUPPORT}
+{$DEFINE NO_TStringBuilder}
+{$DEFINE NO_SCOPEDENUMS}
+{$DEFINE CompilerVersion_l21}  
+{$endif}
+
 uses
   Classes,
   SysUtils,
   uCollections,
+  uTypes,
   Thrift,
   Thrift.Utils,
-  Thrift.Collections,
   Thrift.Protocol,
   Thrift.Transport;
 
@@ -90,7 +112,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function ToString: string; override;
+    function ToString: string; {override}
 
     // IBase
     procedure Read( const iprot: IProtocol);
@@ -150,7 +172,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -189,7 +211,7 @@ type
     constructor Create( AWhat: Integer; const AWhy: string); overload;
     destructor Destroy; override;
 
-    function ToString: string; override;
+    function ToString: string; {override}
 
     // Exception Factory
     property InvalidOperationFactory: IInvalidOperationFactory read FInvalidOperationFactory write FInvalidOperationFactory;
@@ -252,9 +274,9 @@ type
         iface_: Iface;
       protected
         type
-          TProcessFunction = reference to procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);
+          TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);
       protected
-        processMap_: IThriftDictionary<string, TProcessFunction>;
+        processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}
       public
         function Process( const iprot: IProtocol; const oprot: IProtocol): Boolean;
         procedure ping_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);
@@ -274,7 +296,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -291,7 +313,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -333,7 +355,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -373,7 +395,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -421,7 +443,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -461,7 +483,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -509,7 +531,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -559,7 +581,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -584,7 +606,7 @@ type
         constructor Create;
         destructor Destroy; override;
 
-        function ToString: string; override;
+        function ToString: string; {override}
 
         // IBase
         procedure Read( const iprot: IProtocol);
@@ -596,14 +618,15 @@ type
   TConstants = class
   private
     class var FINT32CONSTANT: Integer;
-    class var FMAPCONSTANT: IThriftDictionary<string, string>;
+    class var FMAPCONSTANT: IThriftDictionary_V_V{<string, string>};
   public
     class property INT32CONSTANT: Integer read FINT32CONSTANT;
-    class property MAPCONSTANT: IThriftDictionary<string, string> read FMAPCONSTANT;
-    {$IF CompilerVersion >= 21.0}
+    class property MAPCONSTANT: IThriftDictionary_V_V{<string, string>} read FMAPCONSTANT;
+    //{$IF CompilerVersion >= 21.0}
+    {$IFDEF CompilerVersion_g21}
     class constructor Create;
     class destructor Destroy;
-    {$IFEND}
+    {$ENDIF}
   end;
 
 implementation
@@ -695,13 +718,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         1: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Num1 := iprot.ReadI32();
           end else
@@ -710,7 +733,7 @@ begin
           end;
         end;
         2: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Num2 := iprot.ReadI32();
           end else
@@ -719,7 +742,7 @@ begin
           end;
         end;
         3: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Op := TOperation(iprot.ReadI32());
           end else
@@ -728,7 +751,7 @@ begin
           end;
         end;
         4: begin
-          if (field_.Type_ = TType.String_) then
+          if (field_.Type_ = {TType.}String_) then
           begin
             Comment := iprot.ReadString();
           end else
@@ -758,7 +781,7 @@ begin
   if (__isset_Num1) then
   begin
     field_.Name := 'num1';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Num1);
@@ -767,7 +790,7 @@ begin
   if (__isset_Num2) then
   begin
     field_.Name := 'num2';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 2;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Num2);
@@ -776,7 +799,7 @@ begin
   if (__isset_Op) then
   begin
     field_.Name := 'op';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 3;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Integer(Op));
@@ -785,7 +808,7 @@ begin
   if (__isset_Comment) then
   begin
     field_.Name := 'comment';
-    field_.Type_  := TType.String_;
+    field_.Type_  := {TType.}String_;
     field_.ID := 4;
     oprot.WriteFieldBegin(field_);
     oprot.WriteString(Comment);
@@ -869,13 +892,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         1: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             What := iprot.ReadI32();
           end else
@@ -884,7 +907,7 @@ begin
           end;
         end;
         2: begin
-          if (field_.Type_ = TType.String_) then
+          if (field_.Type_ = {TType.}String_) then
           begin
             Why := iprot.ReadString();
           end else
@@ -914,7 +937,7 @@ begin
   if (__isset_What) then
   begin
     field_.Name := 'what';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(What);
@@ -923,7 +946,7 @@ begin
   if (__isset_Why) then
   begin
     field_.Name := 'why';
-    field_.Type_  := TType.String_;
+    field_.Type_  := {TType.}String_;
     field_.ID := 2;
     oprot.WriteFieldBegin(field_);
     oprot.WriteString(Why);
@@ -1058,7 +1081,7 @@ var
   msg : IMessage;
 begin
   seqid_ := seqid_ + 1;
-  msg := TMessageImpl.Create('ping', TMessageType.Call, seqid_);
+  msg := TMessageImpl.Create('ping', {TMessageType.}Call, seqid_);
   oprot_.WriteMessageBegin( msg );
   args := TPing_argsImpl.Create();
   args.Write(oprot_);
@@ -1073,7 +1096,7 @@ var
   ret : IPing_result;
 begin
   msg := iprot_.ReadMessageBegin();
-  if (msg.Type_ = TMessageType.Exception) then
+  if (msg.Type_ = {TMessageType.}Exception) then
   begin
     x := TApplicationException.Read(iprot_);
     iprot_.ReadMessageEnd();
@@ -1096,7 +1119,7 @@ var
   msg : IMessage;
 begin
   seqid_ := seqid_ + 1;
-  msg := TMessageImpl.Create('add', TMessageType.Call, seqid_);
+  msg := TMessageImpl.Create('add', {TMessageType.}Call, seqid_);
   oprot_.WriteMessageBegin( msg );
   args := TAdd_argsImpl.Create();
   args.Num1 := num1;
@@ -1115,7 +1138,7 @@ var
   ret : IAdd_result;
 begin
   msg := iprot_.ReadMessageBegin();
-  if (msg.Type_ = TMessageType.Exception) then
+  if (msg.Type_ = {TMessageType.}Exception) then
   begin
     x := TApplicationException.Read(iprot_);
     iprot_.ReadMessageEnd();
@@ -1129,7 +1152,7 @@ begin
     Result := ret.Success;
     Exit;
   end;
-  raise TApplicationException.Create(TApplicationException.TExceptionType.MissingResult, 'add failed: unknown result');
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'add failed: unknown result');
 end;
 
 function TTrialTest.TClient.sub(num1: Integer; num2: Integer): Integer;
@@ -1144,7 +1167,7 @@ var
   msg : IMessage;
 begin
   seqid_ := seqid_ + 1;
-  msg := TMessageImpl.Create('sub', TMessageType.Call, seqid_);
+  msg := TMessageImpl.Create('sub', {TMessageType.}Call, seqid_);
   oprot_.WriteMessageBegin( msg );
   args := TSub_argsImpl.Create();
   args.Num1 := num1;
@@ -1163,7 +1186,7 @@ var
   ret : ISub_result;
 begin
   msg := iprot_.ReadMessageBegin();
-  if (msg.Type_ = TMessageType.Exception) then
+  if (msg.Type_ = {TMessageType.}Exception) then
   begin
     x := TApplicationException.Read(iprot_);
     iprot_.ReadMessageEnd();
@@ -1177,7 +1200,7 @@ begin
     Result := ret.Success;
     Exit;
   end;
-  raise TApplicationException.Create(TApplicationException.TExceptionType.MissingResult, 'sub failed: unknown result');
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'sub failed: unknown result');
 end;
 
 function TTrialTest.TClient.calculate(logid: Integer; const w: IWork): Integer;
@@ -1192,7 +1215,7 @@ var
   msg : IMessage;
 begin
   seqid_ := seqid_ + 1;
-  msg := TMessageImpl.Create('calculate', TMessageType.Call, seqid_);
+  msg := TMessageImpl.Create('calculate', {TMessageType.}Call, seqid_);
   oprot_.WriteMessageBegin( msg );
   args := TCalculate_argsImpl.Create();
   args.Logid := logid;
@@ -1207,12 +1230,12 @@ end;
 function TTrialTest.TClient.recv_calculate(): Integer;
 var
   msg : IMessage;
-  ex : Exception;
+  ex : Sysutils.Exception;
   x : TApplicationException;
   ret : ICalculate_result;
 begin
   msg := iprot_.ReadMessageBegin();
-  if (msg.Type_ = TMessageType.Exception) then
+  if (msg.Type_ = {TMessageType.}Exception) then
   begin
     x := TApplicationException.Read(iprot_);
     iprot_.ReadMessageEnd();
@@ -1231,7 +1254,7 @@ begin
     ex := ret.Ouch.CreateException;
     raise ex;
   end;
-  raise TApplicationException.Create(TApplicationException.TExceptionType.MissingResult, 'calculate failed: unknown result');
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'calculate failed: unknown result');
 end;
 
 procedure TTrialTest.TClient.zip();
@@ -1245,7 +1268,7 @@ var
   msg : IMessage;
 begin
   seqid_ := seqid_ + 1;
-  msg := TMessageImpl.Create('zip', TMessageType.Call, seqid_);
+  msg := TMessageImpl.Create('zip', {TMessageType.}Call, seqid_);
   oprot_.WriteMessageBegin( msg );
   args := TZip_argsImpl.Create();
   args.Write(oprot_);
@@ -1257,12 +1280,17 @@ constructor TTrialTest.TProcessorImpl.Create( iface_: Iface );
 begin
   inherited Create;
   Self.iface_ := iface_;
-  processMap_ := TThriftDictionaryImpl<string, TProcessFunction>.Create;
-  processMap_.AddOrSetValue( 'ping', ping_Process);
-  processMap_.AddOrSetValue( 'add', add_Process);
-  processMap_.AddOrSetValue( 'sub', sub_Process);
-  processMap_.AddOrSetValue( 'calculate', calculate_Process);
-  processMap_.AddOrSetValue( 'zip', zip_Process);
+  processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;
+  //processMap_.AddOrSetValue( 'ping', ping_Process);
+  processMap_.AddOrSetValue( 'ping',TValueVariant.Create(Pointer(self.MethodAddress('ping_Process'))));
+  //processMap_.AddOrSetValue( 'add', add_Process);
+  processMap_.AddOrSetValue( 'add',TValueVariant.Create(Pointer(self.MethodAddress('add_Process'))));
+  //processMap_.AddOrSetValue( 'sub', sub_Process);
+  processMap_.AddOrSetValue( 'sub',TValueVariant.Create(Pointer(self.MethodAddress('sub_Process'))));
+  //processMap_.AddOrSetValue( 'calculate', calculate_Process);
+  processMap_.AddOrSetValue( 'calculate',TValueVariant.Create(Pointer(self.MethodAddress('calculate_Process'))));
+  //processMap_.AddOrSetValue( 'zip', zip_Process);
+  processMap_.AddOrSetValue( 'zip',TValueVariant.Create(Pointer(self.MethodAddress('zip_Process'))));
 end;
 
 destructor TTrialTest.TProcessorImpl.Destroy;
@@ -1274,18 +1302,19 @@ function TTrialTest.TProcessorImpl.Process( const iprot: IProtocol; const oprot:
 var
   msg : IMessage;
   fn : TProcessFunction;
+  fnp : Pointer;
   x : TApplicationException;
 begin
   try
     msg := iprot.ReadMessageBegin();
     fn := nil;
-    if not processMap_.TryGetValue(msg.Name, fn)
-    or not Assigned(fn) then
+    if (not processMap_.TryGetValuePointer(msg.Name, fnp))
+    or (fnp=nil) then
     begin
-      TProtocolUtil.Skip(iprot, TType.Struct);
+      TProtocolUtil.Skip(iprot, {TType.}Struct);
       iprot.ReadMessageEnd();
-      x := TApplicationException.Create(TApplicationException.TExceptionType.UnknownMethod, 'Invalid method name: ''' + msg.Name + '''');
-      msg := TMessageImpl.Create(msg.Name, TMessageType.Exception, msg.SeqID);
+      x := TApplicationException.Create({TApplicationException.TExceptionType.}UnknownMethod, 'Invalid method name: ''' + msg.Name + '''');
+      msg := TMessageImpl.Create(msg.Name, {TMessageType.}Exception, msg.SeqID);
       oprot.WriteMessageBegin( msg);
       x.Write(oprot);
       oprot.WriteMessageEnd();
@@ -1293,6 +1322,7 @@ begin
       Result := True;
       Exit;
     end;
+    fn:=TProcessFunction(fnp);
     fn(msg.SeqID, iprot, oprot);
   except
     Result := False;
@@ -1313,7 +1343,7 @@ begin
   iprot.ReadMessageEnd();
   ret := TPing_resultImpl.Create;
   iface_.ping();
-  msg := TMessageImpl.Create('ping', TMessageType.Reply, seqid); 
+  msg := TMessageImpl.Create('ping', {TMessageType.}Reply, seqid); 
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();
@@ -1334,7 +1364,7 @@ begin
   ret.Success := iface_.add(args.Num1, args.Num2);
   args.Num1 := 0;
   args.Num2 := 0;
-  msg := TMessageImpl.Create('add', TMessageType.Reply, seqid); 
+  msg := TMessageImpl.Create('add', {TMessageType.}Reply, seqid); 
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();
@@ -1355,7 +1385,7 @@ begin
   ret.Success := iface_.sub(args.Num1, args.Num2);
   args.Num1 := 0;
   args.Num2 := 0;
-  msg := TMessageImpl.Create('sub', TMessageType.Reply, seqid); 
+  msg := TMessageImpl.Create('sub', {TMessageType.}Reply, seqid); 
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();
@@ -1383,7 +1413,7 @@ begin
       ret.Ouch := E.InvalidOperationFactory;
     end;
   end;
-  msg := TMessageImpl.Create('calculate', TMessageType.Reply, seqid);
+  msg := TMessageImpl.Create('calculate', {TMessageType.}Reply, seqid); 
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();
@@ -1422,7 +1452,7 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
@@ -1478,7 +1508,7 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
@@ -1566,13 +1596,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         1: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Num1 := iprot.ReadI32();
           end else
@@ -1581,7 +1611,7 @@ begin
           end;
         end;
         2: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Num2 := iprot.ReadI32();
           end else
@@ -1611,7 +1641,7 @@ begin
   if (__isset_Num1) then
   begin
     field_.Name := 'num1';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Num1);
@@ -1620,7 +1650,7 @@ begin
   if (__isset_Num2) then
   begin
     field_.Name := 'num2';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 2;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Num2);
@@ -1684,13 +1714,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         0: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Success := iprot.ReadI32();
           end else
@@ -1720,7 +1750,7 @@ begin
   if (__isset_Success) then
   begin
     field_.Name := 'Success';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 0;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Success);
@@ -1798,13 +1828,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         1: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Num1 := iprot.ReadI32();
           end else
@@ -1813,7 +1843,7 @@ begin
           end;
         end;
         2: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Num2 := iprot.ReadI32();
           end else
@@ -1843,7 +1873,7 @@ begin
   if (__isset_Num1) then
   begin
     field_.Name := 'num1';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Num1);
@@ -1852,7 +1882,7 @@ begin
   if (__isset_Num2) then
   begin
     field_.Name := 'num2';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 2;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Num2);
@@ -1916,13 +1946,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         0: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Success := iprot.ReadI32();
           end else
@@ -1952,7 +1982,7 @@ begin
   if (__isset_Success) then
   begin
     field_.Name := 'Success';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 0;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Success);
@@ -2030,13 +2060,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         1: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Logid := iprot.ReadI32();
           end else
@@ -2045,7 +2075,7 @@ begin
           end;
         end;
         2: begin
-          if (field_.Type_ = TType.Struct) then
+          if (field_.Type_ = {TType.}Struct) then
           begin
             W := TWorkImpl.Create;
             W.Read(iprot);
@@ -2076,7 +2106,7 @@ begin
   if (__isset_Logid) then
   begin
     field_.Name := 'logid';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Logid);
@@ -2085,7 +2115,7 @@ begin
   if (W <> nil) and __isset_W then
   begin
     field_.Name := 'w';
-    field_.Type_  := TType.Struct;
+    field_.Type_  := {TType.}Struct;
     field_.ID := 2;
     oprot.WriteFieldBegin(field_);
     W.Write(oprot);
@@ -2165,13 +2195,13 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
       case field_.ID of
         0: begin
-          if (field_.Type_ = TType.I32) then
+          if (field_.Type_ = {TType.}I32) then
           begin
             Success := iprot.ReadI32();
           end else
@@ -2180,7 +2210,7 @@ begin
           end;
         end;
         1: begin
-          if (field_.Type_ = TType.Struct) then
+          if (field_.Type_ = {TType.}Struct) then
           begin
             Ouch := TInvalidOperation.TInvalidOperationFactoryImpl.Create;
             Ouch.Read(iprot);
@@ -2211,7 +2241,7 @@ begin
   if (__isset_Success) then
   begin
     field_.Name := 'Success';
-    field_.Type_  := TType.I32;
+    field_.Type_  := {TType.}I32;
     field_.ID := 0;
     oprot.WriteFieldBegin(field_);
     oprot.WriteI32(Success);
@@ -2220,7 +2250,7 @@ begin
   if (Ouch <> nil) and __isset_Ouch then
   begin
     field_.Name := 'ouch';
-    field_.Type_  := TType.Struct;
+    field_.Type_  := {TType.}Struct;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
     Ouch.Write(oprot);
@@ -2268,7 +2298,7 @@ begin
     while (true) do
     begin
       field_ := iprot.ReadFieldBegin();
-      if (field_.Type_ = TType.Stop) then
+      if (field_.Type_ = {TType.}Stop) then
       begin
         Break;
       end;
@@ -2303,11 +2333,12 @@ begin
   end;
 end;
 
-{$IF CompilerVersion >= 21.0}
+//{$IF CompilerVersion >= 21.0}
+{$IFDEF CompilerVersion_g21}
 class constructor TConstants.Create;
 begin
   FINT32CONSTANT := LongInt( 9853);
-  FMAPCONSTANT := TThriftDictionaryImpl<string, string>.Create;
+  FMAPCONSTANT := TThriftDictionary_V_VImpl{<string, string>}.Create;
   FMAPCONSTANT['hello'] := 'world';
   FMAPCONSTANT['goodnight'] := 'moon';
 end;
@@ -2320,7 +2351,7 @@ end;
 procedure TConstants_Initialize;
 begin
   TConstants.FINT32CONSTANT := LongInt( 9853);
-  TConstants.FMAPCONSTANT := TThriftDictionaryImpl<string, string>.Create;
+  TConstants.FMAPCONSTANT := TThriftDictionary_V_VImpl{<string, string>}.Create;
   TConstants.FMAPCONSTANT['hello'] := 'world';
   TConstants.FMAPCONSTANT['goodnight'] := 'moon';
 end;
@@ -2328,18 +2359,24 @@ end;
 procedure TConstants_Finalize;
 begin
 end;
-{$IFEND}
+{$ENDIF}
+
+//{$IFEND}
 
 
 initialization
-{$IF CompilerVersion < 21.0}
+//{$IF CompilerVersion < 21.0}
+{$IFDEF CompilerVersion_l21}
   TConstants_Initialize;
-{$IFEND}
+{$ENDIF}
+//{$IFEND}
 
 finalization
-{$IF CompilerVersion < 21.0}
+//{$IF CompilerVersion < 21.0}
+{$IFDEF CompilerVersion_l21}
   TConstants_Finalize;
-{$IFEND}
+{$ENDIF}
+//{$IFEND}
 
 
 end.

@@ -75,7 +75,7 @@ type
     end;
 
   private
-    FServiceProcessorMap : TDictionary<String, IProcessor>;
+    FServiceProcessorMap : TuDictionary_V_V{TDictionary<String, IProcessor>};
 
     procedure Error( const oprot : IProtocol; const msg : IMessage;
                      extype : {TApplicationException.}TExceptionType; const etxt : string);
@@ -121,7 +121,7 @@ end;
 constructor TMultiplexedProcessorImpl.Create;
 begin
   inherited Create;
-  FServiceProcessorMap := TDictionary<string,IProcessor>.Create;
+  FServiceProcessorMap :=TuDictionary_V_V.Create {TDictionary<string,IProcessor>.Create};
 end;
 
 
@@ -142,14 +142,14 @@ end;
 
 
 procedure TMultiplexedProcessorImpl.Error( const oprot : IProtocol; const msg : IMessage;
-                                           extype : TApplicationException.TExceptionType;
+                                           extype : {TApplicationException.}TExceptionType;
                                            const etxt : string);
 var appex  : TApplicationException;
     newMsg : IMessage;
 begin
   appex := TApplicationException.Create( extype, etxt);
   try
-    newMsg := TMessageImpl.Create( msg.Name, TMessageType.Exception, msg.SeqID);
+    newMsg := TMessageImpl.Create( msg.Name, {TMessageType.}Exception, msg.SeqID);
 
     oprot.WriteMessageBegin(newMsg);
     appex.Write(oprot);
@@ -172,36 +172,42 @@ const
   ERROR_INVALID_MSGTYPE   = 'Message must be "call" or "oneway"';
   ERROR_INCOMPATIBLE_PROT = 'No service name found in "%s". Client is expected to use TMultiplexProtocol.';
   ERROR_UNKNOWN_SERVICE   = 'Service "%s" is not registered with MultiplexedProcessor';
+var
+  tintf:IInterface;
 begin
   // Use the actual underlying protocol (e.g. TBinaryProtocol) to read the message header.
   // This pulls the message "off the wire", which we'll deal with at the end of this method.
   msg := iprot.readMessageBegin();
-  if not (msg.Type_ in [TMessageType.Call, TMessageType.Oneway]) then begin
+  if not (msg.Type_ in [{TMessageType.}Call, {TMessageType.}Oneway]) then begin
     Error( oprot, msg,
-           TApplicationException.TExceptionType.InvalidMessageType,
+           {TApplicationException.TExceptionType.}InvalidMessageType,
            ERROR_INVALID_MSGTYPE);
-    Exit( FALSE);
+    result:=false;
+    Exit{( FALSE)};
   end;
 
   // Extract the service name
   idx := Pos( TMultiplexedProtocol.SEPARATOR, msg.Name);
   if idx < 1 then begin
     Error( oprot, msg,
-           TApplicationException.TExceptionType.InvalidProtocol,
+           {TApplicationException.TExceptionType.}InvalidProtocol,
            Format(ERROR_INCOMPATIBLE_PROT,[msg.Name]));
-    Exit( FALSE);
+    result:=false;
+    Exit{( FALSE)};
   end;
 
   // Create a new TMessage, something that can be consumed by any TProtocol
   sService := Copy( msg.Name, 1, idx-1);
-  if not FServiceProcessorMap.TryGetValue( sService, processor)
+  if not FServiceProcessorMap.TryGetValueIntf( sService, tintf{processor})
   then begin
     Error( oprot, msg,
-           TApplicationException.TExceptionType.InternalError,
+           {TApplicationException.TExceptionType.}InternalError,
            Format(ERROR_UNKNOWN_SERVICE,[sService]));
-    Exit( FALSE);
+    result:=false;
+    Exit{( FALSE)};
   end;
 
+  processor:=IProcessor(tintf);
   // Create a new TMessage, removing the service name
   Inc( idx, Length(TMultiplexedProtocol.SEPARATOR));
   newMsg := TMessageImpl.Create( Copy( msg.Name, idx, MAXINT), msg.Type_, msg.SeqID);

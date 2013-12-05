@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  *)
-
+//
 unit Thrift.Console;
 
 interface

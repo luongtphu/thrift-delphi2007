@@ -22,7 +22,7 @@ unit Thrift.TypeRegistry;
 interface
 
 uses
-  Generics.Collections, TypInfo,
+  uCollections, TypInfo,
   Thrift.Protocol;
 
 type

@@ -446,7 +446,7 @@ begin
     pair:=FCustomHeaders.GetPair(i);
     if assigned(pair) then
     begin
-      Result.setRequestHeader( pair.Key, pair.Value );
+      Result.setRequestHeader( pair.Key, pair.Value.AsString);
     end;
   end;
  {end}
