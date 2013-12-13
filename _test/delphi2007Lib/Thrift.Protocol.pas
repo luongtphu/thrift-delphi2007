@@ -16,7 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  *)
-
+ {
+  Fix and modify Delphi version less 2010
+  luongtphu@gmail.com
+  Date:Nov 20 2013
+ }
  //#MODIFY NEW
 {begin}
 {$I uDefine.inc}

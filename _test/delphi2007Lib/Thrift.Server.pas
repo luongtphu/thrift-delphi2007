@@ -16,7 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  *)
+ {
+  Fix and modify Delphi version less 2010
+  luongtphu@gmail.com
+  Date:Nov 20 2013
+ }
 
+{* MODIFY AND FIX EXTEND Delphi2007/Delphi7
+By luongtphu@gmail.com Date: Nov 20 2013
+*}
  unit Thrift.Server;
 
 interface
@@ -29,15 +37,17 @@ uses
 
 type
   IServer = interface
-    ['{CF9F56C6-BB39-4C7D-877B-43B416572CE6}']
+    ['{21F5B86A-9C7F-47C9-8675-817D5450A109}']
     procedure Serve;
     procedure Stop;
   end;
+procedure DefaultLogDelegate( const str: string);
 
+  
+type
+  TLogDelegate = {reference to }procedure( const str: string);
+type
   TServerImpl = class abstract( TInterfacedObject, IServer )
-  public
-    type
-      TLogDelegate = reference to procedure( const str: string);
   protected
     FProcessor : IProcessor;
     FServerTransport : IServerTransport;
@@ -47,7 +57,7 @@ type
     FOutputProtocolFactory : IProtocolFactory;
     FLogDelegate : TLogDelegate;
 
-    class procedure DefaultLogDelegate( const str: string);
+
 
     procedure Serve; virtual; abstract;
     procedure Stop; virtual; abstract;
@@ -93,7 +103,7 @@ type
   public
     constructor Create( const AProcessor: IProcessor; const AServerTransport: IServerTransport); overload;
     constructor Create( const AProcessor: IProcessor; const AServerTransport: IServerTransport;
-      ALogDel: TServerImpl.TLogDelegate); overload;
+      ALogDel: {TServerImpl.}TLogDelegate); overload;
     constructor Create( const AProcessor: IProcessor; const AServerTransport: IServerTransport;
       const ATransportFactory: ITransportFactory); overload;
     constructor Create( const AProcessor: IProcessor; const AServerTransport: IServerTransport;
@@ -182,7 +192,7 @@ begin
   FLogDelegate := ALogDelegate;
 end;
 
-class procedure TServerImpl.DefaultLogDelegate( const str: string);
+procedure DefaultLogDelegate( const str: string);
 begin
   Writeln( str );
 end;
@@ -217,7 +227,7 @@ begin
 end;
 
 constructor TSimpleServer.Create( const AProcessor: IProcessor;
-  const AServerTransport: IServerTransport; ALogDel: TServerImpl.TLogDelegate);
+  const AServerTransport: IServerTransport; ALogDel: {TServerImpl.}TLogDelegate);
 var
   InputProtocolFactory : IProtocolFactory;
   OutputProtocolFactory : IProtocolFactory;
@@ -259,9 +269,9 @@ begin
   try
     FServerTransport.Listen;
   except
-    on E: Exception do
+    on E: Sysutils.Exception do
     begin
-      FLogDelegate( E.ToString);
+      FLogDelegate( E.Message);
     end;
   end;
 
@@ -291,12 +301,12 @@ begin
       on E: TTransportException do
       begin
         if FStop
-        then FLogDelegate('TSimpleServer was shutting down, caught ' + E.ToString)
-        else FLogDelegate( E.ToString);
+        then FLogDelegate('TSimpleServer was shutting down, caught ' + E.Message)
+        else FLogDelegate( E.Message);
       end;
-      on E: Exception do
+      on E:Sysutils.Exception do
       begin
-        FLogDelegate( E.ToString);
+        FLogDelegate( E.Message);
       end;
     end;
     if InputTransport <> nil then

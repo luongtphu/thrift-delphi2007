@@ -1,3 +1,8 @@
+ {
+  Develop to replace Generic.Collection/ThriftCollection Delphi version less 2010
+  luongtphu@gmail.com
+  Date:Nov 20 2013
+ }
 unit uTypes;
 
 interface
