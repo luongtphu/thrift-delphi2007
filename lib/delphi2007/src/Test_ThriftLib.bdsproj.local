@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions>
+	<Transactions>
     <Transaction>2013/12/13 18:13:47.821.bdsproj,D:\MyDoc\RAD Studio\Projects\Project2.bdsproj=D:\MyDoc\_working\KyLe_Project\Thrift\repo-my-github\thrift-delphi2007\lib\delphi2007\Test_ThriftLib.bdsproj</Transaction>
     <Transaction>2013/12/13 18:14:15.562.pas,D:\MyDoc\_working\KyLe_Project\Thrift\repo-my-github\thrift-delphi2007\lib\delphi2007\Thrift.Collections.pas=</Transaction>
     <Transaction>2013/12/13 18:15:27.032.pas,D:\MyDoc\_working\KyLe_Project\Thrift\repo-my-github\thrift-delphi2007\lib\delphi2007\Thrift.Protocol.JSON.pas=</Transaction>

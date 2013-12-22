@@ -430,9 +430,10 @@ void t_delphi7_generator::init_generator() {
   add_delphi_uses_list("Classes");
   add_delphi_uses_list("SysUtils");
   add_delphi_uses_list("uCollections");
+  add_delphi_uses_list("uTypes");
   add_delphi_uses_list("Thrift");
   add_delphi_uses_list("Thrift.Utils");
-  add_delphi_uses_list("Thrift.Collections");
+  //add_delphi_uses_list("Thrift.Collections");
   add_delphi_uses_list("Thrift.Protocol");
   add_delphi_uses_list("Thrift.Transport");
 
@@ -478,6 +479,29 @@ void t_delphi7_generator::close_generator() {
   f_all << autogen_comment() << endl;
   f_all << "unit " << unitname << ";" << endl << endl;
   f_all << "interface" << endl << endl;
+  f_all << "//{$I uDefine.inc}" << endl;
+  f_all << "{$ifdef CompilerVersion}" << endl;
+  f_all << "{$IF CompilerVersion >= 21}" << endl;
+  f_all << "{$DEFINE CompilerVersion_g21}" << endl;
+  f_all << "{$ELSE}" << endl;
+  f_all << "{$DEFINE CompilerVersion_l21}  " << endl;
+  f_all << "{$IFEND}" << endl;
+  f_all << "{$IF CompilerVersion >= 19} // From Tiburon / Delphi 2009 has support generic collection" << endl;
+  f_all << "{$DEFINE GEN_SUPPORT}" << endl;
+  f_all << "{$DEFINE YES_SCOPEDENUMS}" << endl;
+
+  f_all << "{$ELSE}" << endl;
+  f_all << "{$DEFINE GEN_NOSUPPORT} //No support Generic" << endl;
+  f_all << "{$DEFINE NO_TStringBuilder}//No Support TStringBuilder" << endl;
+  f_all << "{$DEFINE NO_SCOPEDENUMS}//No Support TStringBuilder" << endl;
+
+  f_all << "{$IFEND}" << endl;
+  f_all << "{$else}" << endl;
+  f_all << "{$DEFINE GEN_NOSUPPORT}" << endl;
+  f_all << "{$DEFINE NO_TStringBuilder}" << endl;
+  f_all << "{$DEFINE NO_SCOPEDENUMS}" << endl;
+  f_all << "{$DEFINE CompilerVersion_l21}  " << endl;
+  f_all << "{$endif}" << endl<< endl;
   f_all  << "uses"  << endl;
 
   indent_up();
@@ -538,9 +562,11 @@ void t_delphi7_generator::close_generator() {
 
   f_all  << "initialization" << endl;
   if ( has_const ) {    
-	f_all  << "{$IF CompilerVersion < 21.0}" << endl;
+	f_all  << "//{$IF CompilerVersion < 21.0}" << endl;
+	f_all  << "{$IFDEF CompilerVersion_l21}" << endl;
     f_all  << "  TConstants_Initialize;" << endl;
-	f_all  << "{$IFEND}" << endl;
+	f_all  << "{$ENDIF}" << endl;
+	f_all  << "//{$IFEND}" << endl;
   }
   if (register_types_) {
 	  f_all << "  RegisterTypeFactories;" << endl;
@@ -549,9 +575,11 @@ void t_delphi7_generator::close_generator() {
 
   f_all  << "finalization" << endl;
   if ( has_const ) {    
-	f_all  << "{$IF CompilerVersion < 21.0}" << endl;
+	f_all  << "//{$IF CompilerVersion < 21.0}" << endl;
+	f_all  << "{$IFDEF CompilerVersion_l21}" << endl;
     f_all  << "  TConstants_Finalize;" << endl;
-	f_all  << "{$IFEND}" << endl;
+	f_all  << "{$ENDIF}" << endl;
+	f_all  << "//{$IFEND}" << endl;
   }
   f_all  << endl << endl;
   
@@ -568,7 +596,7 @@ void t_delphi7_generator::close_generator() {
 
 void t_delphi7_generator::delphi_type_usings( ostream& out) {
   indent_up();
-  indent(out) << "Classes, SysUtils, Generics.Collections, Thrift.Collections, Thrift.Protocol," << endl;
+  indent(out) << "Classes, SysUtils, uCollections, Thrift.Protocol," << endl;
   indent(out) << "Thrift.Transport;" << endl << endl;
   indent_down();
 }
@@ -716,10 +744,11 @@ void t_delphi7_generator::generate_consts(std::vector<t_const*> consts) {
     print_const_prop(s_const, normalize_name((*c_iter)->get_name()), 
       (*c_iter)->get_type(), (*c_iter)->get_value());
   }
-  indent(s_const) << "{$IF CompilerVersion >= 21.0}" << endl;
+  indent(s_const) << "//{$IF CompilerVersion >= 21.0}" << endl;
+  indent(s_const) << "{$IFDEF CompilerVersion_g21}" << endl;
   indent(s_const) << "class constructor Create;" << endl;
   indent(s_const) << "class destructor Destroy;" << endl;
-  indent(s_const) << "{$IFEND}" << endl;
+  indent(s_const) << "{$ENDIF}" << endl;
   indent_down();
   indent(s_const) << "end;" << endl << endl;
   indent_down();
@@ -733,7 +762,8 @@ void t_delphi7_generator::generate_consts(std::vector<t_const*> consts) {
   }
   indent_down_impl();
 
-  indent_impl(s_const_impl) << "{$IF CompilerVersion >= 21.0}" << endl;
+  indent_impl(s_const_impl) << "//{$IF CompilerVersion >= 21.0}" << endl;
+  indent_impl(s_const_impl) << "{$IFDEF CompilerVersion_g21}" << endl;
   indent_impl(s_const_impl) << "class constructor TConstants.Create;" << endl;
 
   if ( ! vars.str().empty() ) {
@@ -787,7 +817,8 @@ void t_delphi7_generator::generate_consts(std::vector<t_const*> consts) {
   }
   indent_down_impl();
   indent_impl(s_const_impl) << "end;" << endl;
-  indent_impl(s_const_impl) << "{$IFEND}" << endl << endl;
+  indent_impl(s_const_impl) << "{$ENDIF}" << endl << endl;
+  indent_impl(s_const_impl) << "//{$IFEND}" << endl << endl;
 }
 
 void t_delphi7_generator::print_const_def_value(std::ostream& vars, std::ostream& out, string name, t_type* type, t_const_value* value, string cls_nm)
@@ -1300,7 +1331,7 @@ void t_delphi7_generator::generate_delphi_struct_definition(ostream &out, t_stru
   indent(out) << "destructor Destroy; override;" << endl;
 
   out  << endl;
-  indent(out) << "function ToString: string; override;" << endl;
+  indent(out) << "function ToString: string; {override}" << endl;
 
   if (is_exception && (! is_x_factory)) {
     out  << endl;
@@ -1536,7 +1567,7 @@ void t_delphi7_generator::generate_service_client(t_service* tservice) {
     indent_impl(s_service_impl) <<
       "seqid_ := seqid_ + 1;" << endl;
     indent_impl(s_service_impl) <<
-      "msg := TMessageImpl.Create('" << funname << "', TMessageType.Call, seqid_);" << endl;
+		"msg := TMessageImpl.Create('" << funname << "', {TMessageType.}Call, seqid_);" << endl;
 
     indent_impl(s_service_impl) <<
       "oprot_.WriteMessageBegin( msg );" << endl;
@@ -1579,7 +1610,7 @@ void t_delphi7_generator::generate_service_client(t_service* tservice) {
       indent_up_impl();
       indent_impl(s_service_impl) << "msg : IMessage;" << endl;
       if ( xceptions.size() > 0) {
-        indent_impl(s_service_impl) << "ex : Exception;" << endl;
+        indent_impl(s_service_impl) << "ex : Sysutils.Exception;" << endl;
       }
       indent_impl(s_service_impl) << "x : TApplicationException;" << endl;
       indent_impl(s_service_impl) << "ret : " << result_intfnm << ";" << endl;
@@ -1588,7 +1619,7 @@ void t_delphi7_generator::generate_service_client(t_service* tservice) {
       indent_impl(s_service_impl) << "begin" << endl;
       indent_up_impl();
       indent_impl(s_service_impl) << "msg := iprot_.ReadMessageBegin();" << endl;
-      indent_impl(s_service_impl) << "if (msg.Type_ = TMessageType.Exception) then" << endl;
+	  indent_impl(s_service_impl) << "if (msg.Type_ = {TMessageType.}Exception) then" << endl;
       indent_impl(s_service_impl) << "begin" << endl;
       indent_up_impl();
       indent_impl(s_service_impl) << "x := TApplicationException.Read(iprot_);" << endl;
@@ -1628,7 +1659,7 @@ void t_delphi7_generator::generate_service_client(t_service* tservice) {
 
       if (!(*f_iter)->get_returntype()->is_void()) {
         indent_impl(s_service_impl) << 
-          "raise TApplicationException.Create(TApplicationException.TExceptionType.MissingResult, '" << (*f_iter)->get_name() << " failed: unknown result');" << endl;
+			"raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, '" << (*f_iter)->get_name() << " failed: unknown result');" << endl;
       }
 
       indent_down_impl();
@@ -1679,12 +1710,14 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   {
     indent_impl(s_service_impl) << "ASSERT( processMap_ <> nil);  // inherited" << endl;
   } else {
-    indent_impl(s_service_impl) << "processMap_ := TThriftDictionaryImpl<string, TProcessFunction>.Create;" << endl;
+	  indent_impl(s_service_impl) << "processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;" << endl;
   }
 
   for (f_iter = functions.begin(); f_iter != functions.end(); ++f_iter) {
     indent_impl(s_service_impl) << 
-      "processMap_.AddOrSetValue( '" << (*f_iter)->get_name() << "', " << (*f_iter)->get_name() << "_Process);" << endl;
+      "//processMap_.AddOrSetValue( '" << (*f_iter)->get_name() << "', " << (*f_iter)->get_name() << "_Process);" << endl;
+	indent_impl(s_service_impl) << 
+      "processMap_.AddOrSetValue( '" << (*f_iter)->get_name() << "',TValueVariant.Create(Pointer(self.MethodAddress('" << (*f_iter)->get_name() << "_Process'))));" << endl;
   }
   indent_down_impl();
   indent_impl(s_service_impl) << "end;" << endl << endl;
@@ -1707,12 +1740,12 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
     indent_up();
     indent(s_service) << "type" << endl;
     indent_up();
-    indent(s_service) << "TProcessFunction = reference to procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);" << endl;
+	indent(s_service) << "TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);" << endl;
     indent_down();
     indent_down();
     indent(s_service) << "protected" << endl;
     indent_up();
-    indent(s_service) << "processMap_: IThriftDictionary<string, TProcessFunction>;" << endl;
+	indent(s_service) << "processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}" << endl;
     indent_down();
   }
 
@@ -1729,6 +1762,7 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   indent_up_impl();
   indent_impl(s_service_impl) << "msg : IMessage;" << endl;
   indent_impl(s_service_impl) << "fn : TProcessFunction;" << endl;
+  indent_impl(s_service_impl) << "fnp : Pointer;" << endl;
   indent_impl(s_service_impl) << "x : TApplicationException;" << endl;
   indent_down_impl();
   indent_impl(s_service_impl) << "begin" << endl;
@@ -1737,14 +1771,16 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   indent_up_impl();
   indent_impl(s_service_impl) << "msg := iprot.ReadMessageBegin();" << endl;
   indent_impl(s_service_impl) << "fn := nil;" << endl;
-  indent_impl(s_service_impl) << "if not processMap_.TryGetValue(msg.Name, fn)" << endl;
-  indent_impl(s_service_impl) << "or not Assigned(fn) then" << endl;
+  //indent_impl(s_service_impl) << "if not processMap_.TryGetValue(msg.Name, fn)" << endl;
+  //indent_impl(s_service_impl) << "or not Assigned(fn) then" << endl;
+  indent_impl(s_service_impl) << "if (not processMap_.TryGetValuePointer(msg.Name, fnp))" << endl;
+  indent_impl(s_service_impl) << "or (fnp=nil) then" << endl;
   indent_impl(s_service_impl) << "begin" << endl;
   indent_up_impl();
-  indent_impl(s_service_impl) << "TProtocolUtil.Skip(iprot, TType.Struct);" << endl;
+  indent_impl(s_service_impl) << "TProtocolUtil.Skip(iprot, {TType.}Struct);" << endl;
   indent_impl(s_service_impl) << "iprot.ReadMessageEnd();" << endl;
-  indent_impl(s_service_impl) << "x := TApplicationException.Create(TApplicationException.TExceptionType.UnknownMethod, 'Invalid method name: ''' + msg.Name + '''');" << endl;
-  indent_impl(s_service_impl) << "msg := TMessageImpl.Create(msg.Name, TMessageType.Exception, msg.SeqID);" << endl;
+  indent_impl(s_service_impl) << "x := TApplicationException.Create({TApplicationException.TExceptionType.}UnknownMethod, 'Invalid method name: ''' + msg.Name + '''');" << endl;
+  indent_impl(s_service_impl) << "msg := TMessageImpl.Create(msg.Name, {TMessageType.}Exception, msg.SeqID);" << endl;
   indent_impl(s_service_impl) << "oprot.WriteMessageBegin( msg);" << endl;
   indent_impl(s_service_impl) << "x.Write(oprot);" << endl;
   indent_impl(s_service_impl) << "oprot.WriteMessageEnd();" << endl;
@@ -1753,6 +1789,7 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   indent_impl(s_service_impl) << "Exit;" << endl;
   indent_down_impl();
   indent_impl(s_service_impl) << "end;" << endl;
+  indent_impl(s_service_impl) << "fn:=TProcessFunction(fnp);" << endl;
   indent_impl(s_service_impl) << "fn(msg.SeqID, iprot, oprot);" << endl;
   indent_down_impl();
   indent_impl(s_service_impl) << "except" << endl;
@@ -1895,7 +1932,7 @@ void t_delphi7_generator::generate_process_function(t_service* tservice, t_funct
   }
 
   if (! tfunction->is_oneway()) {
-    indent_impl(s_service_impl) << "msg := TMessageImpl.Create('" << tfunction->get_name() << "', TMessageType.Reply, seqid); " << endl;
+	  indent_impl(s_service_impl) << "msg := TMessageImpl.Create('" << tfunction->get_name() << "', {TMessageType.}Reply, seqid); " << endl;
     indent_impl(s_service_impl) << "oprot.WriteMessageBegin( msg); " << endl;
     indent_impl(s_service_impl) << "ret.Write(oprot);" << endl;
     indent_impl(s_service_impl) << "oprot.WriteMessageEnd();" << endl;
@@ -2315,28 +2352,28 @@ string t_delphi7_generator::type_name( t_type* ttype, bool b_cls, bool b_no_post
   } else if (ttype->is_map()) {
     t_map *tmap = (t_map*) ttype;
     if (b_cls) {
-      typ_nm = "TThriftDictionaryImpl";
+      typ_nm = "TThriftDictionary_V_VImpl";
     } else {
-      typ_nm = "IThriftDictionary";
+      typ_nm = "IThriftDictionary_V_V";
     }
-    return typ_nm + "<" + type_name(tmap->get_key_type()) +
-      ", " + type_name(tmap->get_val_type()) + ">";
+    return typ_nm;/* + "{<" + type_name(tmap->get_key_type()) +
+		", " + type_name(tmap->get_val_type()) + ">}";*/
   } else if (ttype->is_set()) {
     t_set* tset = (t_set*) ttype;
     if (b_cls) {
-      typ_nm = "THashSetImpl";
+      typ_nm = "THashSet_VImpl";
     } else {
-      typ_nm = "IHashSet";
+      typ_nm = "IHashSet_V";
     }
-    return typ_nm + "<" + type_name(tset->get_elem_type()) + ">";
+	return typ_nm;// + "{<" + type_name(tset->get_elem_type()) + ">}";
   } else if (ttype->is_list()) {
     t_list* tlist = (t_list*) ttype;
     if (b_cls) {
-      typ_nm = "TThriftListImpl";
+      typ_nm = "TThriftList_VImpl";
     } else {
-      typ_nm = "IThriftList";
+      typ_nm = "IThriftList_V";
     }
-    return typ_nm + "<" + type_name(tlist->get_elem_type()) + ">";
+	return typ_nm;// + "{<" + type_name(tlist->get_elem_type()) + ">}";
   }
 
   string type_prefix;
@@ -2550,30 +2587,30 @@ string t_delphi7_generator::type_to_enum(t_type* type) {
       case t_base_type::TYPE_VOID:
         throw "NO T_VOID CONSTRUCT";
       case t_base_type::TYPE_STRING:
-        return "TType.String_";
+		  return "{TType.}String_";
       case t_base_type::TYPE_BOOL:
-        return "TType.Bool_";
+		  return "{TType.}Bool_";
       case t_base_type::TYPE_BYTE:
-        return "TType.Byte_";
+		  return "{TType.}Byte_";
       case t_base_type::TYPE_I16:
-        return "TType.I16";
+		  return "{TType.}I16";
       case t_base_type::TYPE_I32:
-        return "TType.I32";
+		  return "{TType.}I32";
       case t_base_type::TYPE_I64:
-        return "TType.I64";
+		  return "{TType.}I64";
       case t_base_type::TYPE_DOUBLE:
-        return "TType.Double_";
+		  return "{TType.}Double_";
     }
   } else if (type->is_enum()) {
-    return "TType.I32";
+	  return "{TType.}I32";
   } else if (type->is_struct() || type->is_xception()) {
-    return "TType.Struct";
+	  return "{TType.}Struct";
   } else if (type->is_map()) {
-    return "TType.Map";
+	  return "{TType.}Map";
   } else if (type->is_set()) {
-    return "TType.Set_";
+	  return "{TType.}Set_";
   } else if (type->is_list()) {
-    return "TType.List";
+	  return "{TType.}List";
   }
 
   throw "INVALID TYPE IN type_to_enum: " + type->get_name();
@@ -2781,7 +2818,7 @@ void t_delphi7_generator::generate_delphi_struct_reader_impl(ostream& out, strin
 
   indent_impl(code_block) << "field_ := iprot.ReadFieldBegin();" << endl;
 
-  indent_impl(code_block) << "if (field_.Type_ = TType.Stop) then" << endl;
+  indent_impl(code_block) << "if (field_.Type_ = {TType.}Stop) then" << endl;
   indent_impl(code_block) << "begin" << endl;
   indent_up_impl();
   indent_impl(code_block) << "Break;" << endl;
