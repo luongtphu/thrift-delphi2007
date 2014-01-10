@@ -153,7 +153,7 @@ var appex  : TApplicationException;
 begin
   appex := TApplicationException.Create( extype, etxt);
   try
-    newMsg := TMessageImpl.Create( msg.Name, {TMessageType.}Exception, msg.SeqID);
+    newMsg := TMessageImpl.Create( msg.Name, {TMessageType.}Exception_, msg.SeqID);
 
     oprot.WriteMessageBegin(newMsg);
     appex.Write(oprot);

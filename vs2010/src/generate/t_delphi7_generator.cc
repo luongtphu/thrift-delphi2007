@@ -1619,7 +1619,7 @@ void t_delphi7_generator::generate_service_client(t_service* tservice) {
       indent_impl(s_service_impl) << "begin" << endl;
       indent_up_impl();
       indent_impl(s_service_impl) << "msg := iprot_.ReadMessageBegin();" << endl;
-	  indent_impl(s_service_impl) << "if (msg.Type_ = {TMessageType.}Exception) then" << endl;
+	  indent_impl(s_service_impl) << "if (msg.Type_ = {TMessageType.}Exception_) then" << endl;
       indent_impl(s_service_impl) << "begin" << endl;
       indent_up_impl();
       indent_impl(s_service_impl) << "x := TApplicationException.Read(iprot_);" << endl;
@@ -1697,6 +1697,8 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   indent_down();
 
   indent_impl(s_service_impl) << "constructor " << full_cls << ".Create( iface_: Iface );" << endl;
+  indent_impl(s_service_impl) << "var" << endl;
+  indent_impl(s_service_impl) << "tmpmethod:TProcessFunction;" << endl;
   indent_impl(s_service_impl) << "begin" << endl;
   indent_up_impl();
   if (tservice->get_extends() != NULL)
@@ -1716,8 +1718,9 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   for (f_iter = functions.begin(); f_iter != functions.end(); ++f_iter) {
     indent_impl(s_service_impl) << 
       "//processMap_.AddOrSetValue( '" << (*f_iter)->get_name() << "', " << (*f_iter)->get_name() << "_Process);" << endl;
+	indent_impl(s_service_impl) << "tmpmethod:=Self."<< (*f_iter)->get_name() << "_Process;"<< endl;
 	indent_impl(s_service_impl) << 
-      "processMap_.AddOrSetValue( '" << (*f_iter)->get_name() << "',TValueVariant.Create(Pointer(self.MethodAddress('" << (*f_iter)->get_name() << "_Process'))));" << endl;
+      "processMap_.AddOrSetValue( '" << (*f_iter)->get_name() << "',Pointer(@tmpmethod));" << endl;
   }
   indent_down_impl();
   indent_impl(s_service_impl) << "end;" << endl << endl;
@@ -1740,7 +1743,7 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
     indent_up();
     indent(s_service) << "type" << endl;
     indent_up();
-	indent(s_service) << "TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);" << endl;
+	indent(s_service) << "TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface) of object;" << endl;
     indent_down();
     indent_down();
     indent(s_service) << "protected" << endl;
@@ -1780,7 +1783,7 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   indent_impl(s_service_impl) << "TProtocolUtil.Skip(iprot, {TType.}Struct);" << endl;
   indent_impl(s_service_impl) << "iprot.ReadMessageEnd();" << endl;
   indent_impl(s_service_impl) << "x := TApplicationException.Create({TApplicationException.TExceptionType.}UnknownMethod, 'Invalid method name: ''' + msg.Name + '''');" << endl;
-  indent_impl(s_service_impl) << "msg := TMessageImpl.Create(msg.Name, {TMessageType.}Exception, msg.SeqID);" << endl;
+  indent_impl(s_service_impl) << "msg := TMessageImpl.Create(msg.Name, {TMessageType.}Exception_, msg.SeqID);" << endl;
   indent_impl(s_service_impl) << "oprot.WriteMessageBegin( msg);" << endl;
   indent_impl(s_service_impl) << "x.Write(oprot);" << endl;
   indent_impl(s_service_impl) << "oprot.WriteMessageEnd();" << endl;
@@ -1789,8 +1792,9 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   indent_impl(s_service_impl) << "Exit;" << endl;
   indent_down_impl();
   indent_impl(s_service_impl) << "end;" << endl;
-  indent_impl(s_service_impl) << "fn:=TProcessFunction(fnp);" << endl;
-  indent_impl(s_service_impl) << "fn(msg.SeqID, iprot, oprot);" << endl;
+  indent_impl(s_service_impl) << "//fn:=TProcessFunction(fnp);" << endl;
+  indent_impl(s_service_impl) << "PCardinal(@fn):=fnp;" << endl;
+  indent_impl(s_service_impl) << "fn(msg.SeqID, iprot, oprot,iface_);" << endl;
   indent_down_impl();
   indent_impl(s_service_impl) << "except" << endl;
   indent_up_impl();
@@ -1848,7 +1852,7 @@ void t_delphi7_generator::generate_process_function(t_service* tservice, t_funct
   string result_intfnm = normalize_clsnm(org_resultname, "I");
 
   indent(s_service) <<
-    "procedure " << funcname << "_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);" << endl;
+    "procedure " << funcname << "_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);" << endl;
 
   if (tfunction->is_oneway()) {
     indent_impl(s_service_impl) << "// one way processor" << endl;
@@ -1857,7 +1861,7 @@ void t_delphi7_generator::generate_process_function(t_service* tservice, t_funct
   }
 
   indent_impl(s_service_impl) <<
-    "procedure " << full_cls << "." << funcname << "_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol);" << endl;
+    "procedure " << full_cls << "." << funcname << "_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);" << endl;
   indent_impl(s_service_impl) << "var" << endl;
   indent_up_impl();
   indent_impl(s_service_impl) << "args: " << args_intfnm << ";" << endl;
@@ -1894,7 +1898,7 @@ void t_delphi7_generator::generate_process_function(t_service* tservice, t_funct
   if (!tfunction->is_oneway() && !tfunction->get_returntype()->is_void()) {
     s_service_impl << "ret.Success := ";
   }
-  s_service_impl <<  "iface_." << normalize_name( tfunction->get_name(), true) << "(";
+  s_service_impl <<  "miface_." << normalize_name( tfunction->get_name(), true) << "(";
   bool first = true;
   for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
     if (first) {
