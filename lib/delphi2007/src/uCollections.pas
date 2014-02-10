@@ -152,6 +152,39 @@ type
   end;
 
 type
+  TuStack_V=class(TObject)
+  private
+    fValue:TValueVariantArray;
+    FCount: Integer;
+    FGrowThreshold: Integer;
+    procedure Grow(const ACount: Integer);
+    function GetCapacity: Integer;
+    procedure SetCapacity(ACapacity: Integer);
+    procedure Rehash(NewCapPow2: Integer);
+  public
+    constructor Create(Collection: TValueVariantArray);
+    destructor Destroy; override;
+    procedure Clear;
+    procedure Push(const Value: TValueVariant);overload;
+    procedure PushV(const Value: Variant);overload;
+    procedure PushO(const Value: TObject);overload;
+    procedure PushP(const Value: Pointer);overload;
+    procedure PushI(const Value: IInterface);overload;
+
+    function Pop: TValueVariant;overload;
+    function PopV: Variant;overload;
+    function PopO: TObject;overload;
+    function PopP: Pointer;overload;
+    function PopI: IInterface;overload;
+    function Peek: TValueVariant;
+    function Extract: TValueVariant;
+    procedure TrimExcess;
+    function ToArray: TValueVariantArray;
+    property Count: Integer read FCount;
+    property Capacity: Integer read GetCapacity write SetCapacity;
+  end;
+
+type
   TuList_V=class(TObject)
   private
     fValue:TValueVariantArray;
@@ -2868,6 +2901,228 @@ function TuComparerValue_ObjDefault.Compare(const Left,
   Right: TValueVariant): Integer;
 begin
   result:=AllValue_Compare_Default_Obj(Left,Right);
+end;
+
+{ TuStack_V }
+
+procedure TuStack_V.Clear;
+var
+  i: Integer;
+  oldItemsv: TValueVariantArray;
+begin
+  for i := 0 to FCount - 1 do
+  begin
+    fValue[i].Free;
+  end;
+  oldItemsv := fValue;
+  FCount := 0;
+  SetLength(fValue, 0);
+  SetCapacity(0);
+  FGrowThreshold := 0;
+
+  for i := 0 to FCount - 1 do
+  begin
+    //KeyNotify(oldItems[i].Key, cnRemoved);
+    //ValueNotify(oldItems[i].Value, cnRemoved);
+  end;
+end;
+
+
+constructor TuStack_V.Create(Collection: TValueVariantArray);
+var
+ACapacity:integer;
+item: TValueVariant;
+n,i:integer;
+begin
+inherited Create;
+ACapacity:=0;
+n:=0;
+if Collection<>nil then
+  if length(Collection)>0 then
+  begin
+    n:=length(Collection);
+    ACapacity:=n+10;
+  end;
+
+  if ACapacity < 0 then
+    raise Exception.Create('Error: ACapacity less Zero');
+  SetCapacity(ACapacity);
+
+  for  i:=0 to n-1 do
+  begin
+    item:=Collection[i];
+    Push(item);
+  end;
+end;
+
+destructor TuStack_V.Destroy;
+begin
+  if Count<=0 then exit;
+  Clear;
+  inherited;
+end;
+
+function TuStack_V.Extract: TValueVariant;
+begin
+  result:=Pop;
+end;
+
+function TuStack_V.GetCapacity: Integer;
+begin
+  Result := Length(fvalue);
+end;
+
+procedure TuStack_V.Grow(const ACount: Integer);
+var
+  newCap: Integer;
+begin
+  newCap :=ACount;
+  if (ACount=0) then
+  begin
+    newCap := Length(fvalue) * 2;
+  end;
+  if newCap = 0 then
+    newCap := 4;
+  Rehash(newCap);
+end;
+
+function TuStack_V.Peek: TValueVariant;
+begin
+  if Count = 0 then
+    raise EListError.Create('Unbalanced stack or queue operation');
+  Result := fValue[Count - 1];
+
+end;
+
+function TuStack_V.PopP: Pointer;
+var
+t:TValueVariant;
+begin
+t:=Pop;
+result:=nil;
+if (t<>nil) then
+  result:=t.GetValueP;
+end;
+
+function TuStack_V.PopI: IInterface;
+var
+t:TValueVariant;
+begin
+t:=Pop;
+if (t<>nil) then
+  result:=t.GetValueI;
+end;
+
+function TuStack_V.PopV: Variant;
+var
+t:TValueVariant;
+begin
+t:=Pop;
+if (t<>nil) then
+  result:=t.GetValueV;
+end;
+
+function TuStack_V.PopO: TObject;
+var
+t:TValueVariant;
+begin
+t:=Pop;
+result:=nil;
+if (t<>nil) then
+  result:=t.GetValueO;
+end;
+
+function TuStack_V.Pop: TValueVariant;
+begin
+  Result := nil;
+  if Count = 0 then
+    raise EListError.Create('Unbalanced stack or queue operation');
+  Dec(FCount);
+  Result := fValue[Count];
+  fValue[Count]:=nil;
+  //Notify(Result, Notification);
+end;
+
+procedure TuStack_V.Push(const Value: TValueVariant);
+begin
+  if Count = Length(fValue) then
+    Grow(Count+4);
+  fValue[Count] := Value;
+  Inc(FCount);
+  //Notify(Value, cnAdded);
+end;
+
+procedure TuStack_V.Rehash(NewCapPow2: Integer);
+var
+  oldItems, newItems: TValueVariantArray;
+  i: Integer;
+begin
+  if NewCapPow2 = Length(fvalue) then
+    Exit
+  else if NewCapPow2 < 0 then
+    OutOfMemoryError;
+
+  oldItems := fValue;
+  SetLength(newItems, NewCapPow2);
+
+  fValue := newItems;
+  FGrowThreshold := NewCapPow2 shr 1 + NewCapPow2 shr 2; // 75%
+
+  for i := 0 to Length(oldItems) - 1 do
+  begin
+    fValue[i]:=oldItems[i];
+  end;
+  SetLength(oldItems, 0);
+end;
+
+
+procedure TuStack_V.SetCapacity(ACapacity: Integer);
+var
+  newCap: Integer;
+begin
+  if ACapacity < Count then
+    raise Exception.Create('Error ACapacity < Count');
+
+  if ACapacity = 0 then
+    Rehash(0)
+  else
+  begin
+    newCap := 4;
+    while newCap < ACapacity do
+      newCap := newCap shl 1;
+    Rehash(newCap);
+  end
+end;
+
+
+function TuStack_V.ToArray: TValueVariantArray;
+begin
+  result:=fValue;
+end;
+
+procedure TuStack_V.TrimExcess;
+begin
+  SetCapacity(Count + 1);
+end;
+
+procedure  TuStack_V.PushP(const Value: Pointer);
+begin
+  push(TValueVariant.Create(Value));
+end;
+
+procedure TuStack_V.PushI(const Value: IInterface);
+begin
+  push(TValueVariant.Create(Value));
+end;
+
+procedure TuStack_V.PushV(const Value: Variant);
+begin
+  push(TValueVariant.Create(Value));
+end;
+
+procedure TuStack_V.PushO(const Value: TObject);
+begin
+  push(TValueVariant.Create(Value));
 end;
 
 end.

@@ -40,13 +40,13 @@ uses
   SysUtils,
   Math,
   IdCoderMIME,
-  uCollections,
+  uCollections,uTypes,uSysutils,
   Thrift.Transport,
   Thrift.Protocol;
 
 type
   IJSONProtocol = interface( IProtocol)
-    ['{F239EF43-162E-4778-80D9-3792F5D0795A}']
+    ['{0F9035AB-1E51-4CA4-850C-7C3C9B339002}']
     // Read a byte that must match b; otherwise an exception is thrown.
     procedure ReadJSONSyntaxChar( b : Byte);
   end;
@@ -128,7 +128,7 @@ type
 
   protected
     // Stack of nested contexts that we may be in
-    FContextStack : TStack<TJSONBaseContext>;
+    FContextStack : TuStack_V;
 
     // Current context that we are in
     FContext : TJSONBaseContext;
@@ -310,17 +310,17 @@ end;
 class function TJSONProtocolImpl.GetTypeNameForTypeID(typeID : TType) : string;
 begin
   case typeID of
-    TType.Bool_:    result := NAME_BOOL;
-    TType.Byte_:    result := NAME_BYTE;
-    TType.I16:      result := NAME_I16;
-    TType.I32:      result := NAME_I32;
-    TType.I64:      result := NAME_I64;
-    TType.Double_:  result := NAME_DOUBLE;
-    TType.String_:  result := NAME_STRING;
-    TType.Struct:   result := NAME_STRUCT;
-    TType.Map:      result := NAME_MAP;
-    TType.Set_:     result := NAME_SET;
-    TType.List:     result := NAME_LIST;
+    {TType.}Bool_:    result := NAME_BOOL;
+    {TType.}Byte_:    result := NAME_BYTE;
+    {TType.}I16:      result := NAME_I16;
+    {TType.}I32:      result := NAME_I32;
+    {TType.}I64:      result := NAME_I64;
+    {TType.}Double_:  result := NAME_DOUBLE;
+    {TType.}String_:  result := NAME_STRING;
+    {TType.}Struct:   result := NAME_STRUCT;
+    {TType.}Map:      result := NAME_MAP;
+    {TType.}Set_:     result := NAME_SET;
+    {TType.}List:     result := NAME_LIST;
   else
     raise TProtocolException.Create( TProtocolException.NOT_IMPLEMENTED, 'Unrecognized type ('+IntToStr(Ord(typeID))+')');
   end;
@@ -329,17 +329,17 @@ end;
 
 class function TJSONProtocolImpl.GetTypeIDForTypeName( const name : string) : TType;
 begin
-  if      name = NAME_BOOL   then result := TType.Bool_
-  else if name = NAME_BYTE   then result := TType.Byte_
-  else if name = NAME_I16    then result := TType.I16
-  else if name = NAME_I32    then result := TType.I32
-  else if name = NAME_I64    then result := TType.I64
-  else if name = NAME_DOUBLE then result := TType.Double_
-  else if name = NAME_STRUCT then result := TType.Struct
-  else if name = NAME_STRING then result := TType.String_
-  else if name = NAME_MAP    then result := TType.Map
-  else if name = NAME_LIST   then result := TType.List
-  else if name = NAME_SET    then result := TType.Set_
+  if      name = NAME_BOOL   then result := {TType.}Bool_
+  else if name = NAME_BYTE   then result := {TType.}Byte_
+  else if name = NAME_I16    then result := {TType.}I16
+  else if name = NAME_I32    then result := {TType.}I32
+  else if name = NAME_I64    then result := {TType.}I64
+  else if name = NAME_DOUBLE then result := {TType.}Double_
+  else if name = NAME_STRUCT then result := {TType.}Struct
+  else if name = NAME_STRING then result := {TType.}String_
+  else if name = NAME_MAP    then result := {TType.}Map
+  else if name = NAME_LIST   then result := {TType.}List
+  else if name = NAME_SET    then result := {TType.}Set_
   else raise TProtocolException.Create( TProtocolException.NOT_IMPLEMENTED, 'Unrecognized type ('+name+')');
 end;
 
@@ -472,7 +472,7 @@ begin
   inherited Create( aTrans);
 
   // Stack of nested contexts that we may be in
-  FContextStack := TStack<TJSONBaseContext>.Create;
+  FContextStack := TuStack_V.Create(nil);
 
   FContext := TJSONBaseContext.Create( Self);
   FReader  := TLookaheadReader.Create( Self);
@@ -501,7 +501,7 @@ end;
 
 procedure TJSONProtocolImpl.PushContext( const aCtx : TJSONBaseContext);
 begin
-  FContextStack.Push( FContext);
+  FContextStack.PushO(TObject(FContext));
   FContext := aCtx;
 end;
 
@@ -509,7 +509,7 @@ end;
 procedure TJSONProtocolImpl.PopContext;
 begin
   FreeAndNil(FContext);
-  FContext := FContextStack.Pop;
+  FContext := FContextStack.PopO as TJSONBaseContext;
 end;
 
 
@@ -539,10 +539,15 @@ begin
   ASSERT( Pos( Char(result), HEXCHARS) > 0);
 end;
 
-
+{NEW MODIFY}
 procedure TJSONProtocolImpl.WriteJSONString( const str : string);
+var
+tb:TBytes;
 begin
-  WriteJSONString( SysUtils.TEncoding.UTF8.GetBytes( str));
+  //WriteJSONString( SysUtils.TEncoding.UTF8.GetBytes( str));
+  tb:=StringBytesOf(str);
+  WriteJSONString(tb);
+  setlength(tb,0);
 end;
 
 
@@ -586,10 +591,11 @@ begin
   Transport.Write( QUOTE);
 end;
 
-
+{NEW MODIFY}
 procedure TJSONProtocolImpl.WriteJSONInteger( const num : Int64);
 var str : String;
     escapeNum : Boolean;
+    tb:TBytes;
 begin
   FContext.Write;
   str := IntToStr(num);
@@ -598,17 +604,21 @@ begin
   if escapeNum
   then Transport.Write( QUOTE);
 
-  Transport.Write( SysUtils.TEncoding.UTF8.GetBytes( str));
+  //Transport.Write( SysUtils.TEncoding.UTF8.GetBytes( str));
+  tb:=StringBytesOf(str);
+  Transport.Write(tb);
+  setlength(tb,0);
 
   if escapeNum
   then Transport.Write( QUOTE);
 end;
 
-
+{NEW MODIFY}
 procedure TJSONProtocolImpl.WriteJSONDouble( const num : Double);
 var str : string;
     special : Boolean;
     escapeNum : Boolean;
+    tb:TBytes;
 begin
   FContext.Write;
 
@@ -627,13 +637,17 @@ begin
   if escapeNum
   then Transport.Write( QUOTE);
 
-  Transport.Write( SysUtils.TEncoding.UTF8.GetBytes( str));
+  //Transport.Write( SysUtils.TEncoding.UTF8.GetBytes( str));
+  tb:=StringBytesOf(str);
+  Transport.Write(tb);
+  setlength(tb,0);
+
 
   if escapeNum
   then Transport.Write( QUOTE);
 end;
 
-
+{NEW MODIFY}
 procedure TJSONProtocolImpl.WriteJSONBase64( const b : TBytes);
 var str : string;
     tmp : TBytes;
@@ -645,7 +659,8 @@ begin
   // First base64-encode b, then write the resulting 8-bit chars
   // Unfortunately, EncodeBytes() returns a string of 16-bit (wide) chars
   // And for the sake of efficiency, we want to write everything at once
-  str := TIdEncoderMIME.EncodeBytes(b);
+  //str := TIdEncoderMIME.EncodeBytes(b);
+  str := BytesToString(b);
   ASSERT( SizeOf(str[1]) = SizeOf(Word));
   SetLength( tmp, Length(str));
   for i := 1 to Length(str) do begin
@@ -689,13 +704,19 @@ end;
 
 
 procedure TJSONProtocolImpl.WriteMessageBegin( const aMsg : IMessage);
+var
+tb:Tbytes;
 begin
   ResetContextStack;  // THRIFT-1473
 
   WriteJSONArrayStart;
   WriteJSONInteger(VERSION);
 
-  WriteJSONString( SysUtils.TEncoding.UTF8.GetBytes( aMsg.Name));
+  //WriteJSONString( SysUtils.TEncoding.UTF8.GetBytes( aMsg.Name));
+  tb:=StringBytesOf(aMsg.Name);
+  WriteJSONString(tb);
+  setlength(tb,0);
+
 
   WriteJSONInteger( LongInt( aMsg.Type_));
   WriteJSONInteger( aMsg.SeqID);
@@ -815,8 +836,15 @@ begin
 end;
 
 procedure TJSONProtocolImpl.WriteString( const s: string );
+var
+tb:Tbytes;
 begin
-  WriteJSONString( SysUtils.TEncoding.UTF8.GetBytes( s));
+//  WriteJSONString( SysUtils.TEncoding.UTF8.GetBytes( s));
+  tb:=StringBytesOf(s);
+  WriteJSONString(tb);
+  setlength(tb,0);
+
+
 end;
 
 procedure TJSONProtocolImpl.WriteBinary( const b: TBytes);
@@ -932,7 +960,9 @@ begin
 
   if FReader.Peek = QUOTE[0]
   then begin
-    str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( TRUE));
+    //str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( TRUE));
+    str:=BytesToString(ReadJSONString( TRUE));
+
     dub := StrToFloat( str, INVARIANT_CULTURE);
 
     if not FContext.EscapeNumbers()
@@ -960,7 +990,7 @@ begin
   end;
 end;
 
-
+ {NEW MODIFY}
 function TJSONProtocolImpl.ReadJSONBase64 : TBytes;
 var b : TBytes;
     str : string;
@@ -968,7 +998,8 @@ begin
   b := ReadJSONString(false);
 
   SetString( str, PAnsiChar(b), Length(b));
-  result := TIdDecoderMIME.DecodeBytes( str);
+  //result := TIdDecoderMIME.DecodeBytes( str);
+  result := StringBytesOf(str);
 end;
 
 
@@ -1001,7 +1032,7 @@ begin
   PopContext;
 end;
 
-
+{NEW MODIFY}
 function TJSONProtocolImpl.ReadMessageBegin: IMessage;
 begin
   ResetContextStack;  // THRIFT-1473
@@ -1012,7 +1043,8 @@ begin
   if ReadJSONInteger <> VERSION
   then raise TProtocolException.Create( TProtocolException.BAD_VERSION, 'Message contained bad version.');
 
-  result.Name  := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( FALSE));
+  //result.Name  := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( FALSE));
+  result.Name  := BytesToString(ReadJSONString( FALSE));
   result.Type_ := TMessageType( ReadJSONInteger);
   result.SeqID := ReadJSONInteger;
 end;
@@ -1044,12 +1076,13 @@ begin
   result := TFieldImpl.Create;
   ch := FReader.Peek;
   if ch = RBRACE[0]
-  then result.Type_ := TType.Stop
+  then result.Type_ := {TType.}Stop
   else begin
     result.ID := ReadJSONInteger;
     ReadJSONObjectStart;
 
-    str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( FALSE));
+    //str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( FALSE));
+    str := BytesToString( ReadJSONString( FALSE));
     result.Type_ := GetTypeIDForTypeName( str);
   end;
 end;
@@ -1067,10 +1100,12 @@ begin
   result := TMapImpl.Create;
   ReadJSONArrayStart;
 
-  str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  //str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  str := BytesToString( ReadJSONString(FALSE));
   result.KeyType := GetTypeIDForTypeName( str);
 
-  str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  //str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  str := BytesToString( ReadJSONString(FALSE));
   result.ValueType := GetTypeIDForTypeName( str);
 
   result.Count := ReadJSONInteger;
@@ -1091,7 +1126,8 @@ begin
   result := TListImpl.Create;
   ReadJSONArrayStart;
 
-  str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  //str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  str := BytesToString( ReadJSONString(FALSE));
   result.ElementType := GetTypeIDForTypeName( str);
   result.Count := ReadJSONInteger;
 end;
@@ -1109,7 +1145,8 @@ begin
   result := TSetImpl.Create;
   ReadJSONArrayStart;
 
-  str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  //str := SysUtils.TEncoding.UTF8.GetString( ReadJSONString(FALSE));
+  str := BytesToString( ReadJSONString(FALSE));
   result.ElementType := GetTypeIDForTypeName( str);
   result.Count := ReadJSONInteger;
 end;
@@ -1159,7 +1196,8 @@ end;
 
 function TJSONProtocolImpl.ReadString : string;
 begin
-  result := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( FALSE));
+  //result := SysUtils.TEncoding.UTF8.GetString( ReadJSONString( FALSE));
+  result := BytesToString( ReadJSONString( FALSE));
 end;
 
 

@@ -3,7 +3,8 @@ program Test_ThriftLib;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,TypInfo,
+  SysUtils,
+  TypInfo,
   uTypes in 'uTypes.pas',
   Thrift.Console in 'Thrift.Console.pas',
   Thrift in 'Thrift.pas',
@@ -19,7 +20,9 @@ uses
   uCollections in 'uCollections.pas',
   uRTLConsts in 'uRTLConsts.pas',
   uStringBuilder in 'uStringBuilder.pas',
-  uSysUtils in 'uSysUtils.pas';
+  uSysUtils in 'uSysUtils.pas',
+  Thrift.Protocol.JSON in 'Thrift.Protocol.JSON.pas';
+
 type
   TTest=class(Tobject)
   public

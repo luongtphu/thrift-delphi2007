@@ -28,7 +28,8 @@ const
   function BytesToString(t:TBytes):string;
   function BytesOf(const Val: Pointer; const Len: integer): TBytes; overload;
   function StringBytesOf(const Val: string): TBytes; overload;
-
+  function CharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean;
+  
 implementation
 function _IntToStr32(Value: Cardinal; Negative: Boolean): string;
 var
@@ -203,8 +204,11 @@ setlength(result,0);
 n:=length(Val);
 if (n<=0) then exit;
 result:=BytesOf(pchar(Val),n);
-
-
-
 end;
+
+function CharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean;
+begin
+  Result := C in CharSet;
+end;
+
 end.

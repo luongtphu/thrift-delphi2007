@@ -19,5 +19,5 @@
 # under the License.
 #
 
-../../../compiler/cpp/thrift --gen delphi -o . ../../../test/ThriftTest.thrift
-
+#../../../compiler/cpp/thrift --gen delphi -o . ../../../test/ThriftTest.thrift
+..\..\..\bin\thrift --gen delphi7 -o . ../../../test/ThriftTest.thrift
