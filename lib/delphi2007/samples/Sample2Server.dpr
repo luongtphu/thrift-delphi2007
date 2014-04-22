@@ -18,6 +18,14 @@ type
     function add(num1: Integer; num2: Integer): Integer;
     function calculate(logid: Integer; const w: IWork): Integer;
     procedure zip();
+    procedure echoVoid();
+    function echoByte(arg: ShortInt): ShortInt;
+    function echoI32(arg: Integer): Integer;
+    function echoI64(const arg: Int64): Int64;
+    function echoString(const arg: string): string;
+    function echoList(const arg: IThriftList_V): IThriftList_V;
+    function echoSet(const arg: IHashSet_V): IHashSet_V;
+    function echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
   public
     constructor Create;
     destructor Destroy;  override;
@@ -66,6 +74,47 @@ destructor TSample2Handler.Destroy;
 begin
 
   inherited;
+end;
+
+function TSample2Handler.echoByte(arg: ShortInt): ShortInt;
+begin
+
+end;
+
+function TSample2Handler.echoI32(arg: Integer): Integer;
+begin
+
+end;
+
+function TSample2Handler.echoI64(const arg: Int64): Int64;
+begin
+
+end;
+
+function TSample2Handler.echoList(const arg: IThriftList_V): IThriftList_V;
+begin
+
+end;
+
+function TSample2Handler.echoMap(
+  const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+begin
+
+end;
+
+function TSample2Handler.echoSet(const arg: IHashSet_V): IHashSet_V;
+begin
+
+end;
+
+function TSample2Handler.echoString(const arg: string): string;
+begin
+
+end;
+
+procedure TSample2Handler.echoVoid;
+begin
+
 end;
 
 procedure TSample2Handler.ping;

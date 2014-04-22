@@ -98,7 +98,7 @@ type
   // base class for IDL-generated exceptions
   TException = class( SysUtils.Exception)
   public
-    function Message : string;        // hide inherited property: allow read, but prevent accidental writes
+   // function Message : string;        // hide inherited property: allow read, but prevent accidental writes
     procedure UpdateMessageProperty;  // update inherited message property with toString()
   end;
 
@@ -106,10 +106,10 @@ implementation
 
 { TException }
 
-function TException.Message;
+//function TException.Message;
 // allow read (exception summary), but prevent accidental writes
 // read will return the exception summary
-begin
+//begin
  //#MODIFY SAVE
  {begin}
 //   result := Self.ToString;
@@ -117,10 +117,11 @@ begin
 
  //#MODIFY NEW
  {begin}
-  result := Self.Message;
+  //result := Self.Message;
+  //result :=FMessage;
 {end}
 
-end;
+//end;
 
 procedure TException.UpdateMessageProperty;
 // Update the inherited Message property to better conform to standard behaviour.
@@ -132,7 +133,8 @@ begin
 {end}
  //#MODIFY NEW
  {begin}
-  inherited Message := Self.Message;  // produces a summary text
+  //inherited Message := Self.Message;  // produces a summary text
+  //inherited Message := FMessage;  // produces a summary text
 {end}
 end;
 

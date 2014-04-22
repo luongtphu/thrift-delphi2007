@@ -618,33 +618,54 @@ type
 
   IHashSet_V = interface(IThriftContainer)
     ['{F5ECAFF0-179F-4312-8B67-044DD79DAD0F}']
-    //function GetEnumerator: TVariantArray;
+    function GetItem(const Key: Integer): Variant;
+    procedure SetItem(const Key: Integer; const Value: Variant);
+    function GetItemV(const Key: Integer): TValueVariant;
+    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
     function GetIsReadOnly: Boolean;
     function GetCount: Integer;
     property Count: Integer read GetCount;
     property IsReadOnly: Boolean read GetIsReadOnly;
-    procedure Add( const item: TKeyVariant);
+    procedure Add( const item: TValueVariant);overload;
+    procedure Add(const value:Variant);overload;
+    procedure Add(const value:TObject);overload;
+    procedure Add(const value:IInterface);overload;
+    procedure Add(const value:Pointer);overload;    
     procedure Clear;
-    function Contains( const item: TKeyVariant): Boolean;
-    procedure CopyTo(var A: TKeyVariantArray; arrayIndex: Integer);
-    function Remove( const item: TKeyVariant ): Boolean;
+    function Contains( const item: TValueVariant): Boolean;
+    procedure CopyTo(var A: TValueVariantArray; arrayIndex: Integer);
+    function Remove( const item: TValueVariant ): Boolean;
+    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    property Value[const Key: integer]: Variant read GetItem write SetItem;default;    
   end;
 
   THashSet_VImpl = class( TInterfacedObject, IHashSet_V)
   private
-    FDictionary : IThriftDictionary_V_V;
+    FList:IThriftList_V;
     FIsReadOnly: Boolean;
+    function GetItem(const Key: Integer): Variant;
+    procedure SetItem(const Key: Integer; const Value: Variant);
+    function GetItemV(const Key: Integer): TValueVariant;
+    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
+
   protected
     //function GetEnumerator: TVariantArray;
     function GetIsReadOnly: Boolean;
     function GetCount: Integer;
     property Count: Integer read GetCount;
     property IsReadOnly: Boolean read GetIsReadOnly;
-    procedure Add( const item: TKeyVariant);
+    procedure Add( const item: TValueVariant);overload;
+    procedure Add(const value:Variant);overload;
+    procedure Add(const value:TObject);overload;
+    procedure Add(const value:IInterface);overload;
+    procedure Add(const value:Pointer);overload;
     procedure Clear;
-    function Contains( const item: TKeyVariant): Boolean;
-    procedure CopyTo(var A: TKeyVariantArray; arrayIndex: Integer);
-    function Remove( const item: TKeyVariant ): Boolean;
+    function Contains( const item: TValueVariant): Boolean;
+    procedure CopyTo(var A: TValueVariantArray; arrayIndex: Integer);
+    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    property Value[const Key: integer]: Variant read GetItem write SetItem;default;
+
+    function Remove( const item: TValueVariant ): Boolean;
     function ToString: string;
   public
     constructor Create;
@@ -1007,43 +1028,63 @@ end;
 
 { THashSet_VImpl }
 
-procedure THashSet_VImpl.Add(const item: TKeyVariant);
+procedure THashSet_VImpl.Add(const item: TValueVariant);
 begin
-  if not FDictionary.ContainsKey(item) then
+  if not Contains(item) then
   begin
-    FDictionary.Add( item, 0);
+    FList.Add( item);
   end;
+end;
+
+procedure THashSet_VImpl.Add(const value: TObject);
+begin
+  Flist.Add(value);
+end;
+
+procedure THashSet_VImpl.Add(const value: Variant);
+begin
+  Flist.Add(value);
+end;
+
+procedure THashSet_VImpl.Add(const value: Pointer);
+begin
+  Flist.Add(value);
+end;
+
+procedure THashSet_VImpl.Add(const value: IInterface);
+begin
+  Flist.Add(value);
 end;
 
 procedure THashSet_VImpl.Clear;
 begin
-  FDictionary.Clear;
+  Flist.Clear;
 end;
 
-function THashSet_VImpl.Contains(const item: TKeyVariant): Boolean;
+function THashSet_VImpl.Contains(const item: TValueVariant): Boolean;
 begin
-  result:=FDictionary.ContainsKey(item);
+  result:=Flist.Contains(item);
 end;
 
-procedure THashSet_VImpl.CopyTo(var A: TKeyVariantArray; arrayIndex: Integer);
+procedure THashSet_VImpl.CopyTo(var A: TValueVariantArray; arrayIndex: Integer);
 var
 n,i:integer;
 begin
-  n:=FDictionary.Count;
+  n:=FList.Count;
   for i := 0 to n - 1 do
   begin
-   A[i+arrayIndex]:=FDictionary.Keys[i];
+   A[i+arrayIndex]:=FList.Items[i];
   end;
 end;
 
 constructor THashSet_VImpl.Create;
 begin
-    FDictionary :=TThriftDictionary_V_VImpl.Create;
+    FList :=TThriftList_VImpl.Create;
 end;
 
 function THashSet_VImpl.GetCount: Integer;
 begin
-  result:=FDictionary.Count;
+  result:=FList.Count;
 end;
 
 
@@ -1052,14 +1093,31 @@ begin
 
 end;
 
-function THashSet_VImpl.Remove(const item: TKeyVariant): Boolean;
+function THashSet_VImpl.GetItem(const Key: Integer): Variant;
 begin
-  Result := False;
-  if FDictionary.ContainsKey( item ) then
-  begin
-    FDictionary.Remove( item );
-    Result := not FDictionary.ContainsKey( item );
-  end;
+  result:=Flist.GetItem(Key);
+end;
+
+function THashSet_VImpl.GetItemV(const Key: Integer): TValueVariant;
+begin
+  result:=Flist.GetItemV(Key);
+end;
+
+function THashSet_VImpl.Remove(const item: TValueVariant): Boolean;
+begin
+  FList.Remove(item);
+  Result := not Contains(item);
+end;
+
+procedure THashSet_VImpl.SetItem(const Key: Integer; const Value: Variant);
+begin
+  Flist.SetItem(Key,Value);
+end;
+
+procedure THashSet_VImpl.SetItemV(const Key: Integer;
+  const Value: TValueVariant);
+begin
+  Flist.SetItemV(Key,Value);
 end;
 
 function THashSet_VImpl.ToString: string;

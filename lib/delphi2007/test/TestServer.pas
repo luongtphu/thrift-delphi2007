@@ -27,14 +27,13 @@ interface
 
 uses
   Windows, SysUtils,
-  Generics.Collections,
   Thrift.Console,
   Thrift.Server,
   Thrift.Transport,
   Thrift.Transport.Pipes,
   Thrift.Protocol,
   Thrift.Protocol.JSON,
-  Thrift.Collections,
+  uCollections,
   Thrift.Utils,
   Thrift.Test,
   Thrift,

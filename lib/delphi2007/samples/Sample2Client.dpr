@@ -38,25 +38,36 @@ begin
 
     transport.Open;
 
-    client.ping;
-    WriteLn('ping()');
+    try
+      WriteLn('Call ping()..');
+      client.ping;
+      WriteLn('Call ping()..OK');
+    except
+      on e: Sysutils.Exception   do   WriteLn('....Error:'+e.Message);
+    end;
 
-    sum := client.add( 1, 1);
-    Writeln( Format( 'Call ADD Method: 1+1=%d', [sum]));
+    try
+      WriteLn('Call add(5,9)=14');
+      sum := client.add( 5, 9);
+      Writeln( Format( 'Call ADD result: 5+9=%d', [sum]));
+    except
+      on e: Sysutils.Exception   do   WriteLn('....Error:'+e.Message);
+    end;
+
 
     work := TWorkImpl.Create;
 
     work.Op   := Sample2.DIVIDE;
     work.Num1 := 1;
-    work.Num2 := 5;
+    work.Num2 := 0;
 
     try
+      Writeln( 'Call calculator method: 1/0: result is exception');
       quotient := client.calculate(1, work);
-      Writeln( 'Whoa we can divide by 0');
       Writeln( Format('1/0=%d',[quotient]));
     except
       on io: TInvalidOperation
-      do Writeln( 'Invalid operation: ' + io.Why);
+      do Writeln( '....Invalid operation: ' + io.Why);
     end;
 
     work.Op   := Sample2.SUBTRACT;

@@ -2213,7 +2213,7 @@ void t_delphi7_generator::generate_serialize_struct(ostream& out, t_struct* tstr
   out <<
     indent_impl() << prefix << ".Write(oprot);" << endl;
 }
-
+//#NEW 
 void t_delphi7_generator::generate_serialize_container(ostream& out, bool is_xception, t_type* ttype, string prefix, ostream& local_vars) {
   string obj;
   if (ttype->is_map()) {
@@ -2243,20 +2243,37 @@ void t_delphi7_generator::generate_serialize_container(ostream& out, bool is_xce
   }
 
   string iter = tmp("_iter");
+  string iterik = tmp("ik");
+  string iterikn = tmp("ikn");
   if (ttype->is_map()) {
+	local_vars << "  " << iterik << ":integer;"  << endl;
+	local_vars << "  " << iterikn << ":integer;"  << endl;
     local_vars << "  " << iter << ": " << type_name(((t_map*)ttype)->get_key_type()) << ";" << endl;
-    indent_impl(out) << "for " << iter << " in " << prefix << ".Keys do" << endl;
+    //indent_impl(out) << "for " << iter << " in " << prefix << ".Keys do" << endl;
+	indent_impl(out) << iterikn<<":="<<prefix << ".Count;" << endl;
+	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
+	indent_impl(out) << iter<<":="<<prefix << ".Keys["<<iterik<<"];" << endl;
     indent_up_impl();
   } else if (ttype->is_set()) {
+	local_vars << "  " << iterik << ":integer;"  << endl;
+	local_vars << "  " << iterikn << ":integer;"  << endl;
     local_vars << "  " << iter << ": " << type_name(((t_set*)ttype)->get_elem_type()) << ";" << endl;
-    indent_impl(out) << "for " << iter << " in " << prefix << " do" << endl;
+    //indent_impl(out) << "for " << iter << " in " << prefix << " do" << endl;
+	indent_impl(out) << iterikn<<":="<<prefix << ".Count;" << endl;
+	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
+	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"];" << endl;
     indent_up_impl();
   } else if (ttype->is_list()) {
+	local_vars << "  " << iterik << ":integer;"  << endl;
+	local_vars << "  " << iterikn << ":integer;"  << endl;
     local_vars << "  " << iter << ": " << type_name(((t_list*)ttype)->get_elem_type()) << ";" << endl;
-    indent_impl(out) << "for " << iter << " in " << prefix << " do" << endl;
+    //indent_impl(out) << "for " << iter << " in " << prefix << " do" << endl;
+	indent_impl(out) << iterikn<<":="<<prefix << ".Count;" << endl;
+	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
+	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"];" << endl;
     indent_up_impl();
   }
 

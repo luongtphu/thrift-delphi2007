@@ -232,6 +232,14 @@ type
         procedure ping();
         function add(num1: Integer; num2: Integer): Integer;
         function calculate(logid: Integer; const w: IWork): Integer;
+        procedure echoVoid();
+        function echoByte(arg: ShortInt): ShortInt;
+        function echoI32(arg: Integer): Integer;
+        function echoI64(const arg: Int64): Int64;
+        function echoString(const arg: string): string;
+        function echoList(const arg: IThriftList_V): IThriftList_V;
+        function echoSet(const arg: IHashSet_V): IHashSet_V;
+        function echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
         procedure zip();
       end;
 
@@ -251,6 +259,14 @@ type
         procedure ping();
         function add(num1: Integer; num2: Integer): Integer;
         function calculate(logid: Integer; const w: IWork): Integer;
+        procedure echoVoid();
+        function echoByte(arg: ShortInt): ShortInt;
+        function echoI32(arg: Integer): Integer;
+        function echoI64(const arg: Int64): Int64;
+        function echoString(const arg: string): string;
+        function echoList(const arg: IThriftList_V): IThriftList_V;
+        function echoSet(const arg: IHashSet_V): IHashSet_V;
+        function echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
         procedure zip();
       public
         procedure send_ping();
@@ -259,6 +275,22 @@ type
         function recv_add(): Integer;
         procedure send_calculate(logid: Integer; const w: IWork);
         function recv_calculate(): Integer;
+        procedure send_echoVoid();
+        procedure recv_echoVoid();
+        procedure send_echoByte(arg: ShortInt);
+        function recv_echoByte(): ShortInt;
+        procedure send_echoI32(arg: Integer);
+        function recv_echoI32(): Integer;
+        procedure send_echoI64(const arg: Int64);
+        function recv_echoI64(): Int64;
+        procedure send_echoString(const arg: string);
+        function recv_echoString(): string;
+        procedure send_echoList(const arg: IThriftList_V);
+        function recv_echoList(): IThriftList_V;
+        procedure send_echoSet(const arg: IHashSet_V);
+        function recv_echoSet(): IHashSet_V;
+        procedure send_echoMap(const arg: IThriftDictionary_V_V);
+        function recv_echoMap(): IThriftDictionary_V_V;
         procedure send_zip();
       end;
 
@@ -278,6 +310,14 @@ type
         procedure ping_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure add_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure calculate_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoVoid_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoByte_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoI32_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoI64_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoString_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoList_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoSet_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoMap_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure zip_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
       end;
 
@@ -501,6 +541,572 @@ type
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
         property __isset_Ouch: Boolean read Get__isset_Ouch;
+      end;
+
+      IEchoVoid_args = interface(IBase)
+      end;
+
+      TEchoVoid_argsImpl = class(TInterfacedObject, IBase, IEchoVoid_args)
+      private
+        
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+      end;
+
+      IEchoVoid_result = interface(IBase)
+      end;
+
+      TEchoVoid_resultImpl = class(TInterfacedObject, IBase, IEchoVoid_result)
+      private
+        
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+      end;
+
+      IEchoByte_args = interface(IBase)
+        function GetArg: ShortInt;
+        procedure SetArg( const Value: ShortInt);
+
+        property Arg: ShortInt read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoByte_argsImpl = class(TInterfacedObject, IBase, IEchoByte_args)
+      private
+        FArg: ShortInt;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: ShortInt;
+        procedure SetArg( const Value: ShortInt);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: ShortInt read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoByte_result = interface(IBase)
+        function GetSuccess: ShortInt;
+        procedure SetSuccess( const Value: ShortInt);
+
+        property Success: ShortInt read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoByte_resultImpl = class(TInterfacedObject, IBase, IEchoByte_result)
+      private
+        FSuccess: ShortInt;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: ShortInt;
+        procedure SetSuccess( const Value: ShortInt);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: ShortInt read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoI32_args = interface(IBase)
+        function GetArg: Integer;
+        procedure SetArg( const Value: Integer);
+
+        property Arg: Integer read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoI32_argsImpl = class(TInterfacedObject, IBase, IEchoI32_args)
+      private
+        FArg: Integer;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: Integer;
+        procedure SetArg( const Value: Integer);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: Integer read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoI32_result = interface(IBase)
+        function GetSuccess: Integer;
+        procedure SetSuccess( const Value: Integer);
+
+        property Success: Integer read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoI32_resultImpl = class(TInterfacedObject, IBase, IEchoI32_result)
+      private
+        FSuccess: Integer;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: Integer;
+        procedure SetSuccess( const Value: Integer);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: Integer read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoI64_args = interface(IBase)
+        function GetArg: Int64;
+        procedure SetArg( const Value: Int64);
+
+        property Arg: Int64 read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoI64_argsImpl = class(TInterfacedObject, IBase, IEchoI64_args)
+      private
+        FArg: Int64;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: Int64;
+        procedure SetArg( const Value: Int64);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: Int64 read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoI64_result = interface(IBase)
+        function GetSuccess: Int64;
+        procedure SetSuccess( const Value: Int64);
+
+        property Success: Int64 read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoI64_resultImpl = class(TInterfacedObject, IBase, IEchoI64_result)
+      private
+        FSuccess: Int64;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: Int64;
+        procedure SetSuccess( const Value: Int64);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: Int64 read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoString_args = interface(IBase)
+        function GetArg: string;
+        procedure SetArg( const Value: string);
+
+        property Arg: string read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoString_argsImpl = class(TInterfacedObject, IBase, IEchoString_args)
+      private
+        FArg: string;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: string;
+        procedure SetArg( const Value: string);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: string read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoString_result = interface(IBase)
+        function GetSuccess: string;
+        procedure SetSuccess( const Value: string);
+
+        property Success: string read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoString_resultImpl = class(TInterfacedObject, IBase, IEchoString_result)
+      private
+        FSuccess: string;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: string;
+        procedure SetSuccess( const Value: string);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: string read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoList_args = interface(IBase)
+        function GetArg: IThriftList_V;
+        procedure SetArg( const Value: IThriftList_V);
+
+        property Arg: IThriftList_V read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoList_argsImpl = class(TInterfacedObject, IBase, IEchoList_args)
+      private
+        FArg: IThriftList_V;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: IThriftList_V;
+        procedure SetArg( const Value: IThriftList_V);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: IThriftList_V read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoList_result = interface(IBase)
+        function GetSuccess: IThriftList_V;
+        procedure SetSuccess( const Value: IThriftList_V);
+
+        property Success: IThriftList_V read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoList_resultImpl = class(TInterfacedObject, IBase, IEchoList_result)
+      private
+        FSuccess: IThriftList_V;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: IThriftList_V;
+        procedure SetSuccess( const Value: IThriftList_V);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: IThriftList_V read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoSet_args = interface(IBase)
+        function GetArg: IHashSet_V;
+        procedure SetArg( const Value: IHashSet_V);
+
+        property Arg: IHashSet_V read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoSet_argsImpl = class(TInterfacedObject, IBase, IEchoSet_args)
+      private
+        FArg: IHashSet_V;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: IHashSet_V;
+        procedure SetArg( const Value: IHashSet_V);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: IHashSet_V read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoSet_result = interface(IBase)
+        function GetSuccess: IHashSet_V;
+        procedure SetSuccess( const Value: IHashSet_V);
+
+        property Success: IHashSet_V read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoSet_resultImpl = class(TInterfacedObject, IBase, IEchoSet_result)
+      private
+        FSuccess: IHashSet_V;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: IHashSet_V;
+        procedure SetSuccess( const Value: IHashSet_V);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: IHashSet_V read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoMap_args = interface(IBase)
+        function GetArg: IThriftDictionary_V_V;
+        procedure SetArg( const Value: IThriftDictionary_V_V);
+
+        property Arg: IThriftDictionary_V_V read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoMap_argsImpl = class(TInterfacedObject, IBase, IEchoMap_args)
+      private
+        FArg: IThriftDictionary_V_V;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: IThriftDictionary_V_V;
+        procedure SetArg( const Value: IThriftDictionary_V_V);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: IThriftDictionary_V_V read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoMap_result = interface(IBase)
+        function GetSuccess: IThriftDictionary_V_V;
+        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+
+        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoMap_resultImpl = class(TInterfacedObject, IBase, IEchoMap_result)
+      private
+        FSuccess: IThriftDictionary_V_V;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: IThriftDictionary_V_V;
+        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
       end;
 
       IZip_args = interface(IBase)
@@ -1116,6 +1722,369 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'calculate failed: unknown result');
 end;
 
+procedure TSample2.TClient.echoVoid();
+begin
+  send_echoVoid();
+  recv_echoVoid();
+end;
+
+procedure TSample2.TClient.send_echoVoid();
+var
+  args : IEchoVoid_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoVoid', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoVoid_argsImpl.Create();
+  args.Write(oprot_);
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+procedure TSample2.TClient.recv_echoVoid();
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoVoid_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoVoid_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+end;
+
+function TSample2.TClient.echoByte(arg: ShortInt): ShortInt;
+begin
+  send_echoByte(arg);
+  Result := recv_echoByte();
+end;
+
+procedure TSample2.TClient.send_echoByte(arg: ShortInt);
+var
+  args : IEchoByte_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoByte', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoByte_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := 0;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoByte(): ShortInt;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoByte_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoByte_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoByte failed: unknown result');
+end;
+
+function TSample2.TClient.echoI32(arg: Integer): Integer;
+begin
+  send_echoI32(arg);
+  Result := recv_echoI32();
+end;
+
+procedure TSample2.TClient.send_echoI32(arg: Integer);
+var
+  args : IEchoI32_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoI32', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoI32_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := 0;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoI32(): Integer;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoI32_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoI32_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoI32 failed: unknown result');
+end;
+
+function TSample2.TClient.echoI64(const arg: Int64): Int64;
+begin
+  send_echoI64(arg);
+  Result := recv_echoI64();
+end;
+
+procedure TSample2.TClient.send_echoI64(const arg: Int64);
+var
+  args : IEchoI64_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoI64', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoI64_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := 0;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoI64(): Int64;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoI64_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoI64_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoI64 failed: unknown result');
+end;
+
+function TSample2.TClient.echoString(const arg: string): string;
+begin
+  send_echoString(arg);
+  Result := recv_echoString();
+end;
+
+procedure TSample2.TClient.send_echoString(const arg: string);
+var
+  args : IEchoString_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoString', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoString_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := '';
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoString(): string;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoString_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoString_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoString failed: unknown result');
+end;
+
+function TSample2.TClient.echoList(const arg: IThriftList_V): IThriftList_V;
+begin
+  send_echoList(arg);
+  Result := recv_echoList();
+end;
+
+procedure TSample2.TClient.send_echoList(const arg: IThriftList_V);
+var
+  args : IEchoList_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoList', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoList_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := nil;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoList(): IThriftList_V;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoList_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoList_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    ret.Success := nil;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoList failed: unknown result');
+end;
+
+function TSample2.TClient.echoSet(const arg: IHashSet_V): IHashSet_V;
+begin
+  send_echoSet(arg);
+  Result := recv_echoSet();
+end;
+
+procedure TSample2.TClient.send_echoSet(const arg: IHashSet_V);
+var
+  args : IEchoSet_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoSet', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoSet_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := nil;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoSet(): IHashSet_V;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoSet_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoSet_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    ret.Success := nil;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoSet failed: unknown result');
+end;
+
+function TSample2.TClient.echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+begin
+  send_echoMap(arg);
+  Result := recv_echoMap();
+end;
+
+procedure TSample2.TClient.send_echoMap(const arg: IThriftDictionary_V_V);
+var
+  args : IEchoMap_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoMap', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoMap_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := nil;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoMap(): IThriftDictionary_V_V;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoMap_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoMap_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    ret.Success := nil;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoMap failed: unknown result');
+end;
+
 procedure TSample2.TClient.zip();
 begin
   send_zip();
@@ -1151,6 +2120,30 @@ begin
   //processMap_.AddOrSetValue( 'calculate', calculate_Process);
   tmpmethod:=Self.calculate_Process;
   processMap_.AddOrSetValue( 'calculate',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoVoid', echoVoid_Process);
+  tmpmethod:=Self.echoVoid_Process;
+  processMap_.AddOrSetValue( 'echoVoid',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoByte', echoByte_Process);
+  tmpmethod:=Self.echoByte_Process;
+  processMap_.AddOrSetValue( 'echoByte',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoI32', echoI32_Process);
+  tmpmethod:=Self.echoI32_Process;
+  processMap_.AddOrSetValue( 'echoI32',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoI64', echoI64_Process);
+  tmpmethod:=Self.echoI64_Process;
+  processMap_.AddOrSetValue( 'echoI64',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoString', echoString_Process);
+  tmpmethod:=Self.echoString_Process;
+  processMap_.AddOrSetValue( 'echoString',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoList', echoList_Process);
+  tmpmethod:=Self.echoList_Process;
+  processMap_.AddOrSetValue( 'echoList',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoSet', echoSet_Process);
+  tmpmethod:=Self.echoSet_Process;
+  processMap_.AddOrSetValue( 'echoSet',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoMap', echoMap_Process);
+  tmpmethod:=Self.echoMap_Process;
+  processMap_.AddOrSetValue( 'echoMap',Pointer(@tmpmethod));
   //processMap_.AddOrSetValue( 'zip', zip_Process);
   tmpmethod:=Self.zip_Process;
   processMap_.AddOrSetValue( 'zip',Pointer(@tmpmethod));
@@ -1257,6 +2250,165 @@ begin
     end;
   end;
   msg := TMessageImpl.Create('calculate', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoVoid_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoVoid_args;
+  msg: IMessage;
+  ret: IEchoVoid_result;
+begin
+  args := TEchoVoid_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoVoid_resultImpl.Create;
+  miface_.echoVoid();
+  msg := TMessageImpl.Create('echoVoid', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoByte_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoByte_args;
+  msg: IMessage;
+  ret: IEchoByte_result;
+begin
+  args := TEchoByte_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoByte_resultImpl.Create;
+  ret.Success := miface_.echoByte(args.Arg);
+  args.Arg := 0;
+  msg := TMessageImpl.Create('echoByte', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoI32_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoI32_args;
+  msg: IMessage;
+  ret: IEchoI32_result;
+begin
+  args := TEchoI32_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoI32_resultImpl.Create;
+  ret.Success := miface_.echoI32(args.Arg);
+  args.Arg := 0;
+  msg := TMessageImpl.Create('echoI32', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoI64_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoI64_args;
+  msg: IMessage;
+  ret: IEchoI64_result;
+begin
+  args := TEchoI64_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoI64_resultImpl.Create;
+  ret.Success := miface_.echoI64(args.Arg);
+  args.Arg := 0;
+  msg := TMessageImpl.Create('echoI64', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoString_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoString_args;
+  msg: IMessage;
+  ret: IEchoString_result;
+begin
+  args := TEchoString_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoString_resultImpl.Create;
+  ret.Success := miface_.echoString(args.Arg);
+  args.Arg := '';
+  msg := TMessageImpl.Create('echoString', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoList_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoList_args;
+  msg: IMessage;
+  ret: IEchoList_result;
+begin
+  args := TEchoList_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoList_resultImpl.Create;
+  ret.Success := miface_.echoList(args.Arg);
+  args.Arg := nil;
+  msg := TMessageImpl.Create('echoList', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoSet_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoSet_args;
+  msg: IMessage;
+  ret: IEchoSet_result;
+begin
+  args := TEchoSet_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoSet_resultImpl.Create;
+  ret.Success := miface_.echoSet(args.Arg);
+  args.Arg := nil;
+  msg := TMessageImpl.Create('echoSet', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoMap_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoMap_args;
+  msg: IMessage;
+  ret: IEchoMap_result;
+begin
+  args := TEchoMap_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoMap_resultImpl.Create;
+  ret.Success := miface_.echoMap(args.Arg);
+  args.Arg := nil;
+  msg := TMessageImpl.Create('echoMap', {TMessageType.}Reply, seqid); 
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();
@@ -1881,6 +3033,1628 @@ begin
     sb.Append(Success);
     sb.Append(',Ouch: ');
     if (Ouch = nil) then sb.Append('<null>') else sb.Append(Ouch.ToString());
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoVoid_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoVoid_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+procedure TSample2.TEchoVoid_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      TProtocolUtil.Skip(iprot, field_.Type_);
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoVoid_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+begin
+  struc := TStructImpl.Create('echoVoid_args');
+  oprot.WriteStructBegin(struc);
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoVoid_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoVoid_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoVoid_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+procedure TSample2.TEchoVoid_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      TProtocolUtil.Skip(iprot, field_.Type_);
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoVoid_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+begin
+  struc := TStructImpl.Create('echoVoid_result');
+  oprot.WriteStructBegin(struc);
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoVoid_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoByte_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoByte_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoByte_argsImpl.GetArg: ShortInt;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoByte_argsImpl.SetArg( const Value: ShortInt);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoByte_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoByte_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}Byte_) then
+          begin
+            Arg := iprot.ReadByte();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoByte_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoByte_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Arg) then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}Byte_;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteByte(Arg);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoByte_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoByte_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoByte_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoByte_resultImpl.GetSuccess: ShortInt;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoByte_resultImpl.SetSuccess( const Value: ShortInt);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoByte_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoByte_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}Byte_) then
+          begin
+            Success := iprot.ReadByte();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoByte_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoByte_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Success) then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}Byte_;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteByte(Success);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoByte_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoI32_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoI32_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoI32_argsImpl.GetArg: Integer;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoI32_argsImpl.SetArg( const Value: Integer);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoI32_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoI32_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}I32) then
+          begin
+            Arg := iprot.ReadI32();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoI32_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoI32_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Arg) then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}I32;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteI32(Arg);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoI32_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoI32_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoI32_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoI32_resultImpl.GetSuccess: Integer;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoI32_resultImpl.SetSuccess( const Value: Integer);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoI32_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoI32_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}I32) then
+          begin
+            Success := iprot.ReadI32();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoI32_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoI32_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Success) then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}I32;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteI32(Success);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoI32_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoI64_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoI64_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoI64_argsImpl.GetArg: Int64;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoI64_argsImpl.SetArg( const Value: Int64);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoI64_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoI64_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}I64) then
+          begin
+            Arg := iprot.ReadI64();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoI64_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoI64_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Arg) then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}I64;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteI64(Arg);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoI64_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoI64_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoI64_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoI64_resultImpl.GetSuccess: Int64;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoI64_resultImpl.SetSuccess( const Value: Int64);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoI64_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoI64_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}I64) then
+          begin
+            Success := iprot.ReadI64();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoI64_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoI64_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Success) then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}I64;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteI64(Success);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoI64_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoString_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoString_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoString_argsImpl.GetArg: string;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoString_argsImpl.SetArg( const Value: string);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoString_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoString_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}String_) then
+          begin
+            Arg := iprot.ReadString();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoString_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoString_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Arg) then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}String_;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteString(Arg);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoString_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoString_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoString_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoString_resultImpl.GetSuccess: string;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoString_resultImpl.SetSuccess( const Value: string);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoString_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoString_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}String_) then
+          begin
+            Success := iprot.ReadString();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoString_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+begin
+  struc := TStructImpl.Create('echoString_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (__isset_Success) then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}String_;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    oprot.WriteString(Success);
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoString_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoList_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoList_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoList_argsImpl.GetArg: IThriftList_V;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoList_argsImpl.SetArg( const Value: IThriftList_V);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoList_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoList_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _list0: IList;
+  _i1: Integer;
+  _elem2: ShortInt;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}List) then
+          begin
+            Arg := TThriftList_VImpl.Create;
+            _list0 := iprot.ReadListBegin();
+            for _i1 := 0 to _list0.Count - 1 do
+            begin
+              _elem2 := iprot.ReadByte();
+              Arg.Add(_elem2);
+            end;
+            iprot.ReadListEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoList_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  list_3 : IList;
+  ik5:integer;
+  ikn6:integer;
+  _iter4: ShortInt;
+begin
+  struc := TStructImpl.Create('echoList_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Arg <> nil) and __isset_Arg then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}List;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    list_3 := TListImpl.Create({TType.}Byte_, Arg.Count);
+    oprot.WriteListBegin( list_3);
+    ikn6:=Arg.Count;
+    for ik5:=0 to ikn6 do 
+    begin
+    _iter4:=Arg[ik5];
+      oprot.WriteByte(_iter4);
+    end;
+    oprot.WriteListEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoList_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoList_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoList_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoList_resultImpl.GetSuccess: IThriftList_V;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoList_resultImpl.SetSuccess( const Value: IThriftList_V);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoList_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoList_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _list7: IList;
+  _i8: Integer;
+  _elem9: ShortInt;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}List) then
+          begin
+            Success := TThriftList_VImpl.Create;
+            _list7 := iprot.ReadListBegin();
+            for _i8 := 0 to _list7.Count - 1 do
+            begin
+              _elem9 := iprot.ReadByte();
+              Success.Add(_elem9);
+            end;
+            iprot.ReadListEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoList_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  list_10 : IList;
+  ik12:integer;
+  ikn13:integer;
+  _iter11: ShortInt;
+begin
+  struc := TStructImpl.Create('echoList_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Success <> nil) and __isset_Success then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}List;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    list_10 := TListImpl.Create({TType.}Byte_, Success.Count);
+    oprot.WriteListBegin( list_10);
+    ikn13:=Success.Count;
+    for ik12:=0 to ikn13 do 
+    begin
+    _iter11:=Success[ik12];
+      oprot.WriteByte(_iter11);
+    end;
+    oprot.WriteListEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoList_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoSet_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoSet_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoSet_argsImpl.GetArg: IHashSet_V;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoSet_argsImpl.SetArg( const Value: IHashSet_V);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoSet_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoSet_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _set14: ISet;
+  _i15: Integer;
+  _elem16: ShortInt;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}Set_) then
+          begin
+            Arg := THashSet_VImpl.Create;
+            _set14 := iprot.ReadSetBegin();
+            for _i15 := 0 to _set14.Count - 1 do
+            begin
+              _elem16 := iprot.ReadByte();
+              Arg.Add(_elem16);
+            end;
+            iprot.ReadSetEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoSet_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  set_17 : ISet;
+  ik19:integer;
+  ikn20:integer;
+  _iter18: ShortInt;
+begin
+  struc := TStructImpl.Create('echoSet_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Arg <> nil) and __isset_Arg then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}Set_;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    set_17 := TSetImpl.Create({TType.}Byte_, Arg.Count);
+    oprot.WriteSetBegin( set_17);
+    ikn20:=Arg.Count;
+    for ik19:=0 to ikn20 do 
+    begin
+    _iter18:=Arg[ik19];
+      oprot.WriteByte(_iter18);
+    end;
+    oprot.WriteSetEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoSet_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoSet_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoSet_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoSet_resultImpl.GetSuccess: IHashSet_V;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoSet_resultImpl.SetSuccess( const Value: IHashSet_V);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoSet_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoSet_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _set21: ISet;
+  _i22: Integer;
+  _elem23: ShortInt;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}Set_) then
+          begin
+            Success := THashSet_VImpl.Create;
+            _set21 := iprot.ReadSetBegin();
+            for _i22 := 0 to _set21.Count - 1 do
+            begin
+              _elem23 := iprot.ReadByte();
+              Success.Add(_elem23);
+            end;
+            iprot.ReadSetEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoSet_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  set_24 : ISet;
+  ik26:integer;
+  ikn27:integer;
+  _iter25: ShortInt;
+begin
+  struc := TStructImpl.Create('echoSet_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Success <> nil) and __isset_Success then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}Set_;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    set_24 := TSetImpl.Create({TType.}Byte_, Success.Count);
+    oprot.WriteSetBegin( set_24);
+    ikn27:=Success.Count;
+    for ik26:=0 to ikn27 do 
+    begin
+    _iter25:=Success[ik26];
+      oprot.WriteByte(_iter25);
+    end;
+    oprot.WriteSetEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoSet_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoMap_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoMap_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoMap_argsImpl.GetArg: IThriftDictionary_V_V;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoMap_argsImpl.SetArg( const Value: IThriftDictionary_V_V);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoMap_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoMap_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _map28: IMap;
+  _i29: Integer;
+  _key30: ShortInt;
+  _val31: ShortInt;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}Map) then
+          begin
+            Arg := TThriftDictionary_V_VImpl.Create;
+            _map28 := iprot.ReadMapBegin();
+            for _i29 := 0 to _map28.Count - 1 do
+            begin
+              _key30 := iprot.ReadByte();
+              _val31 := iprot.ReadByte();
+              Arg.AddOrSetValue( _key30, _val31);
+            end;
+            iprot.ReadMapEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoMap_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  map32 : IMap;
+  ik34:integer;
+  ikn35:integer;
+  _iter33: ShortInt;
+begin
+  struc := TStructImpl.Create('echoMap_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Arg <> nil) and __isset_Arg then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}Map;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    map32 := TMapImpl.Create( {TType.}Byte_, {TType.}Byte_, Arg.Count);
+    oprot.WriteMapBegin( map32);
+    ikn35:=Arg.Count;
+    for ik34:=0 to ikn35 do 
+    begin
+    _iter33:=Arg.Keys[ik34];
+      oprot.WriteByte(_iter33);
+      oprot.WriteByte(Arg[_iter33]);
+    end;
+    oprot.WriteMapEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoMap_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoMap_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoMap_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoMap_resultImpl.GetSuccess: IThriftDictionary_V_V;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoMap_resultImpl.SetSuccess( const Value: IThriftDictionary_V_V);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoMap_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoMap_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _map36: IMap;
+  _i37: Integer;
+  _key38: ShortInt;
+  _val39: ShortInt;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}Map) then
+          begin
+            Success := TThriftDictionary_V_VImpl.Create;
+            _map36 := iprot.ReadMapBegin();
+            for _i37 := 0 to _map36.Count - 1 do
+            begin
+              _key38 := iprot.ReadByte();
+              _val39 := iprot.ReadByte();
+              Success.AddOrSetValue( _key38, _val39);
+            end;
+            iprot.ReadMapEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoMap_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  map40 : IMap;
+  ik42:integer;
+  ikn43:integer;
+  _iter41: ShortInt;
+begin
+  struc := TStructImpl.Create('echoMap_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Success <> nil) and __isset_Success then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}Map;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    map40 := TMapImpl.Create( {TType.}Byte_, {TType.}Byte_, Success.Count);
+    oprot.WriteMapBegin( map40);
+    ikn43:=Success.Count;
+    for ik42:=0 to ikn43 do 
+    begin
+    _iter41:=Success.Keys[ik42];
+      oprot.WriteByte(_iter41);
+      oprot.WriteByte(Success[_iter41]);
+    end;
+    oprot.WriteMapEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoMap_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
     sb.Append(')');
     Result := sb.ToString;
   finally

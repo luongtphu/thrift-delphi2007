@@ -64,14 +64,22 @@ service Sample2 {
 
  
 
-   void ping(),
+	void ping(),
 
-   i32 add(1:i32 num1, 2:i32 num2),
+	i32 add(1:i32 num1, 2:i32 num2),
 
-   i32 calculate(1:i32 logid, 2:Work w) throws (1:InvalidOperation ouch),
+	i32 calculate(1:i32 logid, 2:Work w) throws (1:InvalidOperation ouch),
 
+	void echoVoid(),
+	byte echoByte(1: byte arg),
+	i32 echoI32(1: i32 arg),
+	i64 echoI64(1: i64 arg),
+	string echoString(1: string arg),
+	list<byte>  echoList(1: list<byte> arg),
+	set<byte>  echoSet(1: set<byte> arg),
+	map<byte, byte>  echoMap(1: map<byte, byte> arg),   
  
-   oneway void zip()
+	oneway void zip()
 
 }
 
