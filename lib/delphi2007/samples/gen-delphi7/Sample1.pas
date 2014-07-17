@@ -83,7 +83,7 @@ type
         type
           TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface) of object;
       protected
-        processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}
+        processMap_: IThriftDictionary;{IThriftDictionary<string, TProcessFunction>;}
       public
         function Process( const iprot: IProtocol; const oprot: IProtocol): Boolean;
         procedure ping_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
@@ -319,7 +319,7 @@ tmpmethod:TProcessFunction;
 begin
   inherited Create;
   Self.iface_ := iface_;
-  processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;
+  processMap_ := TThriftDictionaryImpl{<string, TProcessFunction>}.Create;
   //processMap_.AddOrSetValue( 'ping', ping_Process);
   tmpmethod:=Self.ping_Process;
   processMap_.AddOrSetValue( 'ping',Pointer(@tmpmethod));

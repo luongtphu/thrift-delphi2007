@@ -28,7 +28,7 @@ unit Thrift.Transport.Pipes;
 interface
 
 uses
-  uTypes,Windows, SysUtils, Math, AccCtrl, AclAPI, SyncObjs,
+  Windows, SysUtils, Math, AccCtrl, AclAPI, SyncObjs,
   Thrift.Transport,
   Thrift.Stream;
 

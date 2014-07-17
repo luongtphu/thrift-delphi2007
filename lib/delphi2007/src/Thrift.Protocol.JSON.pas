@@ -40,7 +40,7 @@ uses
   SysUtils,
   Math,
   IdCoderMIME,
-  uCollections,uTypes,uSysutils,
+  uCollections,uSysutils,
   Thrift.Transport,
   Thrift.Protocol;
 
@@ -128,7 +128,7 @@ type
 
   protected
     // Stack of nested contexts that we may be in
-    FContextStack : TuStack_V;
+    FContextStack : TuStack;
 
     // Current context that we are in
     FContext : TJSONBaseContext;
@@ -472,7 +472,7 @@ begin
   inherited Create( aTrans);
 
   // Stack of nested contexts that we may be in
-  FContextStack := TuStack_V.Create(nil);
+  FContextStack := TuStack.Create(nil);
 
   FContext := TJSONBaseContext.Create( Self);
   FReader  := TLookaheadReader.Create( Self);

@@ -237,9 +237,9 @@ type
         function echoI32(arg: Integer): Integer;
         function echoI64(const arg: Int64): Int64;
         function echoString(const arg: string): string;
-        function echoList(const arg: IThriftList_V): IThriftList_V;
-        function echoSet(const arg: IHashSet_V): IHashSet_V;
-        function echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+        function echoList(const arg: IThriftList): IThriftList;
+        function echoSet(const arg: IHashSet): IHashSet;
+        function echoMap(const arg: IThriftDictionary): IThriftDictionary;
         procedure zip();
       end;
 
@@ -264,9 +264,9 @@ type
         function echoI32(arg: Integer): Integer;
         function echoI64(const arg: Int64): Int64;
         function echoString(const arg: string): string;
-        function echoList(const arg: IThriftList_V): IThriftList_V;
-        function echoSet(const arg: IHashSet_V): IHashSet_V;
-        function echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+        function echoList(const arg: IThriftList): IThriftList;
+        function echoSet(const arg: IHashSet): IHashSet;
+        function echoMap(const arg: IThriftDictionary): IThriftDictionary;
         procedure zip();
       public
         procedure send_ping();
@@ -285,12 +285,12 @@ type
         function recv_echoI64(): Int64;
         procedure send_echoString(const arg: string);
         function recv_echoString(): string;
-        procedure send_echoList(const arg: IThriftList_V);
-        function recv_echoList(): IThriftList_V;
-        procedure send_echoSet(const arg: IHashSet_V);
-        function recv_echoSet(): IHashSet_V;
-        procedure send_echoMap(const arg: IThriftDictionary_V_V);
-        function recv_echoMap(): IThriftDictionary_V_V;
+        procedure send_echoList(const arg: IThriftList);
+        function recv_echoList(): IThriftList;
+        procedure send_echoSet(const arg: IHashSet);
+        function recv_echoSet(): IHashSet;
+        procedure send_echoMap(const arg: IThriftDictionary);
+        function recv_echoMap(): IThriftDictionary;
         procedure send_zip();
       end;
 
@@ -304,7 +304,7 @@ type
         type
           TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface) of object;
       protected
-        processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}
+        processMap_: IThriftDictionary;{IThriftDictionary<string, TProcessFunction>;}
       public
         function Process( const iprot: IProtocol; const oprot: IProtocol): Boolean;
         procedure ping_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
@@ -882,10 +882,10 @@ type
       end;
 
       IEchoList_args = interface(IBase)
-        function GetArg: IThriftList_V;
-        procedure SetArg( const Value: IThriftList_V);
+        function GetArg: IThriftList;
+        procedure SetArg( const Value: IThriftList);
 
-        property Arg: IThriftList_V read GetArg write SetArg;
+        property Arg: IThriftList read GetArg write SetArg;
 
         function Get__isset_Arg: Boolean;
 
@@ -894,12 +894,12 @@ type
 
       TEchoList_argsImpl = class(TInterfacedObject, IBase, IEchoList_args)
       private
-        FArg: IThriftList_V;
+        FArg: IThriftList;
         
         F__isset_Arg: Boolean;
         
-        function GetArg: IThriftList_V;
-        procedure SetArg( const Value: IThriftList_V);
+        function GetArg: IThriftList;
+        procedure SetArg( const Value: IThriftList);
 
         function Get__isset_Arg: Boolean;
       public
@@ -913,17 +913,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Arg: IThriftList_V read GetArg write SetArg;
+        property Arg: IThriftList read GetArg write SetArg;
 
         // isset
         property __isset_Arg: Boolean read Get__isset_Arg;
       end;
 
       IEchoList_result = interface(IBase)
-        function GetSuccess: IThriftList_V;
-        procedure SetSuccess( const Value: IThriftList_V);
+        function GetSuccess: IThriftList;
+        procedure SetSuccess( const Value: IThriftList);
 
-        property Success: IThriftList_V read GetSuccess write SetSuccess;
+        property Success: IThriftList read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -932,12 +932,12 @@ type
 
       TEchoList_resultImpl = class(TInterfacedObject, IBase, IEchoList_result)
       private
-        FSuccess: IThriftList_V;
+        FSuccess: IThriftList;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftList_V;
-        procedure SetSuccess( const Value: IThriftList_V);
+        function GetSuccess: IThriftList;
+        procedure SetSuccess( const Value: IThriftList);
 
         function Get__isset_Success: Boolean;
       public
@@ -951,17 +951,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftList_V read GetSuccess write SetSuccess;
+        property Success: IThriftList read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
       end;
 
       IEchoSet_args = interface(IBase)
-        function GetArg: IHashSet_V;
-        procedure SetArg( const Value: IHashSet_V);
+        function GetArg: IHashSet;
+        procedure SetArg( const Value: IHashSet);
 
-        property Arg: IHashSet_V read GetArg write SetArg;
+        property Arg: IHashSet read GetArg write SetArg;
 
         function Get__isset_Arg: Boolean;
 
@@ -970,12 +970,12 @@ type
 
       TEchoSet_argsImpl = class(TInterfacedObject, IBase, IEchoSet_args)
       private
-        FArg: IHashSet_V;
+        FArg: IHashSet;
         
         F__isset_Arg: Boolean;
         
-        function GetArg: IHashSet_V;
-        procedure SetArg( const Value: IHashSet_V);
+        function GetArg: IHashSet;
+        procedure SetArg( const Value: IHashSet);
 
         function Get__isset_Arg: Boolean;
       public
@@ -989,17 +989,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Arg: IHashSet_V read GetArg write SetArg;
+        property Arg: IHashSet read GetArg write SetArg;
 
         // isset
         property __isset_Arg: Boolean read Get__isset_Arg;
       end;
 
       IEchoSet_result = interface(IBase)
-        function GetSuccess: IHashSet_V;
-        procedure SetSuccess( const Value: IHashSet_V);
+        function GetSuccess: IHashSet;
+        procedure SetSuccess( const Value: IHashSet);
 
-        property Success: IHashSet_V read GetSuccess write SetSuccess;
+        property Success: IHashSet read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -1008,12 +1008,12 @@ type
 
       TEchoSet_resultImpl = class(TInterfacedObject, IBase, IEchoSet_result)
       private
-        FSuccess: IHashSet_V;
+        FSuccess: IHashSet;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IHashSet_V;
-        procedure SetSuccess( const Value: IHashSet_V);
+        function GetSuccess: IHashSet;
+        procedure SetSuccess( const Value: IHashSet);
 
         function Get__isset_Success: Boolean;
       public
@@ -1027,17 +1027,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IHashSet_V read GetSuccess write SetSuccess;
+        property Success: IHashSet read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
       end;
 
       IEchoMap_args = interface(IBase)
-        function GetArg: IThriftDictionary_V_V;
-        procedure SetArg( const Value: IThriftDictionary_V_V);
+        function GetArg: IThriftDictionary;
+        procedure SetArg( const Value: IThriftDictionary);
 
-        property Arg: IThriftDictionary_V_V read GetArg write SetArg;
+        property Arg: IThriftDictionary read GetArg write SetArg;
 
         function Get__isset_Arg: Boolean;
 
@@ -1046,12 +1046,12 @@ type
 
       TEchoMap_argsImpl = class(TInterfacedObject, IBase, IEchoMap_args)
       private
-        FArg: IThriftDictionary_V_V;
+        FArg: IThriftDictionary;
         
         F__isset_Arg: Boolean;
         
-        function GetArg: IThriftDictionary_V_V;
-        procedure SetArg( const Value: IThriftDictionary_V_V);
+        function GetArg: IThriftDictionary;
+        procedure SetArg( const Value: IThriftDictionary);
 
         function Get__isset_Arg: Boolean;
       public
@@ -1065,17 +1065,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Arg: IThriftDictionary_V_V read GetArg write SetArg;
+        property Arg: IThriftDictionary read GetArg write SetArg;
 
         // isset
         property __isset_Arg: Boolean read Get__isset_Arg;
       end;
 
       IEchoMap_result = interface(IBase)
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -1084,12 +1084,12 @@ type
 
       TEchoMap_resultImpl = class(TInterfacedObject, IBase, IEchoMap_result)
       private
-        FSuccess: IThriftDictionary_V_V;
+        FSuccess: IThriftDictionary;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
         function Get__isset_Success: Boolean;
       public
@@ -1103,7 +1103,7 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
@@ -1131,10 +1131,10 @@ type
   TConstants = class
   private
     class var FINT32CONSTANT: Integer;
-    class var FMAPCONSTANT: IThriftDictionary_V_V;
+    class var FMAPCONSTANT: IThriftDictionary;
   public
     class property INT32CONSTANT: Integer read FINT32CONSTANT;
-    class property MAPCONSTANT: IThriftDictionary_V_V read FMAPCONSTANT;
+    class property MAPCONSTANT: IThriftDictionary read FMAPCONSTANT;
     //{$IF CompilerVersion >= 21.0}
     {$IFDEF CompilerVersion_g21}
     class constructor Create;
@@ -1944,13 +1944,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoString failed: unknown result');
 end;
 
-function TSample2.TClient.echoList(const arg: IThriftList_V): IThriftList_V;
+function TSample2.TClient.echoList(const arg: IThriftList): IThriftList;
 begin
   send_echoList(arg);
   Result := recv_echoList();
 end;
 
-procedure TSample2.TClient.send_echoList(const arg: IThriftList_V);
+procedure TSample2.TClient.send_echoList(const arg: IThriftList);
 var
   args : IEchoList_args;
   msg : IMessage;
@@ -1966,7 +1966,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TSample2.TClient.recv_echoList(): IThriftList_V;
+function TSample2.TClient.recv_echoList(): IThriftList;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -1991,13 +1991,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoList failed: unknown result');
 end;
 
-function TSample2.TClient.echoSet(const arg: IHashSet_V): IHashSet_V;
+function TSample2.TClient.echoSet(const arg: IHashSet): IHashSet;
 begin
   send_echoSet(arg);
   Result := recv_echoSet();
 end;
 
-procedure TSample2.TClient.send_echoSet(const arg: IHashSet_V);
+procedure TSample2.TClient.send_echoSet(const arg: IHashSet);
 var
   args : IEchoSet_args;
   msg : IMessage;
@@ -2013,7 +2013,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TSample2.TClient.recv_echoSet(): IHashSet_V;
+function TSample2.TClient.recv_echoSet(): IHashSet;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -2038,13 +2038,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoSet failed: unknown result');
 end;
 
-function TSample2.TClient.echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+function TSample2.TClient.echoMap(const arg: IThriftDictionary): IThriftDictionary;
 begin
   send_echoMap(arg);
   Result := recv_echoMap();
 end;
 
-procedure TSample2.TClient.send_echoMap(const arg: IThriftDictionary_V_V);
+procedure TSample2.TClient.send_echoMap(const arg: IThriftDictionary);
 var
   args : IEchoMap_args;
   msg : IMessage;
@@ -2060,7 +2060,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TSample2.TClient.recv_echoMap(): IThriftDictionary_V_V;
+function TSample2.TClient.recv_echoMap(): IThriftDictionary;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -2110,7 +2110,7 @@ tmpmethod:TProcessFunction;
 begin
   inherited Create;
   Self.iface_ := iface_;
-  processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;
+  processMap_ := TThriftDictionaryImpl{<string, TProcessFunction>}.Create;
   //processMap_.AddOrSetValue( 'ping', ping_Process);
   tmpmethod:=Self.ping_Process;
   processMap_.AddOrSetValue( 'ping',Pointer(@tmpmethod));
@@ -3946,12 +3946,12 @@ begin
   inherited;
 end;
 
-function TSample2.TEchoList_argsImpl.GetArg: IThriftList_V;
+function TSample2.TEchoList_argsImpl.GetArg: IThriftList;
 begin
   Result := FArg;
 end;
 
-procedure TSample2.TEchoList_argsImpl.SetArg( const Value: IThriftList_V);
+procedure TSample2.TEchoList_argsImpl.SetArg( const Value: IThriftList);
 begin
   F__isset_Arg := True;
   FArg := Value;
@@ -3984,7 +3984,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Arg := TThriftList_VImpl.Create;
+            Arg := TThriftListImpl.Create;
             _list0 := iprot.ReadListBegin();
             for _i1 := 0 to _list0.Count - 1 do
             begin
@@ -4031,7 +4031,7 @@ begin
     ikn6:=Arg.Count;
     for ik5:=0 to ikn6 do 
     begin
-    _iter4:=Arg[ik5];
+    _iter4:=Arg.Items[ik5];
       oprot.WriteByte(_iter4);
     end;
     oprot.WriteListEnd();
@@ -4066,12 +4066,12 @@ begin
   inherited;
 end;
 
-function TSample2.TEchoList_resultImpl.GetSuccess: IThriftList_V;
+function TSample2.TEchoList_resultImpl.GetSuccess: IThriftList;
 begin
   Result := FSuccess;
 end;
 
-procedure TSample2.TEchoList_resultImpl.SetSuccess( const Value: IThriftList_V);
+procedure TSample2.TEchoList_resultImpl.SetSuccess( const Value: IThriftList);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -4104,7 +4104,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Success := TThriftList_VImpl.Create;
+            Success := TThriftListImpl.Create;
             _list7 := iprot.ReadListBegin();
             for _i8 := 0 to _list7.Count - 1 do
             begin
@@ -4151,7 +4151,7 @@ begin
     ikn13:=Success.Count;
     for ik12:=0 to ikn13 do 
     begin
-    _iter11:=Success[ik12];
+    _iter11:=Success.Items[ik12];
       oprot.WriteByte(_iter11);
     end;
     oprot.WriteListEnd();
@@ -4186,12 +4186,12 @@ begin
   inherited;
 end;
 
-function TSample2.TEchoSet_argsImpl.GetArg: IHashSet_V;
+function TSample2.TEchoSet_argsImpl.GetArg: IHashSet;
 begin
   Result := FArg;
 end;
 
-procedure TSample2.TEchoSet_argsImpl.SetArg( const Value: IHashSet_V);
+procedure TSample2.TEchoSet_argsImpl.SetArg( const Value: IHashSet);
 begin
   F__isset_Arg := True;
   FArg := Value;
@@ -4224,7 +4224,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            Arg := THashSet_VImpl.Create;
+            Arg := THashSetImpl.Create;
             _set14 := iprot.ReadSetBegin();
             for _i15 := 0 to _set14.Count - 1 do
             begin
@@ -4271,7 +4271,7 @@ begin
     ikn20:=Arg.Count;
     for ik19:=0 to ikn20 do 
     begin
-    _iter18:=Arg[ik19];
+    _iter18:=Arg.Items[ik19];
       oprot.WriteByte(_iter18);
     end;
     oprot.WriteSetEnd();
@@ -4306,12 +4306,12 @@ begin
   inherited;
 end;
 
-function TSample2.TEchoSet_resultImpl.GetSuccess: IHashSet_V;
+function TSample2.TEchoSet_resultImpl.GetSuccess: IHashSet;
 begin
   Result := FSuccess;
 end;
 
-procedure TSample2.TEchoSet_resultImpl.SetSuccess( const Value: IHashSet_V);
+procedure TSample2.TEchoSet_resultImpl.SetSuccess( const Value: IHashSet);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -4344,7 +4344,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            Success := THashSet_VImpl.Create;
+            Success := THashSetImpl.Create;
             _set21 := iprot.ReadSetBegin();
             for _i22 := 0 to _set21.Count - 1 do
             begin
@@ -4391,7 +4391,7 @@ begin
     ikn27:=Success.Count;
     for ik26:=0 to ikn27 do 
     begin
-    _iter25:=Success[ik26];
+    _iter25:=Success.Items[ik26];
       oprot.WriteByte(_iter25);
     end;
     oprot.WriteSetEnd();
@@ -4426,12 +4426,12 @@ begin
   inherited;
 end;
 
-function TSample2.TEchoMap_argsImpl.GetArg: IThriftDictionary_V_V;
+function TSample2.TEchoMap_argsImpl.GetArg: IThriftDictionary;
 begin
   Result := FArg;
 end;
 
-procedure TSample2.TEchoMap_argsImpl.SetArg( const Value: IThriftDictionary_V_V);
+procedure TSample2.TEchoMap_argsImpl.SetArg( const Value: IThriftDictionary);
 begin
   F__isset_Arg := True;
   FArg := Value;
@@ -4465,7 +4465,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Arg := TThriftDictionary_V_VImpl.Create;
+            Arg := TThriftDictionaryImpl.Create;
             _map28 := iprot.ReadMapBegin();
             for _i29 := 0 to _map28.Count - 1 do
             begin
@@ -4549,12 +4549,12 @@ begin
   inherited;
 end;
 
-function TSample2.TEchoMap_resultImpl.GetSuccess: IThriftDictionary_V_V;
+function TSample2.TEchoMap_resultImpl.GetSuccess: IThriftDictionary;
 begin
   Result := FSuccess;
 end;
 
-procedure TSample2.TEchoMap_resultImpl.SetSuccess( const Value: IThriftDictionary_V_V);
+procedure TSample2.TEchoMap_resultImpl.SetSuccess( const Value: IThriftDictionary);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -4588,7 +4588,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Success := TThriftDictionary_V_VImpl.Create;
+            Success := TThriftDictionaryImpl.Create;
             _map36 := iprot.ReadMapBegin();
             for _i37 := 0 to _map36.Count - 1 do
             begin
@@ -4723,7 +4723,7 @@ end;
 class constructor TConstants.Create;
 begin
   FINT32CONSTANT := LongInt( 9853);
-  FMAPCONSTANT := TThriftDictionary_V_VImpl.Create;
+  FMAPCONSTANT := TThriftDictionaryImpl.Create;
   FMAPCONSTANT['hello'] := 'world';
   FMAPCONSTANT['goodnight'] := 'moon';
 end;
@@ -4736,7 +4736,7 @@ end;
 procedure TConstants_Initialize;
 begin
   TConstants.FINT32CONSTANT := LongInt( 9853);
-  TConstants.FMAPCONSTANT := TThriftDictionary_V_VImpl.Create;
+  TConstants.FMAPCONSTANT := TThriftDictionaryImpl.Create;
   TConstants.FMAPCONSTANT['hello'] := 'world';
   TConstants.FMAPCONSTANT['goodnight'] := 'moon';
 end;

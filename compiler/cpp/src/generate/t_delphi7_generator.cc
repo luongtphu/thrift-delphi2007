@@ -1712,7 +1712,7 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
   {
     indent_impl(s_service_impl) << "ASSERT( processMap_ <> nil);  // inherited" << endl;
   } else {
-	  indent_impl(s_service_impl) << "processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;" << endl;
+	  indent_impl(s_service_impl) << "processMap_ := TThriftDictionaryImpl{<string, TProcessFunction>}.Create;" << endl;
   }
 
   for (f_iter = functions.begin(); f_iter != functions.end(); ++f_iter) {
@@ -1748,7 +1748,7 @@ void t_delphi7_generator::generate_service_server(t_service* tservice) {
     indent_down();
     indent(s_service) << "protected" << endl;
     indent_up();
-	indent(s_service) << "processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}" << endl;
+	indent(s_service) << "processMap_: IThriftDictionary;{IThriftDictionary<string, TProcessFunction>;}" << endl;
     indent_down();
   }
 
@@ -2373,26 +2373,26 @@ string t_delphi7_generator::type_name( t_type* ttype, bool b_cls, bool b_no_post
   } else if (ttype->is_map()) {
     t_map *tmap = (t_map*) ttype;
     if (b_cls) {
-      typ_nm = "TThriftDictionary_V_VImpl";
+      typ_nm = "TThriftDictionaryImpl";
     } else {
-      typ_nm = "IThriftDictionary_V_V";
+      typ_nm = "IThriftDictionary";
     }
     return typ_nm;/* + "{<" + type_name(tmap->get_key_type()) +
 		", " + type_name(tmap->get_val_type()) + ">}";*/
   } else if (ttype->is_set()) {
     t_set* tset = (t_set*) ttype;
     if (b_cls) {
-      typ_nm = "THashSet_VImpl";
+      typ_nm = "THashSetImpl";
     } else {
-      typ_nm = "IHashSet_V";
+      typ_nm = "IHashSet";
     }
 	return typ_nm;// + "{<" + type_name(tset->get_elem_type()) + ">}";
   } else if (ttype->is_list()) {
     t_list* tlist = (t_list*) ttype;
     if (b_cls) {
-      typ_nm = "TThriftList_VImpl";
+      typ_nm = "TThriftListImpl";
     } else {
-      typ_nm = "IThriftList_V";
+      typ_nm = "IThriftList";
     }
 	return typ_nm;// + "{<" + type_name(tlist->get_elem_type()) + ">}";
   }

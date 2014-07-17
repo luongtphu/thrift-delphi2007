@@ -1,160 +1,223 @@
+unit uCollections;
  {
   Develop to replace Generic.Collection/ThriftCollection Delphi version less 2010
   luongtphu@gmail.com
-  Date:Nov 20 2013
+  Date:July 20 2014
+  Change to replace old uCollections
  }
-unit uCollections;
-
 interface
-uses sysutils,uTypes,variants,classes;
+uses sysutils,variants,classes;
 
 type
-  TKeyComparisonProc = function(const Left, Right: TKeyVariant): Integer;
-  TValueComparisonProc = function(const Left, Right: TValueVariant): Integer;
-
-  IuComparerKey_V = interface
-    function Compare(const Left, Right: TKeyVariant): Integer;
-  end;
-  IuComparerValue_V = interface
-    function Compare(const Left, Right: TValueVariant): Integer;
-  end;
-
-
-  TuComparerKey_VDefault = class(TInterfacedObject, IuComparerKey_V)
+TAllValueType=(avtNull,avtEmpty,avtPointer,avtBool,avtInt,avtFloat,
+avtString,avtObject,avtIntf);
+type
+TAllValueRec=record
+  case TAllValueType of
+    avtPointer:(p:Pointer);
+    avtBool:(b:Boolean);
+    avtInt:(n:Int64);
+    avtFloat:(f:double);
+    avtString:(s:PAnsiString);
+    avtobject:(o:Tobject);
+    avtIntf:(i:^IInterface);
+end;
+TAllValue=class
+  private
+    fprefree:boolean;
+    fvt:TAllValueType;
+    fv:TAllValueRec;
+    fhash:int64;
+    procedure setvalue(v:Variant);overload;
+    function getvalue:Variant;
+    procedure setvalueobj(v:Tobject);overload;
+    function getvalueObj:Tobject;
+    procedure setvalueintf(v:IInterface);overload;
+    function getvalueIntf:IInterface;
+    procedure setvalueptr(v:Pointer);overload;
+    function getvaluePtr:Pointer;
   public
-    function Compare(const Left, Right: TKeyVariant): Integer;
-  end;
-
-  TuComparerValue_VDefault = class(TInterfacedObject, IuComparerValue_V)
+    constructor Create;overload;
+    constructor Create(v:variant);overload;
+    constructor Create(v: Tobject; const prefree:boolean=false);overload;
+    constructor Create(v:IInterface);overload;
+    constructor Create(v:Pointer);overload;
+    destructor Destroy;virtual;
   public
-    function Compare(const Left, Right: TValueVariant): Integer;
-  end;
-
-  TuComparerValue_ObjDefault = class(TInterfacedObject, IuComparerValue_V)
+    function IsEmpty:Boolean;
+    function IsNull:Boolean;
+    function AsString:string;
+    function AsFloat:Double;
+    function AsInt:int64;
+    function AsObj:TObject;
+    function AsIntf:IInterface;
+    function AsPointer:Pointer;
   public
-    function Compare(const Left, Right: TValueVariant): Integer;
+    procedure Free;
+
+    property TypeValue:TAllValueType read fvt;
+    property Hash:Int64 read fhash;
+    property Value:Variant read getvalue write setvalue;
+    property ValueObj:Tobject read getvalueobj write setvalueobj;
+    property ValueIntf:IInterface read getvalueintf write setvalueintf;
+    property ValuePtr:Pointer read getvalueptr write setvalueptr;
+end;
+
+  function AllValue_Compare_Default(const Left,Right: TAllValue): Integer;
+
+  function _AllValue(v:variant):TAllValue;overload;
+  function _AllValue(v:Tobject):TAllValue;overload;
+  function _AllValue(v:IInterface):TAllValue;overload;
+  function _AllValue(v:Pointer):TAllValue;overload;
+
+  function HashString32(const S: AnsiString): LongWord;
+  function HashString(const S: AnsiString): int64;
+type
+  TAllValueArray=array of TAllValue;
+  TAllValuePair = class
+    Key: TAllValue;
+    Value: TAllValue;
+    constructor Create(const AKey: TAllValue; const AValue: TAllValue);
+  end;
+  
+  function _AllValueArray_Grow(var a:TAllValueArray;const sz:integer=0):TAllValueArray;
+  procedure _AllValueArray_Delete(var a:TAllValueArray);
+  procedure _AllValueArray_DeleteI(var a:TAllValueArray;const index:integer);
+
+
+
+type
+  TValueComparisonProc = function(const Left, Right: TAllValue): Integer;
+
+  IuComparerValue = interface
+    function Compare(const Left, Right: TAllValue): Integer;
   end;
 
-  TuComparerValue_IntfDefault = class(TInterfacedObject, IuComparerValue_V)
+  TuComparerValue_Default = class(TInterfacedObject, IuComparerValue)
   public
-    function Compare(const Left, Right: TValueVariant): Integer;
+    function Compare(const Left, Right: TAllValue): Integer;
   end;
 
-  TuComparerValue_PtrDefault = class(TInterfacedObject, IuComparerValue_V)
+  IuEqualityComparerValue = interface
+    function Equals(const Left, Right: TAllValue): Boolean;
+  end;
+
+  TIuEqualityComparerValue_Default = class(TInterfacedObject, IuEqualityComparerValue)
   public
-    function Compare(const Left, Right: TValueVariant): Integer;
+      function Equals(const Left, Right: TAllValue): Boolean;
   end;
 
 
-  IuEqualityComparerKey_V = interface
-    function Equals(const Left, Right: TKeyVariant): Boolean;
-  end;
-
-  IuEqualityComparerValue_V = interface
-    function Equals(const Left, Right: TValueVariant): Boolean;
-  end;
-
-
-  TIuEqualityComparerKey_VDefault = class(TInterfacedObject, IuEqualityComparerKey_V)
+  TuComparerValue = class
   public
-      function Equals(const Left, Right: TKeyVariant): Boolean;
-  end;
-  TIuEqualityComparerValue_VDefault = class(TInterfacedObject, IuEqualityComparerValue_V)
-  public
-      function Equals(const Left, Right: TValueVariant): Boolean;
-  end;
-
-
-  TuComparerKey_V = class
-  public
-    class function Default: IuComparerKey_V;
-    class function DefaultEqual: IuEqualityComparerKey_V;
-  end;
-
-  TuComparerValue_V = class
-  public
-    class function Default: IuComparerValue_V;
-    class function DefaultEqual: IuEqualityComparerValue_V;
-    class function DefaultObj: IuComparerValue_V;
-    class function DefaultInf: IuComparerValue_V;
-    class function DefaultPtr: IuComparerValue_V;
+    class function Default: IuComparerValue;
+    class function DefaultEqual: IuEqualityComparerValue;
   end;
 
 
 type
   TuCollectionNotification = (cnAdded, cnRemoved, cnExtracted);
-  TuCollectionNotifyEvent = procedure(Sender: TObject; const Item: TValueVariant;
+  TuCollectionNotifyEvent = procedure(Sender: TObject; const Item: TAllValue;
     Action: TCollectionNotification) of object;
 
 type
-  TuDictionary_V_V=class(TObject)
+  TuDictionary=class(TObject)
   private
-     fKey:TKeyVariantArray;
-     fValue:TValueVariantArray;
+     fKey:TAllValueArray;
+     fValue:TAllValueArray;
 
     FCount: Integer;
-    FComparer: IuEqualityComparerKey_V;
+    FComparer: IuEqualityComparerValue;
     FGrowThreshold: Integer;
     procedure Grow;
     procedure Rehash(NewCapPow2: Integer);
     procedure SetCapacity(ACapacity: Integer);
     function GetCapacity: Integer;
-    function GetBucketIndex(const Key: TKeyVariant): Integer;
-    function GetItem(const Key: TKeyVariant): Variant;
-    procedure SetItem(const Key: TKeyVariant; const Value: Variant);
-    function GetItemV(const Key: TKeyVariant): TValueVariant;
-    procedure SetItemV(const Key: TKeyVariant; const Value: TValueVariant);
-    procedure DoAdd(Index: Integer; const Key: TKeyVariant; const Value: TValueVariant);
-    procedure DoSetValue(Index: Integer; const Value: TValueVariant);
-    function DoRemove(const Key: TKeyVariant; Notification: TuCollectionNotification): TValueVariant;
+    function GetBucketIndex(const Key: TAllValue): Integer;
+    function GetItem(const Key: TAllValue): Variant;
+    procedure SetItem(const Key: TAllValue; const Value: Variant);
+    function GetItemV(const Key: TAllValue): TAllValue;
+    procedure SetItemV(const Key: TAllValue; const Value: TAllValue);
+    procedure DoAdd(Index: Integer; const Key: TAllValue; const Value: TAllValue);
+    procedure DoSetValue(Index: Integer; const Value: TAllValue);
+    function DoRemove(const Key: TAllValue; Notification: TuCollectionNotification): TAllValue;
   public
     constructor Create(ACapacity: Integer = 0); overload;
-    constructor Create(const AComparer: IuEqualityComparerKey_V); overload;
-    constructor Create(ACapacity: Integer; const AComparer: IuEqualityComparerKey_V); overload;
+    constructor Create(const AComparer: IuEqualityComparerValue); overload;
+    constructor Create(ACapacity: Integer; const AComparer: IuEqualityComparerValue); overload;
     destructor Destroy; override;
     procedure Clear;
     procedure TrimExcess;
 
-    function ContainsKey(const Key: TKeyVariant): Boolean;
-    procedure Add(const Key: TKeyVariant; const Value: TValueVariant);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant; const Value: TValueVariant);overload;
-    procedure Remove(const Key: TKeyVariant);
-    function ExtractPair(const Key: TKeyVariant): TPair_V_V;
-    function GetPair(const index: Cardinal): TPair_V_V;
-    procedure Add(const Key: TKeyVariant;const value:Variant);overload;
-    procedure Add(const Key: TKeyVariant;const value:TObject);overload;
-    procedure Add(const Key: TKeyVariant;const value:IInterface);overload;
-    procedure Add(const Key: TKeyVariant;const value:Pointer);overload;
+    function ContainsKey(const Key: TAllValue): Boolean;
+    procedure Add(const Key: TAllValue; const Value: TAllValue);overload;
+    procedure Add(const Key: Variant; const Value: TAllValue);overload;
+    procedure AddOrSetValue(const Key: TAllValue; const Value: TAllValue);overload;
+    procedure AddOrSetValue(const Key: Variant; const Value: TAllValue);overload;
+    procedure Remove(const Key: TAllValue);overload;
+    procedure Remove(const Key: Variant);overload;
 
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:Variant);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:TObject);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:IInterface);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:Pointer);overload;
+    function ExtractPair(const Key: TAllValue): TAllValuePair;overload;
+    function ExtractPair(const Key: Variant): TAllValuePair;overload;
+    function GetPair(const index: Cardinal): TAllValuePair;
+    procedure Add(const Key: TAllValue;const value:Variant);overload;
+    procedure Add(const Key: TAllValue;const value:TObject);overload;
+    procedure Add(const Key: TAllValue;const value:IInterface);overload;
+    procedure Add(const Key: TAllValue;const value:Pointer);overload;
 
-    function AsString(const Key: TKeyVariant):string;
-    function AsFloat(const Key: TKeyVariant):Double;
-    function AsInt(const Key: TKeyVariant):Integer;
-    function AsObj(const Key: TKeyVariant):TObject;
-    function AsIntf(const Key: TKeyVariant):IInterface;
-    function AsPointer(const Key: TKeyVariant):Pointer;
-    function TryGetValue(const Key: TKeyVariant; out Value: TValueVariant): Boolean;
-    function TryGetValueObj(const Key: TKeyVariant; out Value:TObject ):Boolean;
-    function TryGetValueIntf(const Key: TKeyVariant; out Value:IInterface):Boolean;
-    function TryGetValueString(const Key: TKeyVariant; out Value:string ):Boolean;
-    function TryGetValuePointer(const Key: TKeyVariant; out Value:Pointer ):Boolean;
+    procedure Add(const Key: Variant;const value:Variant);overload;
+    procedure Add(const Key: Variant;const value:TObject);overload;
+    procedure Add(const Key: Variant;const value:IInterface);overload;
+    procedure Add(const Key: Variant;const value:Pointer);overload;
+
+    procedure AddOrSetValue(const Key: TAllValue;const value:Variant);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:TObject);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:IInterface);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:Pointer);overload;
+
+    procedure AddOrSetValue(const Key: Variant;const value:Variant);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:TObject);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:IInterface);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:Pointer);overload;
+
+    function AsString(const Key: TAllValue):string;overload;
+    function AsFloat(const Key: TAllValue):Double;overload;
+    function AsInt(const Key: TAllValue):Integer;overload;
+    function AsObj(const Key: TAllValue):TObject;overload;
+    function AsIntf(const Key: TAllValue):IInterface;overload;
+    function AsPointer(const Key: TAllValue):Pointer;overload;
+
+    function AsString(const Key: Variant):string;overload;
+    function AsFloat(const Key: Variant):Double;overload;
+    function AsInt(const Key: Variant):Integer;overload;
+    function AsObj(const Key: Variant):TObject;overload;
+    function AsIntf(const Key: Variant):IInterface;overload;
+    function AsPointer(const Key: Variant):Pointer;overload;
+
+    function TryGetValue(const Key: TAllValue; out Value: TAllValue): Boolean;overload;
+    function TryGetValueObj(const Key: TAllValue; out Value:TObject ):Boolean;overload;
+    function TryGetValueIntf(const Key: TAllValue; out Value:IInterface):Boolean;overload;
+    function TryGetValueString(const Key: TAllValue; out Value:string ):Boolean;overload;
+    function TryGetValuePointer(const Key: TAllValue; out Value:Pointer ):Boolean;overload;
+
+    function TryGetValue(const Key: Variant; out Value: TAllValue): Boolean;overload;
+    function TryGetValueObj(const Key: Variant; out Value:TObject ):Boolean;overload;
+    function TryGetValueIntf(const Key: Variant; out Value:IInterface):Boolean;overload;
+    function TryGetValueString(const Key: Variant; out Value:string ):Boolean;overload;
+    function TryGetValuePointer(const Key: Variant; out Value:Pointer ):Boolean;overload;
   public
     property Count: Integer read FCount;
-    property Items[const Key: TKeyVariant]: TValueVariant read GetItemV write SetItemV;
-    property Value[const Key: TKeyVariant]: Variant read GetItem write SetItem;default;
-    property Keys:TKeyVariantArray read fkey;
-    property Values:TValueVariantArray read fValue;
+    property Items[const Key: TAllValue]: TAllValue read GetItemV write SetItemV;
+    property Value[const Key: TAllValue]: Variant read GetItem write SetItem;default;
+    property Keys:TAllValueArray read fkey;
+    property Values:TAllValueArray read fValue;
     property Capacity: Integer read GetCapacity;
   end;
 
 type
-  TuStack_V=class(TObject)
+  TuStack=class(TObject)
   private
-    fValue:TValueVariantArray;
+    fValue:TAllValueArray;
     FCount: Integer;
     FGrowThreshold: Integer;
     procedure Grow(const ACount: Integer);
@@ -162,32 +225,32 @@ type
     procedure SetCapacity(ACapacity: Integer);
     procedure Rehash(NewCapPow2: Integer);
   public
-    constructor Create(Collection: TValueVariantArray);
+    constructor Create(Collection: TAllValueArray);
     destructor Destroy; override;
     procedure Clear;
-    procedure Push(const Value: TValueVariant);overload;
+    procedure Push(const Value: TAllValue);overload;
     procedure PushV(const Value: Variant);overload;
     procedure PushO(const Value: TObject);overload;
     procedure PushP(const Value: Pointer);overload;
     procedure PushI(const Value: IInterface);overload;
 
-    function Pop: TValueVariant;overload;
+    function Pop: TAllValue;overload;
     function PopV: Variant;overload;
     function PopO: TObject;overload;
     function PopP: Pointer;overload;
     function PopI: IInterface;overload;
-    function Peek: TValueVariant;
-    function Extract: TValueVariant;
+    function Peek: TAllValue;
+    function Extract: TAllValue;
     procedure TrimExcess;
-    function ToArray: TValueVariantArray;
+    function ToArray: TAllValueArray;
     property Count: Integer read FCount;
     property Capacity: Integer read GetCapacity write SetCapacity;
   end;
 
 type
-  TuList_V=class(TObject)
+  TuList=class(TObject)
   private
-    fValue:TValueVariantArray;
+    fValue:TAllValueArray;
     FCount: Integer;
     FGrowThreshold: Integer;
     procedure Grow(const ACount: Integer=0);
@@ -198,29 +261,29 @@ type
     procedure SetCount(Value: Integer);
     function GetItem(const Key: Integer): Variant;
     procedure SetItem(const Key: Integer; const Value: Variant);
-    function GetItemV(const Key: Integer): TValueVariant;
-    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
-    procedure DoAdd(Index: Integer; const Value: TValueVariant);
-    procedure DoSetValue(Index: Integer; const Value: TValueVariant);
-    function DoRemove(const Key: integer; Notification: TuCollectionNotification): TValueVariant;
+    function GetItemV(const Key: Integer): TAllValue;
+    procedure SetItemV(const Key: Integer; const Value: TAllValue);
+    procedure DoAdd(Index: Integer; const Value: TAllValue);
+    procedure DoSetValue(Index: Integer; const Value: TAllValue);
+    function DoRemove(const Key: integer; Notification: TuCollectionNotification): TAllValue;
   public
     constructor Create(ACapacity: Integer = 0);
     destructor Destroy; override;
     procedure Clear;
     procedure TrimExcess;
-    function IndexOf(Value: TValueVariant;const LastIndex:boolean=false): integer;overload;
+    function IndexOf(Value: TAllValue;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: Variant;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: TObject;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: Pointer;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: IInterface;const LastIndex:boolean=false): integer;overload;
 
-    function LastIndexOf(Value: TValueVariant): integer;overload;
+    function LastIndexOf(Value: TAllValue): integer;overload;
     function LastIndexOf(const Value: Variant): integer;overload;
     function LastIndexOf(const Value: TObject): integer;overload;
     function LastIndexOf(const Value: Pointer): integer;overload;
     function LastIndexOf(const Value: IInterface): integer;overload;
 
-    function Contains(Value: TValueVariant): boolean;overload;
+    function Contains(Value: TAllValue): boolean;overload;
     function Contains(const Value: Variant): boolean;overload;
     function Contains(const Value: TObject): boolean;overload;
     function Contains(const Value: Pointer): boolean;overload;
@@ -228,18 +291,18 @@ type
 
     procedure Exchange(Index1, Index2: Integer);
     //procedure Move(CurIndex, NewIndex: Integer);
-    function First: TValueVariant;
-    function Last: TValueVariant;
+    function First: TAllValue;
+    function Last: TAllValue;
     procedure Reverse;
     procedure Sort; overload;
-    procedure Sort(const AComparer: IuComparerValue_V); overload;
+    procedure Sort(const AComparer: IuComparerValue); overload;
     function BinarySearch(const Item: Variant; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: TObject; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: IInterface; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: Pointer; out Index: Integer): Boolean; overload;
-    function BinarySearch(const Item: TValueVariant; out Index: Integer; const AComparer: IuComparerValue_V): Boolean; overload;
+    function BinarySearch(const Item: TAllValue; out Index: Integer; const AComparer: IuComparerValue): Boolean; overload;
 
-    procedure Remove(const value:TValueVariant;const LastIndex:boolean=false);overload;
+    procedure Remove(const value:TAllValue;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: Variant;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: TObject;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: Pointer;const LastIndex:boolean=false);overload;
@@ -247,28 +310,28 @@ type
 
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
-    procedure Add(const Value: TValueVariant);overload;
+    procedure Add(const Value: TAllValue);overload;
     procedure Add(const value:Variant);overload;
     procedure Add(const value:TObject);overload;
     procedure Add(const value:IInterface);overload;
     procedure Add(const value:Pointer);overload;
 
-    procedure AddRange(const Values: array of TValueVariant); overload;
+    procedure AddRange(const Values: array of TAllValue); overload;
     procedure AddRange(const Values: array of Variant); overload;
     procedure AddRange(const Values: array of IInterface); overload;
     procedure AddRange(const Values: array of Pointer); overload;
 
-    procedure Insert(Index: Integer; const Value: TValueVariant);overload;
+    procedure Insert(Index: Integer; const Value: TAllValue);overload;
     procedure Insert(Index: Integer; const Value: Variant);overload;
     procedure Insert(Index: Integer; const Value: IInterface);overload;
     procedure Insert(Index: Integer; const Value: Pointer);overload;
 
-    procedure InsertRange(Index: Integer;const Values: array of TValueVariant); overload;
+    procedure InsertRange(Index: Integer;const Values: array of TAllValue); overload;
     procedure InsertRange(Index: Integer;const Values: array of Variant); overload;
     procedure InsertRange(Index: Integer;const Values: array of IInterface); overload;
     procedure InsertRange(Index: Integer;const Values: array of Pointer); overload;
 
-    procedure AddOrSetValue(const Key: Integer; const Value: TValueVariant);overload;
+    procedure AddOrSetValue(const Key: Integer; const Value: TAllValue);overload;
     procedure AddOrSetValue(const Key: Integer;const value:Variant);overload;
     procedure AddOrSetValue(const Key: Integer;const value:TObject);overload;
     procedure AddOrSetValue(const Key: Integer;const value:IInterface);overload;
@@ -280,12 +343,12 @@ type
     function AsObj(const Key: Integer):TObject;
     function AsIntf(const Key: Integer):IInterface;
     function AsPointer(const Key: Integer):Pointer;
-    function ToArray:TValueVariantArray;
+    function ToArray:TAllValueArray;
   public
     property Count: Integer read FCount;
-    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    property Items[const Key: integer]: TAllValue read GetItemV write SetItemV;
     property Value[const Key: integer]: Variant read GetItem write SetItem;default;
-    property Values:TValueVariantArray read ToArray;
+    property Values:TAllValueArray read ToArray;
     property Capacity: Integer read GetCapacity;
   end;
 
@@ -297,120 +360,179 @@ type
 
 
 type
-  IThriftDictionary_V_V = interface(IThriftContainer)
+  IThriftDictionary = interface(IThriftContainer)
     ['{95704BB4-5A0E-41CB-AB2F-43B4522A1168}']
-    //function GetEnumerator: TPair_V_VArray;
+    //function GetEnumerator: TAllValueArrayArray;
 
-    function GetKeys: TKeyVariantArray;
-    function GetValues: TValueVariantArray;
-    function GetItem(const Key: TKeyVariant): Variant;
-    procedure SetItem(const Key: TKeyVariant; const Value: Variant);
-    function GetItemV(const Key: TKeyVariant): TValueVariant;
-    procedure SetItemV(const Key: TKeyVariant; const Value: TValueVariant);
+    function GetKeys: TAllValueArray;
+    function GetValues: TAllValueArray;
+    function GetItem(const Key: TAllValue): Variant;
+    procedure SetItem(const Key: TAllValue; const Value: Variant);
+    function GetItemV(const Key: TAllValue): TAllValue;
+    procedure SetItemV(const Key: TAllValue; const Value: TAllValue);
 
     function GetCount: Integer;
 
-    procedure Add(const Key: TKeyVariant; const Value: TValueVariant);overload;
-    procedure Remove(const Key: TKeyVariant);
-    function ExtractPair(const Key: TKeyVariant): TPair_V_V;
-    function GetPair(const index: Cardinal): TPair_V_V;
+    procedure Add(const Key: TAllValue; const Value: TAllValue);overload;
+    procedure Add(const Key: Variant; const Value: TAllValue);overload;
+    procedure Remove(const Key: TAllValue);overload;
+    procedure Remove(const Key: Variant);overload;
+    function ExtractPair(const Key: TAllValue): TAllValuePair;overload;
+    function ExtractPair(const Key: Variant): TAllValuePair;overload;
+    function GetPair(const index: Cardinal): TAllValuePair;
     procedure Clear;
     procedure TrimExcess;
-    function TryGetValue(const Key: TKeyVariant; out Value: TValueVariant): Boolean;
-    procedure AddOrSetValue(const Key: TKeyVariant; const Value: TValueVariant);overload;
-    function ContainsKey(const Key: TKeyVariant): Boolean;
-    function ContainsValue(const Value: TValueVariant): Boolean;
-    function ToArray: TPair_V_VArray;
-    procedure Add(const Key: TKeyVariant;const value:Variant);overload;
-    procedure Add(const Key: TKeyVariant;const value:TObject);overload;
-    procedure Add(const Key: TKeyVariant;const value:IInterface);overload;
-    procedure Add(const Key: TKeyVariant;const value:Pointer);overload;
+    function TryGetValue(const Key: TAllValue; out Value: TAllValue): Boolean;overload;
+    function TryGetValue(const Key: Variant; out Value: TAllValue): Boolean;overload;
+    procedure AddOrSetValue(const Key: TAllValue; const Value: TAllValue);overload;
+    procedure AddOrSetValue(const Key: Variant; const Value: TAllValue);overload;
+    function ContainsKey(const Key: TAllValue): Boolean;
+    function ContainsValue(const Value: TAllValue): Boolean;
+    function ToArray: TAllValueArray;
+    procedure Add(const Key: TAllValue;const value:Variant);overload;
+    procedure Add(const Key: TAllValue;const value:TObject);overload;
+    procedure Add(const Key: TAllValue;const value:IInterface);overload;
+    procedure Add(const Key: TAllValue;const value:Pointer);overload;
 
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:Variant);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:TObject);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:IInterface);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:Pointer);overload;
+    procedure Add(const Key: Variant;const value:Variant);overload;
+    procedure Add(const Key: Variant;const value:TObject);overload;
+    procedure Add(const Key: Variant;const value:IInterface);overload;
+    procedure Add(const Key: Variant;const value:Pointer);overload;
 
-    function AsString(const Key: TKeyVariant):string;
-    function AsFloat(const Key: TKeyVariant):Double;
-    function AsInt(const Key: TKeyVariant):Integer;
-    function AsObj(const Key: TKeyVariant):TObject;
-    function AsIntf(const Key: TKeyVariant):IInterface;
-    function AsPointer(const Key: TKeyVariant):Pointer;
-    function TryGetValueObj(const Key: TKeyVariant; out Value:TObject ):Boolean;
-    function TryGetValueIntf(const Key: TKeyVariant; out Value:IInterface):Boolean;
-    function TryGetValueString(const Key: TKeyVariant; out Value:string ):Boolean;
-    function TryGetValuePointer(const Key: TKeyVariant; out Value:Pointer ):Boolean;
+    procedure AddOrSetValue(const Key: TAllValue;const value:Variant);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:TObject);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:IInterface);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:Pointer);overload;
 
-    property Items[const Key: TKeyVariant]: TValueVariant read GetItemV write SetItemV;
-    property Value[const Key: TKeyVariant]: Variant read GetItem write SetItem;default;
+    procedure AddOrSetValue(const Key: Variant;const value:Variant);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:TObject);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:IInterface);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:Pointer);overload;
+
+    function AsString(const Key: TAllValue):string;overload;
+    function AsFloat(const Key: TAllValue):Double;overload;
+    function AsInt(const Key: TAllValue):Integer;overload;
+    function AsObj(const Key: TAllValue):TObject;overload;
+    function AsIntf(const Key: TAllValue):IInterface;overload;
+    function AsPointer(const Key: TAllValue):Pointer;overload;
+
+    function AsString(const Key: Variant):string;overload;
+    function AsFloat(const Key: Variant):Double;overload;
+    function AsInt(const Key: Variant):Integer;overload;
+    function AsObj(const Key: Variant):TObject;overload;
+    function AsIntf(const Key: Variant):IInterface;overload;
+    function AsPointer(const Key: Variant):Pointer;overload;
+
+
+    function TryGetValueObj(const Key: TAllValue; out Value:TObject ):Boolean;overload;
+    function TryGetValueIntf(const Key: TAllValue; out Value:IInterface):Boolean;overload;
+    function TryGetValueString(const Key: TAllValue; out Value:string ):Boolean;overload;
+    function TryGetValuePointer(const Key: TAllValue; out Value:Pointer ):Boolean;overload;
+
+    function TryGetValueObj(const Key: Variant; out Value:TObject ):Boolean;overload;
+    function TryGetValueIntf(const Key: Variant; out Value:IInterface):Boolean;overload;
+    function TryGetValueString(const Key: Variant; out Value:string ):Boolean;overload;
+    function TryGetValuePointer(const Key: Variant; out Value:Pointer ):Boolean;overload;
+
+
+    property Items[const Key: TAllValue]: TAllValue read GetItemV write SetItemV;
+    property Value[const Key: TAllValue]: Variant read GetItem write SetItem;default;
     property Count: Integer read GetCount;
-    property Keys: TKeyVariantArray read GetKeys;
-    property Values: TValueVariantArray read GetValues;
+    property Keys: TAllValueArray read GetKeys;
+    property Values: TAllValueArray read GetValues;
   end;
 
 type
-  TThriftDictionary_V_VImpl = class( TInterfacedObject, IThriftDictionary_V_V)
+  TThriftDictionaryImpl = class( TInterfacedObject, IThriftDictionary)
   private
-    FDictionaly : TuDictionary_V_V;
+    FDictionaly : TuDictionary;
   protected
-    //function GetEnumerator: TPair_V_VArray;
+    //function GetEnumerator: TAllValueArray;
 
-    function GetKeys: TKeyVariantArray;
-    function GetValues: TValueVariantArray;
-    function GetItem(const Key: TKeyVariant): Variant;
-    procedure SetItem(const Key: TKeyVariant; const Value: Variant);
-    function GetItemV(const Key: TKeyVariant): TValueVariant;
-    procedure SetItemV(const Key: TKeyVariant; const Value: TValueVariant);
+    function GetKeys: TAllValueArray;
+    function GetValues: TAllValueArray;
+    function GetItem(const Key: TAllValue): Variant;
+    procedure SetItem(const Key: TAllValue; const Value: Variant);
+    function GetItemV(const Key: TAllValue): TAllValue;
+    procedure SetItemV(const Key: TAllValue; const Value: TAllValue);
 
     function GetCount: Integer;
 
-    procedure Add(const Key: TKeyVariant; const Value: TValueVariant);overload;
-    procedure Remove(const Key: TKeyVariant);
-    function ExtractPair(const Key: TKeyVariant): TPair_V_V;
-    function GetPair(const index: Cardinal): TPair_V_V;
+    procedure Add(const Key: TAllValue; const Value: TAllValue);overload;
+    procedure Add(const Key: Variant; const Value: TAllValue);overload;
+    procedure Remove(const Key: TAllValue);overload;
+    procedure Remove(const Key: Variant);overload;
+    function ExtractPair(const Key: TAllValue): TAllValuePair;overload;
+    function ExtractPair(const Key: Variant): TAllValuePair;overload;
+    function GetPair(const index: Cardinal): TAllValuePair;
     procedure Clear;
     procedure TrimExcess;
-    function TryGetValue(const Key: TKeyVariant; out Value: TValueVariant): Boolean;
-    procedure AddOrSetValue(const Key: TKeyVariant; const Value: TValueVariant);overload;
-    function ContainsKey(const Key: TKeyVariant): Boolean;
-    function ContainsValue(const Value: TValueVariant): Boolean;
-    function ToArray: TPair_V_VArray;
+    function TryGetValue(const Key: TAllValue; out Value: TAllValue): Boolean;overload;
+    function TryGetValue(const Key: Variant; out Value: TAllValue): Boolean;overload;
+    procedure AddOrSetValue(const Key: TAllValue; const Value: TAllValue);overload;
+    procedure AddOrSetValue(const Key: Variant; const Value: TAllValue);overload;
+    function ContainsKey(const Key: TAllValue): Boolean;
+    function ContainsValue(const Value: TAllValue): Boolean;
+    function ToArray: TAllValueArray;
 
-    procedure Add(const Key: TKeyVariant;const value:Variant);overload;
-    procedure Add(const Key: TKeyVariant;const value:TObject);overload;
-    procedure Add(const Key: TKeyVariant;const value:IInterface);overload;
-    procedure Add(const Key: TKeyVariant;const value:Pointer);overload;
+    procedure Add(const Key: TAllValue;const value:Variant);overload;
+    procedure Add(const Key: TAllValue;const value:TObject);overload;
+    procedure Add(const Key: TAllValue;const value:IInterface);overload;
+    procedure Add(const Key: TAllValue;const value:Pointer);overload;
 
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:Variant);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:TObject);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:IInterface);overload;
-    procedure AddOrSetValue(const Key: TKeyVariant;const value:Pointer);overload;
+    procedure Add(const Key: Variant;const value:Variant);overload;
+    procedure Add(const Key: Variant;const value:TObject);overload;
+    procedure Add(const Key: Variant;const value:IInterface);overload;
+    procedure Add(const Key: Variant;const value:Pointer);overload;
 
-    function AsString(const Key: TKeyVariant):string;
-    function AsFloat(const Key: TKeyVariant):Double;
-    function AsInt(const Key: TKeyVariant):Integer;
-    function AsObj(const Key: TKeyVariant):TObject;
-    function AsIntf(const Key: TKeyVariant):IInterface;
-    function AsPointer(const Key: TKeyVariant):Pointer;
-    function TryGetValueObj(const Key: TKeyVariant; out Value:TObject ):Boolean;
-    function TryGetValueIntf(const Key: TKeyVariant; out Value:IInterface):Boolean;
-    function TryGetValueString(const Key: TKeyVariant; out Value:string ):Boolean;
-    function TryGetValuePointer(const Key: TKeyVariant; out Value:Pointer ):Boolean;
+    procedure AddOrSetValue(const Key: TAllValue;const value:Variant);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:TObject);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:IInterface);overload;
+    procedure AddOrSetValue(const Key: TAllValue;const value:Pointer);overload;
+
+    procedure AddOrSetValue(const Key: Variant;const value:Variant);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:TObject);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:IInterface);overload;
+    procedure AddOrSetValue(const Key: Variant;const value:Pointer);overload;
+
+    function AsString(const Key: TAllValue):string;overload;
+    function AsFloat(const Key: TAllValue):Double;overload;
+    function AsInt(const Key: TAllValue):Integer;overload;
+    function AsObj(const Key: TAllValue):TObject;overload;
+    function AsIntf(const Key: TAllValue):IInterface;overload;
+    function AsPointer(const Key: TAllValue):Pointer;overload;
+
+    function AsString(const Key: Variant):string;overload;
+    function AsFloat(const Key: Variant):Double;overload;
+    function AsInt(const Key: Variant):Integer;overload;
+    function AsObj(const Key: Variant):TObject;overload;
+    function AsIntf(const Key: Variant):IInterface;overload;
+    function AsPointer(const Key: Variant):Pointer;overload;
 
 
-    property Items[const Key: TKeyVariant]: TValueVariant read GetItemV write SetItemV;
-    property Value[const Key: TKeyVariant]: Variant read GetItem write SetItem;default;
+    function TryGetValueObj(const Key: TAllValue; out Value:TObject ):Boolean;overload;
+    function TryGetValueIntf(const Key: TAllValue; out Value:IInterface):Boolean;overload;
+    function TryGetValueString(const Key: TAllValue; out Value:string ):Boolean;overload;
+    function TryGetValuePointer(const Key: TAllValue; out Value:Pointer ):Boolean;overload;
+
+    function TryGetValueObj(const Key: Variant; out Value:TObject ):Boolean;overload;
+    function TryGetValueIntf(const Key: Variant; out Value:IInterface):Boolean;overload;
+    function TryGetValueString(const Key: Variant; out Value:string ):Boolean;overload;
+    function TryGetValuePointer(const Key: Variant; out Value:Pointer ):Boolean;overload;
+
+
+    property Items[const Key: TAllValue]: TAllValue read GetItemV write SetItemV;
+    property Value[const Key: TAllValue]: Variant read GetItem write SetItem;default;
     property Count: Integer read GetCount;
-    property Keys: TKeyVariantArray read GetKeys;
-    property Values: TValueVariantArray read GetValues;
+    property Keys: TAllValueArray read GetKeys;
+    property Values: TAllValueArray read GetValues;
     function ToString: string;
   public
     constructor Create(ACapacity: Integer = 0);
     destructor Destroy; override;
   end;
 type
-  IThriftList_V = interface(IThriftContainer)
+  IThriftList = interface(IThriftContainer)
     ['{29BEEE31-9CB4-401B-AA04-5148A75F473B}']
     //function GetEnumerator: TVariantArray;
     function GetCapacity: Integer;
@@ -419,36 +541,36 @@ type
     procedure SetCount(Value: Integer);
     function GetItem(const Key: Integer): Variant;
     procedure SetItem(const Key: Integer; const Value: Variant);
-    function GetItemV(const Key: Integer): TValueVariant;
-    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
+    function GetItemV(const Key: Integer): TAllValue;
+    procedure SetItemV(const Key: Integer; const Value: TAllValue);
     //procedure AddRange(Collection: TEnumerable<T>); overload;
     //procedure InsertRange(Index: Integer; const Collection: TVariantArray); overload;
     //procedure InsertRange(Index: Integer; const Collection: TEnumerable<T>); overload;
-    function Extract(const Value: TValueVariant): TValueVariant;
+    function Extract(const Value: TAllValue): TAllValue;
     procedure Exchange(Index1, Index2: Integer);
     procedure Move(CurIndex, NewIndex: Integer);
-    function First: TValueVariant;
-    function Last: TValueVariant;
+    function First: TAllValue;
+    function Last: TAllValue;
     procedure Clear;
-    function IndexOf(Value: TValueVariant;const LastIndex:boolean=false): integer;overload;
+    function IndexOf(Value: TAllValue;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: Variant;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: TObject;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: Pointer;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: IInterface;const LastIndex:boolean=false): integer;overload;
 
-    function LastIndexOf(Value: TValueVariant): integer;overload;
+    function LastIndexOf(Value: TAllValue): integer;overload;
     function LastIndexOf(const Value: Variant): integer;overload;
     function LastIndexOf(const Value: TObject): integer;overload;
     function LastIndexOf(const Value: Pointer): integer;overload;
     function LastIndexOf(const Value: IInterface): integer;overload;
 
-    function Contains(Value: TValueVariant): boolean;overload;
+    function Contains(Value: TAllValue): boolean;overload;
     function Contains(const Value: Variant): boolean;overload;
     function Contains(const Value: TObject): boolean;overload;
     function Contains(const Value: Pointer): boolean;overload;
     function Contains(const Value: IInterface): boolean;overload;
 
-    procedure Remove(const value:TValueVariant;const LastIndex:boolean=false);overload;
+    procedure Remove(const value:TAllValue;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: Variant;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: TObject;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: Pointer;const LastIndex:boolean=false);overload;
@@ -457,28 +579,28 @@ type
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
 
-    procedure Add(const Value: TValueVariant);overload;
+    procedure Add(const Value: TAllValue);overload;
     procedure Add(const value:Variant);overload;
     procedure Add(const value:TObject);overload;
     procedure Add(const value:IInterface);overload;
     procedure Add(const value:Pointer);overload;
-    procedure AddRange(const Values: array of TValueVariant); overload;
+    procedure AddRange(const Values: array of TAllValue); overload;
     procedure AddRange(const Values: array of Variant); overload;
     procedure AddRange(const Values: array of IInterface); overload;
     procedure AddRange(const Values: array of Pointer); overload;
 
-    procedure Insert(Index: Integer; const Value: TValueVariant);overload;
+    procedure Insert(Index: Integer; const Value: TAllValue);overload;
     procedure Insert(Index: Integer; const Value: Variant);overload;
     procedure Insert(Index: Integer; const Value: IInterface);overload;
     procedure Insert(Index: Integer; const Value: Pointer);overload;
 
-    procedure InsertRange(Index: Integer;const Values: array of TValueVariant); overload;
+    procedure InsertRange(Index: Integer;const Values: array of TAllValue); overload;
     procedure InsertRange(Index: Integer;const Values: array of Variant); overload;
     procedure InsertRange(Index: Integer;const Values: array of IInterface); overload;
     procedure InsertRange(Index: Integer;const Values: array of Pointer); overload;
     
 
-    procedure AddOrSetValue(const Key: Integer; const Value: TValueVariant);overload;
+    procedure AddOrSetValue(const Key: Integer; const Value: TAllValue);overload;
     procedure AddOrSetValue(const Key: Integer;const value:Variant);overload;
     procedure AddOrSetValue(const Key: Integer;const value:TObject);overload;
     procedure AddOrSetValue(const Key: Integer;const value:IInterface);overload;
@@ -493,25 +615,25 @@ type
 
     procedure Reverse;
     procedure Sort; overload;
-    procedure Sort(const AComparer: IuComparerValue_V); overload;
+    procedure Sort(const AComparer: IuComparerValue); overload;
     function BinarySearch(const Item: Variant; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: TObject; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: IInterface; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: Pointer; out Index: Integer): Boolean; overload;
-    function BinarySearch(const Item: TValueVariant; out Index: Integer; const AComparer: IuComparerValue_V): Boolean; overload;
+    function BinarySearch(const Item: TAllValue; out Index: Integer; const AComparer: IuComparerValue): Boolean; overload;
 
     procedure TrimExcess;
-    function ToArray: TValueVariantArray;
+    function ToArray: TAllValueArray;
     property Capacity: Integer read GetCapacity write SetCapacity;
     property Count: Integer read GetCount write SetCount;
-    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    property Items[const Key: integer]: TAllValue read GetItemV write SetItemV;
     property Value[const Key: integer]: Variant read GetItem write SetItem;default;
-    property Values:TValueVariantArray read ToArray;
+    property Values:TAllValueArray read ToArray;
   end;
 
-  TThriftList_VImpl = class( TInterfacedObject, IThriftList_V)
+  TThriftListImpl = class( TInterfacedObject, IThriftList)
     private
-    FList : TuList_V;
+    FList : TuList;
     protected
     //function GetEnumerator: TVariantArray;
     function GetCapacity: Integer;
@@ -520,37 +642,37 @@ type
     procedure SetCount(Value: Integer);
     function GetItem(const Key: Integer): Variant;
     procedure SetItem(const Key: Integer; const Value: Variant);
-    function GetItemV(const Key: Integer): TValueVariant;
-    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
+    function GetItemV(const Key: Integer): TAllValue;
+    procedure SetItemV(const Key: Integer; const Value: TAllValue);
     //procedure AddRange(Collection: TEnumerable<T>); overload;
-    //procedure InsertRange(Index: Integer; const Values: array of TValueVariant); overload;
+    //procedure InsertRange(Index: Integer; const Values: array of TAllValue); overload;
     //procedure InsertRange(Index: Integer; const Collection: TVariantArray); overload;
     //procedure InsertRange(Index: Integer; const Collection: TEnumerable<T>); overload;
-    function Extract(const Value: TValueVariant): TValueVariant;
+    function Extract(const Value: TAllValue): TAllValue;
     procedure Exchange(Index1, Index2: Integer);
     procedure Move(CurIndex, NewIndex: Integer);
-    function First: TValueVariant;
-    function Last: TValueVariant;
+    function First: TAllValue;
+    function Last: TAllValue;
     procedure Clear;
-    function IndexOf(Value: TValueVariant;const LastIndex:boolean=false): integer;overload;
+    function IndexOf(Value: TAllValue;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: Variant;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: TObject;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: Pointer;const LastIndex:boolean=false): integer;overload;
     function IndexOf(const Value: IInterface;const LastIndex:boolean=false): integer;overload;
 
-    function LastIndexOf(Value: TValueVariant): integer;overload;
+    function LastIndexOf(Value: TAllValue): integer;overload;
     function LastIndexOf(const Value: Variant): integer;overload;
     function LastIndexOf(const Value: TObject): integer;overload;
     function LastIndexOf(const Value: Pointer): integer;overload;
     function LastIndexOf(const Value: IInterface): integer;overload;
 
-    function Contains(Value: TValueVariant): boolean;overload;
+    function Contains(Value: TAllValue): boolean;overload;
     function Contains(const Value: Variant): boolean;overload;
     function Contains(const Value: TObject): boolean;overload;
     function Contains(const Value: Pointer): boolean;overload;
     function Contains(const Value: IInterface): boolean;overload;
 
-    procedure Remove(const value:TValueVariant;const LastIndex:boolean=false);overload;
+    procedure Remove(const value:TAllValue;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: Variant;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: TObject;const LastIndex:boolean=false);overload;
     procedure Remove(const Value: Pointer;const LastIndex:boolean=false);overload;
@@ -559,28 +681,28 @@ type
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
 
-    procedure Add(const Value: TValueVariant);overload;
+    procedure Add(const Value: TAllValue);overload;
     procedure Add(const value:Variant);overload;
     procedure Add(const value:TObject);overload;
     procedure Add(const value:IInterface);overload;
     procedure Add(const value:Pointer);overload;
-    procedure AddRange(const Values: array of TValueVariant); overload;
+    procedure AddRange(const Values: array of TAllValue); overload;
     procedure AddRange(const Values: array of Variant); overload;
     procedure AddRange(const Values: array of IInterface); overload;
     procedure AddRange(const Values: array of Pointer); overload;
 
-    procedure Insert(Index: Integer; const Value: TValueVariant);overload;
+    procedure Insert(Index: Integer; const Value: TAllValue);overload;
     procedure Insert(Index: Integer; const Value: Variant);overload;
     procedure Insert(Index: Integer; const Value: IInterface);overload;
     procedure Insert(Index: Integer; const Value: Pointer);overload;
 
-    procedure InsertRange(Index: Integer;const Values: array of TValueVariant); overload;
+    procedure InsertRange(Index: Integer;const Values: array of TAllValue); overload;
     procedure InsertRange(Index: Integer;const Values: array of Variant); overload;
     procedure InsertRange(Index: Integer;const Values: array of IInterface); overload;
     procedure InsertRange(Index: Integer;const Values: array of Pointer); overload;
 
 
-    procedure AddOrSetValue(const Key: Integer; const Value: TValueVariant);overload;
+    procedure AddOrSetValue(const Key: Integer; const Value: TAllValue);overload;
     procedure AddOrSetValue(const Key: Integer;const value:Variant);overload;
     procedure AddOrSetValue(const Key: Integer;const value:TObject);overload;
     procedure AddOrSetValue(const Key: Integer;const value:IInterface);overload;
@@ -595,58 +717,58 @@ type
 
     procedure Reverse;
     procedure Sort; overload;
-    procedure Sort(const AComparer: IuComparerValue_V); overload;
+    procedure Sort(const AComparer: IuComparerValue); overload;
     function BinarySearch(const Item: Variant; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: TObject; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: IInterface; out Index: Integer): Boolean; overload;
     function BinarySearch(const Item: Pointer; out Index: Integer): Boolean; overload;
-    function BinarySearch(const Item: TValueVariant; out Index: Integer; const AComparer: IuComparerValue_V): Boolean; overload;
+    function BinarySearch(const Item: TAllValue; out Index: Integer; const AComparer: IuComparerValue): Boolean; overload;
 
 
     procedure TrimExcess;
-    function ToArray: TValueVariantArray;
+    function ToArray: TAllValueArray;
     property Capacity: Integer read GetCapacity write SetCapacity;
     property Count: Integer read GetCount write SetCount;
-    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    property Items[const Key: integer]: TAllValue read GetItemV write SetItemV;
     property Value[const Key: integer]: Variant read GetItem write SetItem;default;
-    property Values:TValueVariantArray read ToArray;
+    property Values:TAllValueArray read ToArray;
     function ToString: string;
   public
     constructor Create(ACapacity: Integer = 0);
     destructor Destroy; override;
   end;
 
-  IHashSet_V = interface(IThriftContainer)
+  IHashSet = interface(IThriftContainer)
     ['{F5ECAFF0-179F-4312-8B67-044DD79DAD0F}']
     function GetItem(const Key: Integer): Variant;
     procedure SetItem(const Key: Integer; const Value: Variant);
-    function GetItemV(const Key: Integer): TValueVariant;
-    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
+    function GetItemV(const Key: Integer): TAllValue;
+    procedure SetItemV(const Key: Integer; const Value: TAllValue);
     function GetIsReadOnly: Boolean;
     function GetCount: Integer;
     property Count: Integer read GetCount;
     property IsReadOnly: Boolean read GetIsReadOnly;
-    procedure Add( const item: TValueVariant);overload;
+    procedure Add( const item: TAllValue);overload;
     procedure Add(const value:Variant);overload;
     procedure Add(const value:TObject);overload;
     procedure Add(const value:IInterface);overload;
     procedure Add(const value:Pointer);overload;    
     procedure Clear;
-    function Contains( const item: TValueVariant): Boolean;
-    procedure CopyTo(var A: TValueVariantArray; arrayIndex: Integer);
-    function Remove( const item: TValueVariant ): Boolean;
-    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    function Contains( const item: TAllValue): Boolean;
+    procedure CopyTo(var A: TAllValueArray; arrayIndex: Integer);
+    function Remove( const item: TAllValue ): Boolean;
+    property Items[const Key: integer]: TAllValue read GetItemV write SetItemV;
     property Value[const Key: integer]: Variant read GetItem write SetItem;default;    
   end;
 
-  THashSet_VImpl = class( TInterfacedObject, IHashSet_V)
+  THashSetImpl = class( TInterfacedObject, IHashSet)
   private
-    FList:IThriftList_V;
+    FList:IThriftList;
     FIsReadOnly: Boolean;
     function GetItem(const Key: Integer): Variant;
     procedure SetItem(const Key: Integer; const Value: Variant);
-    function GetItemV(const Key: Integer): TValueVariant;
-    procedure SetItemV(const Key: Integer; const Value: TValueVariant);
+    function GetItemV(const Key: Integer): TAllValue;
+    procedure SetItemV(const Key: Integer; const Value: TAllValue);
 
   protected
     //function GetEnumerator: TVariantArray;
@@ -654,18 +776,18 @@ type
     function GetCount: Integer;
     property Count: Integer read GetCount;
     property IsReadOnly: Boolean read GetIsReadOnly;
-    procedure Add( const item: TValueVariant);overload;
+    procedure Add( const item: TAllValue);overload;
     procedure Add(const value:Variant);overload;
     procedure Add(const value:TObject);overload;
     procedure Add(const value:IInterface);overload;
     procedure Add(const value:Pointer);overload;
     procedure Clear;
-    function Contains( const item: TValueVariant): Boolean;
-    procedure CopyTo(var A: TValueVariantArray; arrayIndex: Integer);
-    property Items[const Key: integer]: TValueVariant read GetItemV write SetItemV;
+    function Contains( const item: TAllValue): Boolean;
+    procedure CopyTo(var A: TAllValueArray; arrayIndex: Integer);
+    property Items[const Key: integer]: TAllValue read GetItemV write SetItemV;
     property Value[const Key: integer]: Variant read GetItem write SetItem;default;
 
-    function Remove( const item: TValueVariant ): Boolean;
+    function Remove( const item: TAllValue ): Boolean;
     function ToString: string;
   public
     constructor Create;
@@ -673,29 +795,372 @@ type
   end;
 
 
-procedure Array_AllValue_QuickSort(var Values: array of TValueVariant; const Comparer: IuComparerValue_V;L, R: Integer);overload;
-procedure Array_AllValue_QuickSort(var Values: array of TValueVariant; L, R: Integer);overload;
-procedure Array_AllValue_QuickSort(var Values: array of TValueVariant);overload;
+procedure Array_AllValue_QuickSort(var Values: array of TAllValue; const Comparer: IuComparerValue;L, R: Integer);overload;
+procedure Array_AllValue_QuickSort(var Values: array of TAllValue; L, R: Integer);overload;
+procedure Array_AllValue_QuickSort(var Values: array of TAllValue);overload;
 
-procedure Array_AllValue_Sort(var Values: array of TValueVariant; const Comparer: IuComparerValue_V;index, Count: Integer);overload;
-procedure Array_AllValue_Sort(var Values: array of TValueVariant; index, Count: Integer);overload;
+procedure Array_AllValue_Sort(var Values: array of TAllValue; const Comparer: IuComparerValue;index, Count: Integer);overload;
+procedure Array_AllValue_Sort(var Values: array of TAllValue; index, Count: Integer);overload;
 
 
-function Array_AllValue_BinarySearch(const Values: array of TValueVariant; const Item: TValueVariant;
-  out FoundIndex: Integer; const Comparer: IuComparerValue_V; Index,
+function Array_AllValue_BinarySearch(const Values: array of TAllValue; const Item: TAllValue;
+  out FoundIndex: Integer; const Comparer: IuComparerValue; Index,
   Count: Integer): Boolean;overload;
-function Array_AllValue_BinarySearch(const Values: array of TValueVariant; const Item: TValueVariant;
-  out FoundIndex: Integer; const Comparer: IuComparerValue_V): Boolean;overload;
-function Array_AllValue_BinarySearch(const Values: array of TValueVariant; const Item: TValueVariant;
+function Array_AllValue_BinarySearch(const Values: array of TAllValue; const Item: TAllValue;
+  out FoundIndex: Integer; const Comparer: IuComparerValue): Boolean;overload;
+function Array_AllValue_BinarySearch(const Values: array of TAllValue; const Item: TAllValue;
   out FoundIndex: Integer): Boolean;overload;
+
+
 implementation
 
+{function using to compare}
+function AllValue_Compare_Default(const Left,
+  Right: TAllValue): Integer;
+var
+p1,p2:UInt64;
+begin
+  result:=0;
+  if (Left.TypeValue=Right.TypeValue) then
+  begin
+    if Left.TypeValue=avtString then
+      result:=StrComp(pchar(VarToStr(Left.Value)),pchar(VarToStr(Right.Value)))
+    else
+    begin
+      if (Left.Hash=Right.Hash) then result:=0
+      else if (Left.Hash<Right.Hash) then result:=-1
+      else result:=1;
+    end;
+  end
+  else
+  begin
+    result:=0;
+  end;
+end;
+
+function _AllValue(v:variant):TAllValue;
+begin
+  result:=TAllValue.Create(v);
+end;
+function _AllValue(v:Tobject):TAllValue;
+begin
+  result:=TAllValue.Create(v);
+end;
+function _AllValue(v:IInterface):TAllValue;
+begin
+  result:=TAllValue.Create(v);
+end;
+function _AllValue(v:Pointer):TAllValue;
+begin
+  result:=TAllValue.Create(v);
+end;
+
+
+function HashString32(const S: AnsiString): LongWord;
+const Seed: LongWord=$9747b28c;
+var
+    h: LongWord;
+    len: LongWord;
+    k: LongWord;
+    data: Integer;
+const
+    // 'm' and 'r' are mixing constants generated offline.
+    // They're not really 'magic', they just happen to work well.
+    m = $5bd1e995;
+    r = 24;
+begin
+    len := Length(S);
+
+    //The default seed, $9747b28c, is from the original C library
+
+    // Initialize the hash to a 'random' value
+    h := seed xor len;
+
+    // Mix 4 bytes at a time into the hash
+    data := 1;
+
+    while(len >= 4) do
+    begin
+        k := PLongWord(@S[data])^;
+
+        k := k*m;
+        k := k xor (k shr r);
+        k := k* m;
+
+        h := h*m;
+        h := h xor k;
+
+        data := data+4;
+        len := len-4;
+    end;
+
+    {   Handle the last few bytes of the input array
+            S: ... $69 $18 $2f
+    }
+    Assert(len <= 3);
+    if len = 3 then
+        h := h xor (LongWord(s[data+2]) shl 16);
+    if len >= 2 then
+        h := h xor (LongWord(s[data+1]) shl 8);
+    if len >= 1 then
+    begin
+        h := h xor (LongWord(s[data]));
+        h := h * m;
+    end;
+    // Do a few final mixes of the hash to ensure the last few
+    // bytes are well-incorporated.
+    h := h xor (h shr 13);
+    h := h * m;
+    h := h xor (h shr 15);
+
+    Result := h;
+end;
+function HashString(const S: AnsiString): int64;
+const
+mc:array[0..7] of byte=($AA,$55,$2A,$A2,$B3,$2C,$33,$7E);
+var
+s1:AnsiString;
+i,n:integer;
+r1,r2:LongWord;
+begin
+  n:=length(s);
+  for i := 1 to n do
+  begin
+    s1:=chr(ord(s[i]) xor mc[i mod 8]);
+  end;
+  r1:=HashString32(s);
+  r2:=HashString32(s1);
+  Result:=r1;
+  Result:=(Result shl 32) or r2;
+end;
+
+function _AllValueArray_Grow(var a:TAllValueArray;const sz:integer):TAllValueArray;
+var
+i,nnew,nold:integer;
+an:TAllValueArray;
+begin
+  nold:=length(a);
+  nnew:=sz;
+  if (nnew<=0)  then
+  begin
+    if (nold=0) then
+      nnew:=64;
+  end;
+  SetLength(an, nnew);
+  for i := 0 to nold - 1 do
+  begin
+    an[i]:=a[i];
+  end;
+  SetLength(a, 0);
+  result:=an;
+end;
+procedure _AllValueArray_Delete(var a:TAllValueArray);
+var
+i,nold:integer;
+begin
+  nold:=length(a);
+  for i := 0 to nold - 1 do
+  begin
+    a[i].Free;
+  end;
+  setlength(a,0);
+end;
+procedure _AllValueArray_DeleteI(var a:TAllValueArray;const index:integer);
+var
+i,nold:integer;
+v:TAllValue;
+begin
+  nold:=length(a);
+  v:=a[index];
+  if (index < 0) or (index>=nold) then  Exit;
+  for i := index+1 to nold - 1 do
+  begin
+    a[i-1]:=a[i];
+  end;
+  //v.Free;
+end;
+{ TAllValue }
+constructor TAllValue.Create;
+begin
+  fhash:=0;
+  fvt:=avtNull;
+end;
+constructor TAllValue.Create(v: variant);
+begin
+  setvalue(v);
+end;
+
+function TAllValue.AsFloat: Double;
+begin
+  result:=getvalue;
+end;
+
+function TAllValue.AsInt: int64;
+begin
+  result:=getvalue;
+end;
+
+function TAllValue.AsIntf: IInterface;
+begin
+  result:=getvalueIntf;
+end;
+
+function TAllValue.AsObj: TObject;
+begin
+  result:=getvalueObj;
+end;
+
+function TAllValue.AsPointer: Pointer;
+begin
+  result:=getvaluePtr;
+end;
+
+function TAllValue.AsString: string;
+begin
+  result:=getvalue;
+end;
+
+constructor TAllValue.Create(v: Tobject;const prefree:boolean);
+begin
+  fprefree:=prefree;
+  setvalueobj(v);
+end;
+
+
+constructor TAllValue.Create(v: Pointer);
+begin
+  setvalueptr(v);
+end;
+constructor TAllValue.Create(v: IInterface);
+begin
+  setvalueintf(v);
+end;
+
+destructor TAllValue.Destroy;
+begin
+  Free;
+end;
+
+procedure TAllValue.Free;
+begin
+  if (fvt=avtString) then
+  begin
+    DisposeStr(fv.s);
+  end
+  else if (fvt=avtObject) then
+  begin
+    if fprefree then fv.o.Free;
+  end;
+  
+
+end;
+
+function TAllValue.getvalue: Variant;
+begin
+  result:=vaNull;
+  case fvt of
+  avtBool:result:=fv.b;
+  avtFloat:result:=fv.f;
+  avtInt:result:=fv.n;
+  avtString:if (fv.s<>nil) then result:=fv.s^;
+  end;
+end;
+
+function TAllValue.getvalueIntf: IInterface;
+begin
+  if (fvt=avtIntf) and (fv.i<>nil) then
+    result:=fv.i^;
+end;
+
+function TAllValue.getvalueObj: Tobject;
+begin
+  if (fvt=avtObject) and (assigned(fv.o)) then
+    result:=fv.o;
+
+end;
+
+function TAllValue.getvaluePtr: Pointer;
+begin
+  result:=fv.p;
+end;
+
+function TAllValue.IsEmpty: Boolean;
+begin
+  result:=(fvt=avtEmpty);
+end;
+
+function TAllValue.IsNull: Boolean;
+begin
+  result:=(fvt=avtNull);
+end;
+
+procedure TAllValue.setvalue(v: Variant);
+var
+vt:Word;
+begin
+  fvt:=avtNull;
+  vt:=VarType(v);
+  case vt of
+  varByte,varWord,varLongWord,varShortInt,varSmallint,varInteger,varInt64:begin
+    fvt:=avtInt;
+    fv.n:=v;
+    fhash:=v;
+  end;
+  varSingle,varDouble,varCurrency,varDate:begin
+    fvt:=avtFloat;
+    fv.f:=v;
+    fhash:=v;    
+  end;
+  varBoolean:begin
+    fvt:=avtBool;
+    fv.b:=v;
+    fhash:=v;
+  end;
+  varString:begin
+    fvt:=avtString;
+    if (fv.s<>nil) then
+      DisposeStr(fv.s);
+    fv.s:=NewStr(v);
+    fhash:=HashString(v);
+  end;
+  end;
+end;
+
+procedure TAllValue.setvalueintf(v: IInterface);
+begin
+  fvt:=avtIntf;
+  fv.i:=@v;
+  fhash:=int64(Pointer(fv.i));
+end;
+
+procedure TAllValue.setvalueobj(v: Tobject);
+begin
+  fvt:=avtObject;
+  fv.o:=v;
+  fhash:=int64(Pointer(v));
+end;
+
+procedure TAllValue.setvalueptr(v: Pointer);
+begin
+  fvt:=avtPointer;
+  fv.p:=v;
+  fhash:=int64(Pointer(v));
+end;
+
+{ TAllValuePair }
+
+constructor TAllValuePair.Create(const AKey, AValue: TAllValue);
+begin
+  Key := AKey;
+  Value := AValue;
+end;
+
 //{Functions Utils}
-procedure Array_AllValue_QuickSort(var Values: array of TValueVariant; const Comparer: IuComparerValue_V;
+procedure Array_AllValue_QuickSort(var Values: array of TAllValue; const Comparer: IuComparerValue;
   L, R: Integer);
 var
   I, J: Integer;
-  pivot, temp: TValueVariant;
+  pivot, temp: TAllValue;
 begin
   if (Length(Values) = 0) or ((R - L) <= 0) then
     Exit;
@@ -726,17 +1191,17 @@ begin
   until I >= R;
 end;
 
-procedure Array_AllValue_QuickSort(var Values: array of TValueVariant; L, R: Integer);
+procedure Array_AllValue_QuickSort(var Values: array of TAllValue; L, R: Integer);
 begin
-  Array_AllValue_QuickSort(Values,TuComparerValue_V.Default,L, R);
+  Array_AllValue_QuickSort(Values,TuComparerValue.Default,L, R);
 end;
 
-procedure Array_AllValue_QuickSort(var Values: array of TValueVariant);
+procedure Array_AllValue_QuickSort(var Values: array of TAllValue);
 begin
-  Array_AllValue_QuickSort(Values,TuComparerValue_V.Default,low(Values), High(Values));
+  Array_AllValue_QuickSort(Values,TuComparerValue.Default,low(Values), High(Values));
 end;
 
-procedure Array_AllValue_Sort(var Values: array of TValueVariant; const Comparer: IuComparerValue_V;index, Count: Integer);
+procedure Array_AllValue_Sort(var Values: array of TAllValue; const Comparer: IuComparerValue;index, Count: Integer);
 begin
   if (Index < Low(Values)) or ((Index > High(Values)) and (Count > 0))
     or (Index + Count - 1 > High(Values)) or (Count < 0)
@@ -747,15 +1212,15 @@ begin
   Array_AllValue_QuickSort(Values,Comparer,Index, Index + Count - 1);
 end;
 
-procedure Array_AllValue_Sort(var Values: array of TValueVariant; index, Count: Integer);
+procedure Array_AllValue_Sort(var Values: array of TAllValue; index, Count: Integer);
 begin
-  Array_AllValue_Sort(Values,TuComparerValue_V.Default,index, Count);
+  Array_AllValue_Sort(Values,TuComparerValue.Default,index, Count);
 end;
 
 
 
-function Array_AllValue_BinarySearch(const Values: array of TValueVariant; const Item: TValueVariant;
-  out FoundIndex: Integer; const Comparer: IuComparerValue_V; Index,
+function Array_AllValue_BinarySearch(const Values: array of TAllValue; const Item: TAllValue;
+  out FoundIndex: Integer; const Comparer: IuComparerValue; Index,
   Count: Integer): Boolean;
 var
   L, H: Integer;
@@ -791,236 +1256,365 @@ begin
   FoundIndex := L;
 end;
 
-function Array_AllValue_BinarySearch(const Values: array of TValueVariant; const Item: TValueVariant;
-  out FoundIndex: Integer; const Comparer: IuComparerValue_V): Boolean;
+function Array_AllValue_BinarySearch(const Values: array of TAllValue; const Item: TAllValue;
+  out FoundIndex: Integer; const Comparer: IuComparerValue): Boolean;
 begin
   Result := Array_AllValue_BinarySearch(Values, Item, FoundIndex, Comparer,
     Low(Values), Length(Values));
 end;
 
-function Array_AllValue_BinarySearch(const Values: array of TValueVariant; const Item: TValueVariant;
+function Array_AllValue_BinarySearch(const Values: array of TAllValue; const Item: TAllValue;
   out FoundIndex: Integer): Boolean;
 begin
-  Result := Array_AllValue_BinarySearch(Values, Item, FoundIndex, TuComparerValue_V.Default,
+  Result := Array_AllValue_BinarySearch(Values, Item, FoundIndex, TuComparerValue.Default,
     Low(Values), Length(Values));
 end;
 
 
 { TThriftDictionary_V_VImpl }
 
-procedure TThriftDictionary_V_VImpl.Add(const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TThriftDictionaryImpl.Add(const Key: TAllValue;
+  const Value: TAllValue);
 begin
   FDictionaly.Add(Key,Value);
 end;
 
-procedure TThriftDictionary_V_VImpl.AddOrSetValue(const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: TAllValue;
+  const Value: TAllValue);
 begin
   FDictionaly.AddOrSetValue(key,value);
 end;
 
-procedure TThriftDictionary_V_VImpl.AddOrSetValue(const Key: TKeyVariant;
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: TAllValue;
   const value: TObject);
 begin
   FDictionaly.AddOrSetValue(Key,value);
 end;
 
-procedure TThriftDictionary_V_VImpl.AddOrSetValue(const Key: TKeyVariant;
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: TAllValue;
   const value: IInterface);
 begin
   FDictionaly.AddOrSetValue(Key,value);
 end;
 
-procedure TThriftDictionary_V_VImpl.AddOrSetValue(const Key: TKeyVariant;
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: TAllValue;
   const value: Pointer);
 begin
   FDictionaly.AddOrSetValue(Key,value);
 end;
 
-procedure TThriftDictionary_V_VImpl.AddOrSetValue(const Key: TKeyVariant;
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: TAllValue;
   const value: Variant);
 begin
   FDictionaly.AddOrSetValue(Key,value);
 end;
 
-procedure TThriftDictionary_V_VImpl.Clear;
+procedure TThriftDictionaryImpl.Clear;
 begin
   FDictionaly.Clear;
 end;
 
-function TThriftDictionary_V_VImpl.ContainsKey(const Key: TKeyVariant): Boolean;
+function TThriftDictionaryImpl.ContainsKey(const Key: TAllValue): Boolean;
 begin
   result:=FDictionaly.ContainsKey(Key);
 end;
 
-function TThriftDictionary_V_VImpl.ContainsValue(
-  const Value: TValueVariant): Boolean;
+function TThriftDictionaryImpl.ContainsValue(
+  const Value: TAllValue): Boolean;
 begin
 
 end;
 
-constructor TThriftDictionary_V_VImpl.Create(ACapacity: Integer);
+constructor TThriftDictionaryImpl.Create(ACapacity: Integer);
 begin
-  FDictionaly := TuDictionary_V_V.Create( ACapacity );
+  FDictionaly := TuDictionary.Create( ACapacity );
 end;
 
-destructor TThriftDictionary_V_VImpl.Destroy;
+destructor TThriftDictionaryImpl.Destroy;
 begin
   FDictionaly.Free;
   inherited;
 end;
 
-function TThriftDictionary_V_VImpl.ExtractPair(
-  const Key: TKeyVariant): TPair_V_V;
+function TThriftDictionaryImpl.ExtractPair(
+  const Key: Variant): TAllValuePair;
 begin
-  FDictionaly.ExtractPair(Key);
+  result:=FDictionaly.ExtractPair(Key);
 end;
 
-function TThriftDictionary_V_VImpl.GetCount: Integer;
+function TThriftDictionaryImpl.ExtractPair(
+  const Key: TAllValue): TAllValuePair;
+begin
+  result:=FDictionaly.ExtractPair(Key);
+end;
+
+function TThriftDictionaryImpl.GetCount: Integer;
 begin
   result:=FDictionaly.Count;
 end;
 
 
-function TThriftDictionary_V_VImpl.GetItem(
-  const Key: TKeyVariant): Variant;
+function TThriftDictionaryImpl.GetItem(
+  const Key: TAllValue): Variant;
 begin
   result:=FDictionaly.GetItem(Key);
 end;
 
-function TThriftDictionary_V_VImpl.GetItemV(
-  const Key: TKeyVariant): TValueVariant;
+function TThriftDictionaryImpl.GetItemV(
+  const Key: TAllValue): TAllValue;
 begin
   FDictionaly.GetItemV(Key);
 end;
 
-function TThriftDictionary_V_VImpl.GetKeys: TKeyVariantArray;
+function TThriftDictionaryImpl.GetKeys: TAllValueArray;
 begin
   result:=FDictionaly.Keys;
 end;
 
-function TThriftDictionary_V_VImpl.GetPair(const index: Cardinal): TPair_V_V;
+function TThriftDictionaryImpl.GetPair(const index: Cardinal): TAllValuePair;
 begin
   result:=FDictionaly.GetPair(index);
 end;
 
-function TThriftDictionary_V_VImpl.GetValues: TValueVariantArray;
+function TThriftDictionaryImpl.GetValues: TAllValueArray;
 begin
   result:=FDictionaly.Values;
 end;
 
-procedure TThriftDictionary_V_VImpl.Remove(const Key: TKeyVariant);
+procedure TThriftDictionaryImpl.Remove(const Key: Variant);
 begin
   FDictionaly.Remove(Key);
 end;
 
-procedure TThriftDictionary_V_VImpl.SetItem(const Key: TKeyVariant;
+procedure TThriftDictionaryImpl.Remove(const Key: TAllValue);
+begin
+  FDictionaly.Remove(Key);
+end;
+
+procedure TThriftDictionaryImpl.SetItem(const Key: TAllValue;
   const Value: Variant);
 begin
   FDictionaly.SetItem(Key,Value);
 end;
 
-procedure TThriftDictionary_V_VImpl.SetItemV(const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TThriftDictionaryImpl.SetItemV(const Key: TAllValue;
+  const Value: TAllValue);
 begin
   FDictionaly.SetItemV(Key,Value);
 end;
 
-function TThriftDictionary_V_VImpl.ToArray: TPair_V_VArray;
+function TThriftDictionaryImpl.ToArray: TAllValueArray;
 begin
 
 end;
 
-function TThriftDictionary_V_VImpl.ToString: string;
+function TThriftDictionaryImpl.ToString: string;
 begin
 
 end;
 
-procedure TThriftDictionary_V_VImpl.TrimExcess;
+procedure TThriftDictionaryImpl.TrimExcess;
 begin
   FDictionaly.TrimExcess;
 end;
 
-function TThriftDictionary_V_VImpl.TryGetValue(const Key: TKeyVariant;
-  out Value: TValueVariant): Boolean;
+function TThriftDictionaryImpl.TryGetValue(const Key: TAllValue;
+  out Value: TAllValue): Boolean;
 begin
-  FDictionaly.TryGetValue(Key,value);
+  result:=FDictionaly.TryGetValue(Key,value);
 end;
 
-procedure TThriftDictionary_V_VImpl.Add(const Key: TKeyVariant;
-  const value: IInterface);
+function TThriftDictionaryImpl.TryGetValue(const Key: Variant;
+  out Value: TAllValue): Boolean;
 begin
-  FDictionaly.Add(Key,value);
+  result:=FDictionaly.TryGetValue(_AllValue(Key),value);
 end;
 
-procedure TThriftDictionary_V_VImpl.Add(const Key: TKeyVariant;
-  const value: TObject);
-begin
-  FDictionaly.Add(Key,value);
-end;
-
-procedure TThriftDictionary_V_VImpl.Add(const Key: TKeyVariant;
-  const value: Variant);
-begin
-  FDictionaly.Add(Key,value);
-end;
-
-procedure TThriftDictionary_V_VImpl.Add(const Key: TKeyVariant;
-  const value: Pointer);
-begin
-  FDictionaly.Add(Key,value);
-end;
-
-function TThriftDictionary_V_VImpl.AsFloat(const Key: TKeyVariant): Double;
-begin
-  result:=FDictionaly.AsFloat(Key);
-end;
-
-function TThriftDictionary_V_VImpl.AsInt(const Key: TKeyVariant): Integer;
-begin
-  result:=FDictionaly.AsInt(Key);
-end;
-
-function TThriftDictionary_V_VImpl.AsIntf(const Key: TKeyVariant): IInterface;
-begin
-  result:=FDictionaly.AsIntf(Key);
-end;
-
-function TThriftDictionary_V_VImpl.AsObj(const Key: TKeyVariant): TObject;
-begin
-  result:=FDictionaly.AsObj(Key);
-end;
-
-function TThriftDictionary_V_VImpl.AsPointer(const Key: TKeyVariant): Pointer;
-begin
-  result:=FDictionaly.AsPointer(Key);
-end;
-
-function TThriftDictionary_V_VImpl.AsString(const Key: TKeyVariant): string;
-begin
-  result:=FDictionaly.AsString(Key);
-end;
-
-function TThriftDictionary_V_VImpl.TryGetValueIntf(const Key: TKeyVariant;
+function TThriftDictionaryImpl.TryGetValueIntf(const Key: Variant;
   out Value: IInterface): Boolean;
 begin
   result:=FDictionaly.TryGetValueIntf(Key,value);
 end;
 
-function TThriftDictionary_V_VImpl.TryGetValueObj(const Key: TKeyVariant;
+procedure TThriftDictionaryImpl.Add(const Key: TAllValue;
+  const value: IInterface);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: TAllValue;
+  const value: TObject);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: TAllValue;
+  const value: Variant);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: TAllValue;
+  const value: Pointer);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+function TThriftDictionaryImpl.AsFloat(const Key: TAllValue): Double;
+begin
+  result:=FDictionaly.AsFloat(Key);
+end;
+
+function TThriftDictionaryImpl.AsInt(const Key: TAllValue): Integer;
+begin
+  result:=FDictionaly.AsInt(Key);
+end;
+
+function TThriftDictionaryImpl.AsIntf(const Key: TAllValue): IInterface;
+begin
+  result:=FDictionaly.AsIntf(Key);
+end;
+
+function TThriftDictionaryImpl.AsObj(const Key: TAllValue): TObject;
+begin
+  result:=FDictionaly.AsObj(Key);
+end;
+
+function TThriftDictionaryImpl.AsPointer(const Key: TAllValue): Pointer;
+begin
+  result:=FDictionaly.AsPointer(Key);
+end;
+
+function TThriftDictionaryImpl.AsString(const Key: TAllValue): string;
+begin
+  result:=FDictionaly.AsString(Key);
+end;
+
+function TThriftDictionaryImpl.TryGetValueIntf(const Key: TAllValue;
+  out Value: IInterface): Boolean;
+begin
+  result:=FDictionaly.TryGetValueIntf(Key,value);
+end;
+
+function TThriftDictionaryImpl.TryGetValueObj(const Key: TAllValue;
   out Value: TObject): Boolean;
 begin
   result:=FDictionaly.TryGetValueObj(Key,value);
 end;
 
-function TThriftDictionary_V_VImpl.TryGetValuePointer(const Key: TKeyVariant;
+function TThriftDictionaryImpl.TryGetValuePointer(const Key: TAllValue;
   out Value: Pointer): Boolean;
 begin
   result:=FDictionaly.TryGetValuePointer(Key,value);
 end;
 
-function TThriftDictionary_V_VImpl.TryGetValueString(const Key: TKeyVariant;
+function TThriftDictionaryImpl.TryGetValueString(const Key: TAllValue;
+  out Value: string): Boolean;
+begin
+  result:=FDictionaly.TryGetValueString(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: Variant;
+  const value: IInterface);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: Variant;
+  const value: TObject);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key, value: Variant);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: Variant;
+  const value: Pointer);
+begin
+  FDictionaly.Add(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.Add(const Key: Variant;
+  const Value: TAllValue);
+begin
+  FDictionaly.Add(_AllValue(Key),Value);
+end;
+
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: Variant;
+  const value: Pointer);
+begin
+  FDictionaly.AddOrSetValue(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: Variant;
+  const Value: TAllValue);
+begin
+  FDictionaly.AddOrSetValue(_AllValue(key),value);
+end;
+
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key, value: Variant);
+begin
+  FDictionaly.AddOrSetValue(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: Variant;
+  const value: TObject);
+begin
+  FDictionaly.AddOrSetValue(Key,value);
+end;
+
+procedure TThriftDictionaryImpl.AddOrSetValue(const Key: Variant;
+  const value: IInterface);
+begin
+  FDictionaly.AddOrSetValue(Key,value);
+end;
+
+function TThriftDictionaryImpl.AsFloat(const Key: Variant): Double;
+begin
+  result:=FDictionaly.AsFloat(Key);
+end;
+
+function TThriftDictionaryImpl.AsInt(const Key: Variant): Integer;
+begin
+  result:=FDictionaly.AsInt(Key);
+end;
+
+function TThriftDictionaryImpl.AsIntf(const Key: Variant): IInterface;
+begin
+  result:=FDictionaly.AsIntf(Key);
+end;
+
+function TThriftDictionaryImpl.AsObj(const Key: Variant): TObject;
+begin
+  result:=FDictionaly.AsObj(Key);
+end;
+
+function TThriftDictionaryImpl.AsPointer(const Key: Variant): Pointer;
+begin
+  result:=FDictionaly.AsPointer(Key);
+end;
+
+function TThriftDictionaryImpl.AsString(const Key: Variant): string;
+begin
+  result:=FDictionaly.AsString(Key);
+end;
+
+function TThriftDictionaryImpl.TryGetValueObj(const Key: Variant;
+  out Value: TObject): Boolean;
+begin
+  result:=FDictionaly.TryGetValueObj(Key,value);
+end;
+
+function TThriftDictionaryImpl.TryGetValuePointer(const Key: Variant;
+  out Value: Pointer): Boolean;
+begin
+  result:=FDictionaly.TryGetValuePointer(Key,value);
+end;
+
+function TThriftDictionaryImpl.TryGetValueString(const Key: Variant;
   out Value: string): Boolean;
 begin
   result:=FDictionaly.TryGetValueString(Key,value);
@@ -1028,7 +1622,7 @@ end;
 
 { THashSet_VImpl }
 
-procedure THashSet_VImpl.Add(const item: TValueVariant);
+procedure THashSetImpl.Add(const item: TAllValue);
 begin
   if not Contains(item) then
   begin
@@ -1036,37 +1630,37 @@ begin
   end;
 end;
 
-procedure THashSet_VImpl.Add(const value: TObject);
+procedure THashSetImpl.Add(const value: TObject);
 begin
   Flist.Add(value);
 end;
 
-procedure THashSet_VImpl.Add(const value: Variant);
+procedure THashSetImpl.Add(const value: Variant);
 begin
   Flist.Add(value);
 end;
 
-procedure THashSet_VImpl.Add(const value: Pointer);
+procedure THashSetImpl.Add(const value: Pointer);
 begin
   Flist.Add(value);
 end;
 
-procedure THashSet_VImpl.Add(const value: IInterface);
+procedure THashSetImpl.Add(const value: IInterface);
 begin
   Flist.Add(value);
 end;
 
-procedure THashSet_VImpl.Clear;
+procedure THashSetImpl.Clear;
 begin
   Flist.Clear;
 end;
 
-function THashSet_VImpl.Contains(const item: TValueVariant): Boolean;
+function THashSetImpl.Contains(const item: TAllValue): Boolean;
 begin
   result:=Flist.Contains(item);
 end;
 
-procedure THashSet_VImpl.CopyTo(var A: TValueVariantArray; arrayIndex: Integer);
+procedure THashSetImpl.CopyTo(var A: TAllValueArray; arrayIndex: Integer);
 var
 n,i:integer;
 begin
@@ -1077,50 +1671,50 @@ begin
   end;
 end;
 
-constructor THashSet_VImpl.Create;
+constructor THashSetImpl.Create;
 begin
-    FList :=TThriftList_VImpl.Create;
+    FList :=TThriftListImpl.Create;
 end;
 
-function THashSet_VImpl.GetCount: Integer;
+function THashSetImpl.GetCount: Integer;
 begin
   result:=FList.Count;
 end;
 
 
-function THashSet_VImpl.GetIsReadOnly: Boolean;
+function THashSetImpl.GetIsReadOnly: Boolean;
 begin
 
 end;
 
-function THashSet_VImpl.GetItem(const Key: Integer): Variant;
+function THashSetImpl.GetItem(const Key: Integer): Variant;
 begin
   result:=Flist.GetItem(Key);
 end;
 
-function THashSet_VImpl.GetItemV(const Key: Integer): TValueVariant;
+function THashSetImpl.GetItemV(const Key: Integer): TAllValue;
 begin
   result:=Flist.GetItemV(Key);
 end;
 
-function THashSet_VImpl.Remove(const item: TValueVariant): Boolean;
+function THashSetImpl.Remove(const item: TAllValue): Boolean;
 begin
   FList.Remove(item);
   Result := not Contains(item);
 end;
 
-procedure THashSet_VImpl.SetItem(const Key: Integer; const Value: Variant);
+procedure THashSetImpl.SetItem(const Key: Integer; const Value: Variant);
 begin
   Flist.SetItem(Key,Value);
 end;
 
-procedure THashSet_VImpl.SetItemV(const Key: Integer;
-  const Value: TValueVariant);
+procedure THashSetImpl.SetItemV(const Key: Integer;
+  const Value: TAllValue);
 begin
   Flist.SetItemV(Key,Value);
 end;
 
-function THashSet_VImpl.ToString: string;
+function THashSetImpl.ToString: string;
 begin
 
 end;
@@ -1128,433 +1722,433 @@ end;
 { TThriftList_VImpl }
 
 
-function TThriftList_VImpl.BinarySearch(const Item: TObject;
+function TThriftListImpl.BinarySearch(const Item: TObject;
   out Index: Integer): Boolean;
 begin
   result:=FList.BinarySearch(Item,Index);
 end;
 
-function TThriftList_VImpl.BinarySearch(const Item: Variant;
+function TThriftListImpl.BinarySearch(const Item: Variant;
   out Index: Integer): Boolean;
 begin
   result:=FList.BinarySearch(Item,Index);
 end;
 
-function TThriftList_VImpl.BinarySearch(const Item: IInterface;
+function TThriftListImpl.BinarySearch(const Item: IInterface;
   out Index: Integer): Boolean;
 begin
   result:=FList.BinarySearch(Item,Index);
 end;
 
-procedure TThriftList_VImpl.Add(const value: TObject);
+procedure TThriftListImpl.Add(const value: TObject);
 begin
   FList.Add(Value);
 end;
 
-procedure TThriftList_VImpl.Add(const value: Variant);
+procedure TThriftListImpl.Add(const value: Variant);
 begin
   FList.Add(Value);
 end;
 
-procedure TThriftList_VImpl.Add(const Value: TValueVariant);
+procedure TThriftListImpl.Add(const Value: TAllValue);
 begin
   FList.Add(Value);
 end;
 
-procedure TThriftList_VImpl.Add(const value: Pointer);
+procedure TThriftListImpl.Add(const value: Pointer);
 begin
   FList.Add(Value);
 end;
 
-procedure TThriftList_VImpl.Add(const value: IInterface);
+procedure TThriftListImpl.Add(const value: IInterface);
 begin
   FList.Add(Value);
 end;
 
-procedure TThriftList_VImpl.AddOrSetValue(const Key: Integer;
+procedure TThriftListImpl.AddOrSetValue(const Key: Integer;
   const value: IInterface);
 begin
   FList.AddOrSetValue(Key,Value);
 end;
 
-procedure TThriftList_VImpl.AddOrSetValue(const Key: Integer;
+procedure TThriftListImpl.AddOrSetValue(const Key: Integer;
   const value: Pointer);
 begin
   FList.AddOrSetValue(Key,Value);
 end;
 
-procedure TThriftList_VImpl.AddRange(const Values: array of Variant);
+procedure TThriftListImpl.AddRange(const Values: array of Variant);
 begin
   FList.AddRange(Values);
 end;
 
-procedure TThriftList_VImpl.AddRange(const Values: array of TValueVariant);
+procedure TThriftListImpl.AddRange(const Values: array of TAllValue);
 begin
   FList.AddRange(Values);
 end;
 
-procedure TThriftList_VImpl.AddRange(const Values: array of Pointer);
+procedure TThriftListImpl.AddRange(const Values: array of Pointer);
 begin
   FList.AddRange(Values);
 end;
 
-procedure TThriftList_VImpl.AddRange(const Values: array of IInterface);
+procedure TThriftListImpl.AddRange(const Values: array of IInterface);
 begin
   FList.AddRange(Values);
 end;
 
-procedure TThriftList_VImpl.AddOrSetValue(const Key: Integer;
-  const Value: TValueVariant);
+procedure TThriftListImpl.AddOrSetValue(const Key: Integer;
+  const Value: TAllValue);
 begin
   FList.AddOrSetValue(Key,Value);
 end;
 
-procedure TThriftList_VImpl.AddOrSetValue(const Key: Integer;
+procedure TThriftListImpl.AddOrSetValue(const Key: Integer;
   const value: Variant);
 begin
   FList.AddOrSetValue(Key,Value);
 end;
 
-procedure TThriftList_VImpl.AddOrSetValue(const Key: Integer;
+procedure TThriftListImpl.AddOrSetValue(const Key: Integer;
   const value: TObject);
 begin
   FList.AddOrSetValue(Key,Value);
 end;
 
-function TThriftList_VImpl.AsFloat(const Key: Integer): Double;
+function TThriftListImpl.AsFloat(const Key: Integer): Double;
 begin
   result:=FList.AsFloat(Key);
 end;
 
-function TThriftList_VImpl.AsInt(const Key: Integer): Integer;
+function TThriftListImpl.AsInt(const Key: Integer): Integer;
 begin
   result:=FList.AsInt(Key);
 end;
 
-function TThriftList_VImpl.AsIntf(const Key: Integer): IInterface;
+function TThriftListImpl.AsIntf(const Key: Integer): IInterface;
 begin
   result:=FList.AsIntf(Key);
 end;
 
-function TThriftList_VImpl.AsObj(const Key: Integer): TObject;
+function TThriftListImpl.AsObj(const Key: Integer): TObject;
 begin
   result:=FList.AsObj(Key);
 end;
 
-function TThriftList_VImpl.AsPointer(const Key: Integer): Pointer;
+function TThriftListImpl.AsPointer(const Key: Integer): Pointer;
 begin
   result:=FList.AsPointer(Key);
 end;
 
-function TThriftList_VImpl.AsString(const Key: Integer): string;
+function TThriftListImpl.AsString(const Key: Integer): string;
 begin
   result:=FList.AsString(Key);
 end;
 
-function TThriftList_VImpl.BinarySearch(const Item: TValueVariant;
-  out Index: Integer; const AComparer: IuComparerValue_V): Boolean;
+function TThriftListImpl.BinarySearch(const Item: TAllValue;
+  out Index: Integer; const AComparer: IuComparerValue): Boolean;
 begin
   result:=FList.BinarySearch(Item,Index,AComparer);
 end;
 
-function TThriftList_VImpl.BinarySearch(const Item: Pointer;
+function TThriftListImpl.BinarySearch(const Item: Pointer;
   out Index: Integer): Boolean;
 begin
   result:=FList.BinarySearch(Item,Index);
 end;
 
-procedure TThriftList_VImpl.Clear;
+procedure TThriftListImpl.Clear;
 begin
   FList.Clear;
 end;
 
 
-function TThriftList_VImpl.Contains(const Value: Variant): boolean;
+function TThriftListImpl.Contains(const Value: Variant): boolean;
 begin
   result:=FList.Contains(Value);
 end;
 
-function TThriftList_VImpl.Contains(Value: TValueVariant): boolean;
+function TThriftListImpl.Contains(Value: TAllValue): boolean;
 begin
   result:=FList.Contains(Value);
 end;
 
-function TThriftList_VImpl.Contains(const Value: TObject): boolean;
+function TThriftListImpl.Contains(const Value: TObject): boolean;
 begin
   result:=FList.Contains(Value);
 end;
 
-function TThriftList_VImpl.Contains(const Value: IInterface): boolean;
+function TThriftListImpl.Contains(const Value: IInterface): boolean;
 begin
   result:=FList.Contains(Value);
 end;
 
-function TThriftList_VImpl.Contains(const Value: Pointer): boolean;
+function TThriftListImpl.Contains(const Value: Pointer): boolean;
 begin
   result:=FList.Contains(Value);
 end;
 
-constructor TThriftList_VImpl.Create(ACapacity: Integer = 0);
+constructor TThriftListImpl.Create(ACapacity: Integer = 0);
 begin
-  FList:=TuList_V.Create(ACapacity);
+  FList:=TuList.Create(ACapacity);
 end;
 
-procedure TThriftList_VImpl.Delete(Index: Integer);
+procedure TThriftListImpl.Delete(Index: Integer);
 begin
   FList.Delete(index);
 end;
 
-procedure TThriftList_VImpl.DeleteRange(AIndex, ACount: Integer);
+procedure TThriftListImpl.DeleteRange(AIndex, ACount: Integer);
 begin
   FList.DeleteRange(Aindex,ACount);
 end;
 
-destructor TThriftList_VImpl.Destroy;
+destructor TThriftListImpl.Destroy;
 begin
   if assigned(FList) then
     FList.Free;
   inherited;
 end;
 
-procedure TThriftList_VImpl.Exchange(Index1, Index2: Integer);
+procedure TThriftListImpl.Exchange(Index1, Index2: Integer);
 begin
   FList.Exchange(index1,index2);
 end;
 
-function TThriftList_VImpl.Extract(const Value: TValueVariant): TValueVariant;
+function TThriftListImpl.Extract(const Value: TAllValue): TAllValue;
 begin
 
 end;
 
-function TThriftList_VImpl.First: TValueVariant;
+function TThriftListImpl.First: TAllValue;
 begin
   result:=FList.First;
 end;
 
-function TThriftList_VImpl.GetCapacity: Integer;
+function TThriftListImpl.GetCapacity: Integer;
 begin
   result:=FList.GetCapacity;
 end;
 
-function TThriftList_VImpl.GetCount: Integer;
+function TThriftListImpl.GetCount: Integer;
 begin
   result:=FList.Count;
 end;
 
-function TThriftList_VImpl.GetItem(const Key: Integer): Variant;
+function TThriftListImpl.GetItem(const Key: Integer): Variant;
 begin
   result:=FList.GetItem(Key);
 end;
 
-function TThriftList_VImpl.GetItemV(const Key: Integer): TValueVariant;
+function TThriftListImpl.GetItemV(const Key: Integer): TAllValue;
 begin
   result:=FList.GetItemV(Key);
 end;
 
-function TThriftList_VImpl.IndexOf(const Value: Pointer;
+function TThriftListImpl.IndexOf(const Value: Pointer;
   const LastIndex: boolean): integer;
 begin
   result:=FList.IndexOf(Value,LastIndex);
 end;
 
-function TThriftList_VImpl.IndexOf(const Value: IInterface;
+function TThriftListImpl.IndexOf(const Value: IInterface;
   const LastIndex: boolean): integer;
 begin
   result:=FList.IndexOf(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Insert(Index: Integer; const Value: Variant);
+procedure TThriftListImpl.Insert(Index: Integer; const Value: Variant);
 begin
   FList.Insert(index,Value);
 end;
 
-procedure TThriftList_VImpl.Insert(Index: Integer; const Value: IInterface);
+procedure TThriftListImpl.Insert(Index: Integer; const Value: IInterface);
 begin
   FList.Insert(index,Value);
 end;
 
-procedure TThriftList_VImpl.Insert(Index: Integer; const Value: Pointer);
+procedure TThriftListImpl.Insert(Index: Integer; const Value: Pointer);
 begin
   FList.Insert(index,Value);
 end;
 
-procedure TThriftList_VImpl.InsertRange(Index: Integer;
+procedure TThriftListImpl.InsertRange(Index: Integer;
   const Values: array of Variant);
 begin
   FList.InsertRange(Index,Values);
 end;
 
-procedure TThriftList_VImpl.InsertRange(Index: Integer;
-  const Values: array of TValueVariant);
+procedure TThriftListImpl.InsertRange(Index: Integer;
+  const Values: array of TAllValue);
 begin
   FList.InsertRange(Index,Values);
 end;
 
-procedure TThriftList_VImpl.InsertRange(Index: Integer;
+procedure TThriftListImpl.InsertRange(Index: Integer;
   const Values: array of Pointer);
 begin
   FList.InsertRange(Index,Values);
 end;
 
-procedure TThriftList_VImpl.InsertRange(Index: Integer;
+procedure TThriftListImpl.InsertRange(Index: Integer;
   const Values: array of IInterface);
 begin
   FList.InsertRange(Index,Values);
 end;
 
-function TThriftList_VImpl.IndexOf(const Value: TObject;
+function TThriftListImpl.IndexOf(const Value: TObject;
   const LastIndex: boolean): integer;
 begin
   result:=FList.IndexOf(Value,LastIndex);
 end;
 
-function TThriftList_VImpl.IndexOf(Value: TValueVariant;
+function TThriftListImpl.IndexOf(Value: TAllValue;
   const LastIndex: boolean): integer;
 begin
   result:=FList.IndexOf(Value,LastIndex);
 end;
 
-function TThriftList_VImpl.IndexOf(const Value: Variant;
+function TThriftListImpl.IndexOf(const Value: Variant;
   const LastIndex: boolean): integer;
 begin
   result:=FList.IndexOf(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Insert(Index: Integer; const Value: TValueVariant);
+procedure TThriftListImpl.Insert(Index: Integer; const Value: TAllValue);
 begin
   FList.Insert(index,Value);
 end;
 
-function TThriftList_VImpl.Last: TValueVariant;
+function TThriftListImpl.Last: TAllValue;
 begin
   result:=FList.Last;
 end;
 
-function TThriftList_VImpl.LastIndexOf(const Value: Pointer): integer;
+function TThriftListImpl.LastIndexOf(const Value: Pointer): integer;
 begin
   result:=FList.LastIndexOf(Value);
 end;
 
-function TThriftList_VImpl.LastIndexOf(const Value: IInterface): integer;
+function TThriftListImpl.LastIndexOf(const Value: IInterface): integer;
 begin
   result:=FList.LastIndexOf(Value);
 end;
 
-function TThriftList_VImpl.LastIndexOf(const Value: TObject): integer;
+function TThriftListImpl.LastIndexOf(const Value: TObject): integer;
 begin
   result:=FList.LastIndexOf(Value);
 end;
 
-function TThriftList_VImpl.LastIndexOf(Value: TValueVariant): integer;
+function TThriftListImpl.LastIndexOf(Value: TAllValue): integer;
 begin
   result:=FList.LastIndexOf(Value);
 end;
 
-function TThriftList_VImpl.LastIndexOf(const Value: Variant): integer;
+function TThriftListImpl.LastIndexOf(const Value: Variant): integer;
 begin
   result:=FList.LastIndexOf(Value);
 end;
 
-procedure TThriftList_VImpl.Move(CurIndex, NewIndex: Integer);
+procedure TThriftListImpl.Move(CurIndex, NewIndex: Integer);
 begin
 
 end;
 
-procedure TThriftList_VImpl.Remove(const Value: Variant;
+procedure TThriftListImpl.Remove(const Value: Variant;
   const LastIndex: boolean);
 begin
   FList.Remove(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Remove(const value: TValueVariant;
+procedure TThriftListImpl.Remove(const value: TAllValue;
   const LastIndex: boolean);
 begin
   FList.Remove(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Remove(const Value: TObject;
+procedure TThriftListImpl.Remove(const Value: TObject;
   const LastIndex: boolean);
 begin
   FList.Remove(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Remove(const Value: IInterface;
+procedure TThriftListImpl.Remove(const Value: IInterface;
   const LastIndex: boolean);
 begin
   FList.Remove(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Remove(const Value: Pointer;
+procedure TThriftListImpl.Remove(const Value: Pointer;
   const LastIndex: boolean);
 begin
   FList.Remove(Value,LastIndex);
 end;
 
-procedure TThriftList_VImpl.Reverse;
+procedure TThriftListImpl.Reverse;
 begin
   FList.Reverse;
 end;
 
-procedure TThriftList_VImpl.SetCapacity(Value: Integer);
+procedure TThriftListImpl.SetCapacity(Value: Integer);
 begin
   FList.SetCapacity(Value);
 end;
 
-procedure TThriftList_VImpl.SetCount(Value: Integer);
+procedure TThriftListImpl.SetCount(Value: Integer);
 begin
   FList.SetCount(Value);
 end;
 
-procedure TThriftList_VImpl.SetItem(const Key: Integer; const Value: Variant);
+procedure TThriftListImpl.SetItem(const Key: Integer; const Value: Variant);
 begin
   FList.SetItem(Key,value);
 end;
 
-procedure TThriftList_VImpl.SetItemV(const Key: Integer;
-  const Value: TValueVariant);
+procedure TThriftListImpl.SetItemV(const Key: Integer;
+  const Value: TAllValue);
 begin
   FList.SetItemV(Key,value);
 end;
 
-procedure TThriftList_VImpl.Sort;
+procedure TThriftListImpl.Sort;
 begin
   FList.Sort;
 end;
 
-procedure TThriftList_VImpl.Sort(const AComparer: IuComparerValue_V);
+procedure TThriftListImpl.Sort(const AComparer: IuComparerValue);
 begin
   FList.Sort(AComparer);
 end;
 
-function TThriftList_VImpl.ToArray: TValueVariantArray;
+function TThriftListImpl.ToArray: TAllValueArray;
 begin
   result:=FList.ToArray;
 end;
 
-function TThriftList_VImpl.ToString: string;
+function TThriftListImpl.ToString: string;
 begin
 
 end;
 
-procedure TThriftList_VImpl.TrimExcess;
+procedure TThriftListImpl.TrimExcess;
 begin
   FList.TrimExcess;
 end;
 
 { TuDictionary_V_V }
 
-constructor TuDictionary_V_V.Create(ACapacity: Integer);
+constructor TuDictionary.Create(ACapacity: Integer);
 begin
   Create(ACapacity, nil);
 end;
 
-constructor TuDictionary_V_V.Create(const AComparer: IuEqualityComparerKey_V);
+constructor TuDictionary.Create(const AComparer: IuEqualityComparerValue);
 begin
   Create(0, AComparer);
 end;
 
-procedure TuDictionary_V_V.Add(const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TuDictionary.Add(const Key: TAllValue;
+  const Value: TAllValue);
 var
   index, hc: Integer;
 begin
@@ -1566,29 +2160,29 @@ begin
   DoAdd(Count, Key, Value);
 end;
 
-procedure TuDictionary_V_V.Add(const Key: TKeyVariant; const value: Variant);
+procedure TuDictionary.Add(const Key: TAllValue; const value: Variant);
 begin
-  add(key,TValueVariant.Create(value));
+  add(key,TAllValue.Create(value));
 end;
 
-procedure TuDictionary_V_V.Add(const Key: TKeyVariant; const value: TObject);
+procedure TuDictionary.Add(const Key: TAllValue; const value: TObject);
 begin
-  add(key,TValueVariant.Create(value));
+  add(key,TAllValue.Create(value));
 end;
 
-procedure TuDictionary_V_V.Add(const Key: TKeyVariant; const value: IInterface);
+procedure TuDictionary.Add(const Key: TAllValue; const value: IInterface);
 begin
-  add(key,TValueVariant.Create(value));
+  add(key,TAllValue.Create(value));
 end;
 
-procedure TuDictionary_V_V.AddOrSetValue(const Key: TKeyVariant;
+procedure TuDictionary.AddOrSetValue(const Key: TAllValue;
   const value: Variant);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-procedure TuDictionary_V_V.AddOrSetValue(const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TuDictionary.AddOrSetValue(const Key: TAllValue;
+  const Value: TAllValue);
 var
   index, hc: Integer;
 begin
@@ -1602,48 +2196,48 @@ begin
   DoAdd(index, Key, Value);
 end;
 
-procedure TuDictionary_V_V.AddOrSetValue(const Key: TKeyVariant;
+procedure TuDictionary.AddOrSetValue(const Key: TAllValue;
   const value: IInterface);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-procedure TuDictionary_V_V.AddOrSetValue(const Key: TKeyVariant;
+procedure TuDictionary.AddOrSetValue(const Key: TAllValue;
   const value: TObject);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-function TuDictionary_V_V.AsFloat(const Key: TKeyVariant): Double;
+function TuDictionary.AsFloat(const Key: TAllValue): Double;
 var
-it:TValueVariant;
+it:TAllValue;
 begin
   it:=GetItemV(Key);
   if assigned(it) then
     result:=it.AsFloat;
 end;
 
-function TuDictionary_V_V.AsInt(const Key: TKeyVariant): Integer;
+function TuDictionary.AsInt(const Key: TAllValue): Integer;
 var
-it:TValueVariant;
+it:TAllValue;
 begin
   it:=GetItemV(Key);
   if assigned(it) then
     result:=it.AsInt;
 end;
 
-function TuDictionary_V_V.AsIntf(const Key: TKeyVariant): IInterface;
+function TuDictionary.AsIntf(const Key: TAllValue): IInterface;
 var
-it:TValueVariant;
+it:TAllValue;
 begin
   it:=GetItemV(Key);
   if assigned(it) then
     result:=it.AsIntf;
 end;
 
-function TuDictionary_V_V.AsObj(const Key: TKeyVariant): TObject;
+function TuDictionary.AsObj(const Key: TAllValue): TObject;
 var
-it:TValueVariant;
+it:TAllValue;
 begin
   result:=nil;
   it:=GetItemV(Key);
@@ -1651,9 +2245,9 @@ begin
     result:=it.AsObj;
 end;
 
-function TuDictionary_V_V.AsPointer(const Key: TKeyVariant): Pointer;
+function TuDictionary.AsPointer(const Key: TAllValue): Pointer;
 var
-it:TValueVariant;
+it:TAllValue;
 begin
   result:=nil;
   it:=GetItemV(Key);
@@ -1661,9 +2255,9 @@ begin
     result:=it.AsPointer;
 end;
 
-function TuDictionary_V_V.AsString(const Key: TKeyVariant): string;
+function TuDictionary.AsString(const Key: TAllValue): string;
 var
-it:TValueVariant;
+it:TAllValue;
 begin
   result:='';
   it:=GetItemV(Key);
@@ -1671,24 +2265,15 @@ begin
     result:=it.AsString;
 end;
 
-procedure TuDictionary_V_V.Clear;
+procedure TuDictionary.Clear;
 var
   i: Integer;
-  oldItemsk: TKeyVariantArray;
-  oldItemsv: TValueVariantArray;
 begin
-  for i := 0 to Count - 1 do
-  begin
-    fValue[i].Free;
-  end;
-  oldItemsv := fValue;
-  oldItemsk := fkey;
   FCount := 0;
-  SetLength(fValue, 0);
-  SetLength(fkey, 0);
+  _AllValueArray_Delete(fValue);
+  _AllValueArray_Delete(fkey);
   SetCapacity(0);
   FGrowThreshold := 0;
-
   for i := 0 to Count - 1 do
   begin
     //KeyNotify(oldItems[i].Key, cnRemoved);
@@ -1696,24 +2281,24 @@ begin
   end;
 end;
 
-function TuDictionary_V_V.ContainsKey(const Key: TKeyVariant): Boolean;
+function TuDictionary.ContainsKey(const Key: TAllValue): Boolean;
 begin
   result:=(GetBucketIndex(Key)>=0);
 end;
 
-constructor TuDictionary_V_V.Create(ACapacity: Integer;
-  const AComparer: IuEqualityComparerKey_V);
+constructor TuDictionary.Create(ACapacity: Integer;
+  const AComparer: IuEqualityComparerValue);
 begin
   inherited Create;
   if ACapacity < 0 then
     raise Exception.Create('Error: ACapacity less Zero');
   FComparer := AComparer;
   if FComparer = nil then
-    FComparer := TuComparerKey_V.DefaultEqual;
+    FComparer := TuComparerValue.DefaultEqual;
   SetCapacity(ACapacity);
 end;
 
-destructor TuDictionary_V_V.Destroy;
+destructor TuDictionary.Destroy;
 var
 i:integer;
 begin
@@ -1722,8 +2307,8 @@ begin
   inherited;
 end;
 
-procedure TuDictionary_V_V.DoAdd(Index: Integer; const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TuDictionary.DoAdd(Index: Integer; const Key: TAllValue;
+  const Value: TAllValue);
 begin
   fKey[Index]:= Key;
   fValue[Index]:= Value;
@@ -1733,35 +2318,33 @@ begin
   //ValueNotify(Value, cnAdded);
 end;
 
-function TuDictionary_V_V.DoRemove(const Key: TKeyVariant;
-  Notification: TuCollectionNotification): TValueVariant;
+function TuDictionary.DoRemove(const Key: TAllValue;
+  Notification: TuCollectionNotification): TAllValue;
 var
-  gap, index: Integer;
+  index: Integer;
 begin
   Result :=nil;
   index := GetBucketIndex(Key);
-  if index < 0 then  Exit;
+  _AllValueArray_DeleteI(fKey,index);
+  _AllValueArray_DeleteI(fvalue,index);
   Result := fvalue[index];
-
-  gap := index;
-  while index<Count do
+  if (Notification=cnRemoved) then
   begin
-    Inc(index);
-    fKey[gap]:=fKey[index];
-    fvalue[gap]:=fvalue[index];
-      gap := index;
-  end;
+    Result.Free;
+    Result:=nil;
 
+  end;
+  
   Dec(FCount);
   //KeyNotify(Key, Notification);
   //ValueNotify(Result, Notification);
 
 end;
 
-procedure TuDictionary_V_V.DoSetValue(Index: Integer;
-  const Value: TValueVariant);
+procedure TuDictionary.DoSetValue(Index: Integer;
+  const Value: TAllValue);
 var
-  oldValue: TValueVariant;
+  oldValue: TAllValue;
 begin
   oldValue := Fvalue[Index];
   Fvalue[Index]:= Value;
@@ -1769,7 +2352,12 @@ begin
   //ValueNotify(Value, cnAdded);
 end;
 
-function TuDictionary_V_V.ExtractPair(const Key: TKeyVariant): TPair_V_V;
+function TuDictionary.ExtractPair(const Key: Variant): TAllValuePair;
+begin
+  result:=ExtractPair(_AllValue(Key));
+end;
+
+function TuDictionary.ExtractPair(const Key: TAllValue): TAllValuePair;
 var
   index: Integer;
 begin
@@ -1777,12 +2365,12 @@ begin
   index := GetBucketIndex(Key);
   if index >=0 then
   begin
-    Result := TPair_V_V.Create(Key, DoRemove(Key, cnExtracted));
+    Result := TAllValuePair.Create(Key, DoRemove(Key, cnExtracted));
   end;
 
 end;
 
-function TuDictionary_V_V.GetBucketIndex(const Key: TKeyVariant): Integer;
+function TuDictionary.GetBucketIndex(const Key: TAllValue): Integer;
 var
 i:integer;
 begin
@@ -1800,12 +2388,12 @@ begin
   
 end;
 
-function TuDictionary_V_V.GetCapacity: Integer;
+function TuDictionary.GetCapacity: Integer;
 begin
   Result := Length(fvalue);
 end;
 
-function TuDictionary_V_V.GetItemV(const Key: TKeyVariant): TValueVariant;
+function TuDictionary.GetItemV(const Key: TAllValue): TAllValue;
 var
   index: Integer;
 begin
@@ -1816,26 +2404,26 @@ begin
   Result := FValue[index];
 end;
 
-function TuDictionary_V_V.GetPair(const index: Cardinal): TPair_V_V;
+function TuDictionary.GetPair(const index: Cardinal): TAllValuePair;
 begin
   result:=nil;
   if (index >=0) and (Index<Count) then
   begin
-    Result := TPair_V_V.Create(fKey[index], fvalue[index]);
+    Result := TAllValuePair.Create(fKey[index], fvalue[index]);
   end;
 end;
 
-function TuDictionary_V_V.GetItem(const Key: TKeyVariant): Variant;
+function TuDictionary.GetItem(const Key: TAllValue): Variant;
 var
   i: Integer;
 begin
   i := GetBucketIndex(Key);
   if i < 0 then
     raise EListError.Create('Error: Not Found key');
-  Result := FValue[i].GetValueV;
+  Result := FValue[i].Value;
 end;
 
-procedure TuDictionary_V_V.Grow;
+procedure TuDictionary.Grow;
 var
   newCap: Integer;
 begin
@@ -1845,39 +2433,25 @@ begin
   Rehash(newCap);
 end;
 
-procedure TuDictionary_V_V.Rehash(NewCapPow2: Integer);
-var
-  oldItems, newItems: TValueVariantArray;
-  koldItems, knewItems: TKeyVariantArray;
-  i: Integer;
+procedure TuDictionary.Rehash(NewCapPow2: Integer);
 begin
   if NewCapPow2 = Length(fKey) then
     Exit
   else if NewCapPow2 < 0 then
     OutOfMemoryError;
-
-  oldItems := fValue;
-  koldItems := fkey;
-  SetLength(newItems, NewCapPow2);
-  SetLength(knewItems, NewCapPow2);
-
-  fKey := knewItems;
-  fValue := newItems;
-  FGrowThreshold := NewCapPow2 shr 1 + NewCapPow2 shr 2; // 75%
-
-  for i := 0 to Length(oldItems) - 1 do
-  begin
-    fKey[i]:=koldItems[i];
-    fValue[i]:=oldItems[i];
-  end;
-  SetLength(oldItems, 0);
-  SetLength(koldItems, 0);
+  fKey := _AllValueArray_Grow(fKey,NewCapPow2);
+  fValue := _AllValueArray_Grow(fValue,NewCapPow2);
 end;
 
 
-procedure TuDictionary_V_V.Remove(const Key: TKeyVariant);
+procedure TuDictionary.Remove(const Key: Variant);
+begin
+  Remove(_AllValue(Key));
+end;
+
+procedure TuDictionary.Remove(const Key: TAllValue);
 var
-t:TValueVariant;
+t:TAllValue;
 begin
   t:=DoRemove(Key, cnRemoved);
   if assigned(t) then
@@ -1885,7 +2459,7 @@ begin
 
 end;
 
-procedure TuDictionary_V_V.SetCapacity(ACapacity: Integer);
+procedure TuDictionary.SetCapacity(ACapacity: Integer);
 var
   newCap: Integer;
 begin
@@ -1903,8 +2477,8 @@ begin
   end
 end;
 
-procedure TuDictionary_V_V.SetItemV(const Key: TKeyVariant;
-  const Value: TValueVariant);
+procedure TuDictionary.SetItemV(const Key: TAllValue;
+  const Value: TAllValue);
 var
 index:integer;
 begin
@@ -1920,7 +2494,7 @@ begin
   end;
 end;
 
-procedure TuDictionary_V_V.SetItem(const Key: TKeyVariant;
+procedure TuDictionary.SetItem(const Key: TAllValue;
   const Value: Variant);
 var
 i:integer;
@@ -1933,17 +2507,17 @@ begin
   end
   else
   begin
-    FValue[i]:=TValueVariant.Create(Value);
+    FValue[i]:=TAllValue.Create(Value);
   end;
 end;
 
-procedure TuDictionary_V_V.TrimExcess;
+procedure TuDictionary.TrimExcess;
 begin
   SetCapacity(Count + 1);
 end;
 
-function TuDictionary_V_V.TryGetValue(const Key: TKeyVariant;
-  out Value: TValueVariant): Boolean;
+function TuDictionary.TryGetValue(const Key: TAllValue;
+  out Value: TAllValue): Boolean;
 var
   index: Integer;
 begin
@@ -1955,10 +2529,10 @@ begin
     Value := nil;
 end;
 
-function TuDictionary_V_V.TryGetValueIntf(const Key: TKeyVariant;
+function TuDictionary.TryGetValueIntf(const Key: TAllValue;
   out Value: IInterface): Boolean;
 var
-t: TValueVariant;
+t: TAllValue;
 begin
   Value:=nil;
   result:=TryGetValue(Key,t);
@@ -1968,10 +2542,10 @@ begin
   end;
 end;
 
-function TuDictionary_V_V.TryGetValueObj(const Key: TKeyVariant;
+function TuDictionary.TryGetValueObj(const Key: TAllValue;
   out Value: TObject): Boolean;
 var
-t: TValueVariant;
+t: TAllValue;
 begin
   Value:=nil;
   result:=TryGetValue(Key,t);
@@ -1981,10 +2555,10 @@ begin
   end;
 end;
 
-function TuDictionary_V_V.TryGetValuePointer(const Key: TKeyVariant;
+function TuDictionary.TryGetValuePointer(const Key: TAllValue;
   out Value: Pointer): Boolean;
 var
-t: TValueVariant;
+t: TAllValue;
 begin
   Value:=nil;
   result:=TryGetValue(Key,t);
@@ -1994,10 +2568,10 @@ begin
   end;
 end;
 
-function TuDictionary_V_V.TryGetValueString(const Key: TKeyVariant;
+function TuDictionary.TryGetValueString(const Key: TAllValue;
   out Value: string): Boolean;
 var
-t: TValueVariant;
+t: TAllValue;
 begin
   Value:='';
   result:=TryGetValue(Key,t);
@@ -2008,81 +2582,167 @@ begin
 
 end;
 
-procedure TuDictionary_V_V.Add(const Key: TKeyVariant; const value: Pointer);
+procedure TuDictionary.Add(const Key: TAllValue; const value: Pointer);
 begin
-  add(key,TValueVariant.Create(Pointer(value)));
+  add(key,TAllValue.Create(Pointer(value)));
 end;
 
-procedure TuDictionary_V_V.AddOrSetValue(const Key: TKeyVariant;
+procedure TuDictionary.AddOrSetValue(const Key: TAllValue;
   const value: Pointer);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-{ TuComparerKey_V }
 
-class function TuComparerKey_V.Default: IuComparerKey_V;
+procedure TuDictionary.Add(const Key: Variant; const value: IInterface);
 begin
-  result:=IuComparerKey_V(TuComparerKey_VDefault.Create);
+  Add(_AllValue(Key),value);
 end;
 
-{ YuComparerKey_VDefault }
-
-function TuComparerKey_VDefault.Compare(const Left,
-  Right: TKeyVariant): Integer;
+procedure TuDictionary.Add(const Key: Variant; const value: TObject);
 begin
-  result:=Variant_Compare_Default(Left,Right);
+  Add(_AllValue(Key),value);
 end;
 
-class function TuComparerKey_V.DefaultEqual: IuEqualityComparerKey_V;
+procedure TuDictionary.Add(const Key, value: Variant);
 begin
-  result:=IuEqualityComparerKey_V(TIuEqualityComparerKey_VDefault.Create);
+  Add(_AllValue(Key),value);
 end;
 
-{ TIuEqualityComparerKey_VVDefault }
-
-function TIuEqualityComparerKey_VDefault.Equals(const Left,
-  Right: TKeyVariant): Boolean;
+procedure TuDictionary.Add(const Key: Variant; const value: Pointer);
 begin
-  result:=(Variant_Compare_Default(Left,Right)=0);
+  Add(_AllValue(Key),value);
 end;
 
+procedure TuDictionary.Add(const Key: Variant; const Value: TAllValue);
+begin
+  Add(_AllValue(Key),value);
+end;
+
+procedure TuDictionary.AddOrSetValue(const Key: Variant;
+  const value: Pointer);
+begin
+  AddOrSetValue(_AllValue(Key),value);
+end;
+
+procedure TuDictionary.AddOrSetValue(const Key: Variant;
+  const Value: TAllValue);
+begin
+  AddOrSetValue(_AllValue(Key),value);
+end;
+
+procedure TuDictionary.AddOrSetValue(const Key, value: Variant);
+begin
+  AddOrSetValue(_AllValue(Key),value);
+end;
+
+procedure TuDictionary.AddOrSetValue(const Key: Variant;
+  const value: IInterface);
+begin
+  AddOrSetValue(_AllValue(Key),value);
+end;
+
+procedure TuDictionary.AddOrSetValue(const Key: Variant;
+  const value: TObject);
+begin
+  AddOrSetValue(_AllValue(Key),value);
+end;
+
+function TuDictionary.AsFloat(const Key: Variant): Double;
+begin
+  result:=  AsFloat(_AllValue(Key));
+end;
+
+function TuDictionary.AsInt(const Key: Variant): Integer;
+begin
+  result:=  AsInt(_AllValue(Key));
+end;
+
+function TuDictionary.AsIntf(const Key: Variant): IInterface;
+begin
+  result:=  AsIntf(_AllValue(Key));
+end;
+
+function TuDictionary.AsObj(const Key: Variant): TObject;
+begin
+  result:=  AsObj(_AllValue(Key));
+end;
+
+function TuDictionary.AsPointer(const Key: Variant): Pointer;
+begin
+  result:=  AsPointer(_AllValue(Key));
+end;
+
+function TuDictionary.AsString(const Key: Variant): string;
+begin
+  result:=  AsString(_AllValue(Key));
+end;
+
+function TuDictionary.TryGetValue(const Key: Variant;
+  out Value: TAllValue): Boolean;
+begin
+  result:=  TryGetValue(_AllValue(Key),Value);
+end;
+
+function TuDictionary.TryGetValueIntf(const Key: Variant;
+  out Value: IInterface): Boolean;
+begin
+  result:=  TryGetValueIntf(_AllValue(Key),Value);
+end;
+
+function TuDictionary.TryGetValueObj(const Key: Variant;
+  out Value: TObject): Boolean;
+begin
+  result:=  TryGetValueObj(_AllValue(Key),Value);
+end;
+
+function TuDictionary.TryGetValuePointer(const Key: Variant;
+  out Value: Pointer): Boolean;
+begin
+  result:=  TryGetValuePointer(_AllValue(Key),Value);
+end;
+
+function TuDictionary.TryGetValueString(const Key: Variant;
+  out Value: string): Boolean;
+begin
+  result:=  TryGetValueString(_AllValue(Key),Value);
+end;
 
 { TuList_V }
 
-procedure TuList_V.Add(const value: Pointer);
+procedure TuList.Add(const value: Pointer);
 begin
-  add(TValueVariant.Create(value));
+  add(TAllValue.Create(value));
 end;
 
-procedure TuList_V.Add(const Value: TValueVariant);
+procedure TuList.Add(const Value: TAllValue);
 begin
   if (FCount >= FGrowThreshold) or (FCount>=High(fvalue)) then
     Grow;
   DoAdd(Count, Value);
 end;
 
-procedure TuList_V.Add(const value: IInterface);
+procedure TuList.Add(const value: IInterface);
 begin
-  add(TValueVariant.Create(value));
+  add(TAllValue.Create(value));
 end;
 
-procedure TuList_V.Add( const value: Variant);
+procedure TuList.Add( const value: Variant);
 begin
-  add(TValueVariant.Create(value));
+  add(TAllValue.Create(value));
 end;
 
-procedure TuList_V.Add(const value: TObject);
+procedure TuList.Add(const value: TObject);
 begin
-  add(TValueVariant.Create(value));
+  add(TAllValue.Create(value));
 end;
 
-procedure TuList_V.AddOrSetValue(const Key: integer; const value: Pointer);
+procedure TuList.AddOrSetValue(const Key: integer; const value: Pointer);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-procedure TuList_V.AddRange(const Values: array of Variant);
+procedure TuList.AddRange(const Values: array of Variant);
 var
 i,n:integer;
 begin
@@ -2092,7 +2752,7 @@ begin
     Add(Values[i]);
 end;
 
-procedure TuList_V.AddRange(const Values: array of TValueVariant);
+procedure TuList.AddRange(const Values: array of TAllValue);
 var
 i,n:integer;
 begin
@@ -2102,7 +2762,7 @@ begin
     Add(Values[i]);
 end;
 
-procedure TuList_V.AddRange(const Values: array of Pointer);
+procedure TuList.AddRange(const Values: array of Pointer);
 var
 i,n:integer;
 begin
@@ -2112,7 +2772,7 @@ begin
     Add(Values[i]);
 end;
 
-procedure TuList_V.AddRange(const Values: array of IInterface);
+procedure TuList.AddRange(const Values: array of IInterface);
 var
 i,n:integer;
 begin
@@ -2122,13 +2782,13 @@ begin
     Add(Values[i]);
 end;
 
-procedure TuList_V.AddOrSetValue(const Key: Integer; const value: Variant);
+procedure TuList.AddOrSetValue(const Key: Integer; const value: Variant);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-procedure TuList_V.AddOrSetValue(const Key: Integer;
-  const Value: TValueVariant);
+procedure TuList.AddOrSetValue(const Key: Integer;
+  const Value: TAllValue);
 var
   index:Integer;
 begin
@@ -2142,94 +2802,94 @@ begin
   DoAdd(index, Value);
 end;
 
-procedure TuList_V.AddOrSetValue(const Key: Integer; const value: TObject);
+procedure TuList.AddOrSetValue(const Key: Integer; const value: TObject);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-procedure TuList_V.AddOrSetValue(const Key: Integer;
+procedure TuList.AddOrSetValue(const Key: Integer;
   const value: IInterface);
 begin
-  AddOrSetValue(key,TValueVariant.Create(value));
+  AddOrSetValue(key,TAllValue.Create(value));
 end;
 
-function TuList_V.AsFloat(const Key: Integer): Double;
+function TuList.AsFloat(const Key: Integer): Double;
 begin
   result:=GetItemV(Key).AsFloat;
 end;
 
-function TuList_V.AsInt(const Key: Integer): Integer;
+function TuList.AsInt(const Key: Integer): Integer;
 begin
   result:=GetItemV(Key).AsInt;
 end;
 
-function TuList_V.AsIntf(const Key: Integer): IInterface;
+function TuList.AsIntf(const Key: Integer): IInterface;
 begin
   result:=GetItemV(Key).AsIntf;
 end;
 
-function TuList_V.AsObj(const Key: Integer): TObject;
+function TuList.AsObj(const Key: Integer): TObject;
 begin
   result:=GetItemV(Key).AsPointer;
 end;
 
-function TuList_V.AsPointer(const Key: Integer): Pointer;
+function TuList.AsPointer(const Key: Integer): Pointer;
 begin
   result:=GetItemV(Key).AsPointer;
 end;
 
-function TuList_V.AsString(const Key: Integer): string;
+function TuList.AsString(const Key: Integer): string;
 begin
   result:=GetItemV(Key).AsString;
 end;
 
-function TuList_V.BinarySearch(const Item: TObject;
+function TuList.BinarySearch(const Item: TObject;
   out Index: Integer): Boolean;
 var
-Itemt:TValueVariant;
+Itemt:TAllValue;
 begin
   Itemt.Create(Item,true);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
 
-function TuList_V.BinarySearch(const Item: Variant;
+function TuList.BinarySearch(const Item: Variant;
   out Index: Integer): Boolean;
 var
-Itemt:TValueVariant;
+Itemt:TAllValue;
 begin
   Itemt.Create(Item);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
-function TuList_V.BinarySearch(const Item: IInterface;
+function TuList.BinarySearch(const Item: IInterface;
   out Index: Integer): Boolean;
 var
-Itemt:TValueVariant;
+Itemt:TAllValue;
 begin
   Itemt.Create(Item);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
-function TuList_V.BinarySearch(const Item: TValueVariant; out Index: Integer;
-  const AComparer: IuComparerValue_V): Boolean;
+function TuList.BinarySearch(const Item: TAllValue; out Index: Integer;
+  const AComparer: IuComparerValue): Boolean;
 begin
   result:=Array_AllValue_BinarySearch(fvalue,Item,Index,AComparer);
 end;
 
-function TuList_V.BinarySearch(const Item: Pointer;
+function TuList.BinarySearch(const Item: Pointer;
   out Index: Integer): Boolean;
 var
-Itemt:TValueVariant;
+Itemt:TAllValue;
 begin
   Itemt.Create(Item);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
-procedure TuList_V.Clear;
+procedure TuList.Clear;
 var
   i: Integer;
-  oldItemsv: TValueVariantArray;
+  oldItemsv: TAllValueArray;
 begin
   for i := 0 to FCount - 1 do
   begin
@@ -2248,32 +2908,32 @@ begin
   end;
 end;
 
-function TuList_V.Contains(const Value: Pointer): boolean;
+function TuList.Contains(const Value: Pointer): boolean;
 begin
   result:=(IndexOf(Value)>=0);
 end;
 
-function TuList_V.Contains(const Value: IInterface): boolean;
+function TuList.Contains(const Value: IInterface): boolean;
 begin
   result:=(IndexOf(Value)>=0);
 end;
 
-function TuList_V.Contains(const Value: TObject): boolean;
+function TuList.Contains(const Value: TObject): boolean;
 begin
   result:=(IndexOf(Value)>=0);
 end;
 
-function TuList_V.Contains(Value: TValueVariant): boolean;
+function TuList.Contains(Value: TAllValue): boolean;
 begin
   result:=(IndexOf(Value)>=0);
 end;
 
-function TuList_V.Contains(const Value: Variant): boolean;
+function TuList.Contains(const Value: Variant): boolean;
 begin
   result:=(IndexOf(Value)>=0);
 end;
 
-constructor TuList_V.Create(ACapacity: Integer);
+constructor TuList.Create(ACapacity: Integer);
 begin
   inherited Create;
   if ACapacity < 0 then
@@ -2281,18 +2941,18 @@ begin
   SetCapacity(ACapacity);
 end;
 
-procedure TuList_V.Delete(Index: Integer);
+procedure TuList.Delete(Index: Integer);
 var
-t:TValueVariant;
+t:TAllValue;
 begin
   t:=DoRemove(Index, cnRemoved);
   if assigned(t) then
     t.Free;
 end;
 
-procedure TuList_V.DeleteRange(AIndex, ACount: Integer);
+procedure TuList.DeleteRange(AIndex, ACount: Integer);
 var
-  newItems: array of TValueVariant;
+  newItems: array of TAllValue;
   FCountt,tailCount, i1,I: Integer;
 begin
   if (AIndex < 0) or (ACount < 0) or (AIndex + ACount > Count)
@@ -2325,22 +2985,22 @@ begin
   FCount:=FCountt;
 end;
 
-destructor TuList_V.Destroy;
+destructor TuList.Destroy;
 begin
   if Count<=0 then exit;
   Clear;
   inherited;
 end;
 
-procedure TuList_V.DoAdd(Index: Integer; const Value: TValueVariant);
+procedure TuList.DoAdd(Index: Integer; const Value: TAllValue);
 begin
   fValue[Index]:= Value;
   Inc(FCount);
 
 end;
 
-function TuList_V.DoRemove(const Key: integer;
-  Notification: TuCollectionNotification): TValueVariant;
+function TuList.DoRemove(const Key: integer;
+  Notification: TuCollectionNotification): TAllValue;
 var
   gap, index: Integer;
 begin
@@ -2362,9 +3022,9 @@ begin
 
 end;
 
-procedure TuList_V.DoSetValue(Index: Integer; const Value: TValueVariant);
+procedure TuList.DoSetValue(Index: Integer; const Value: TAllValue);
 var
-  oldValue: TValueVariant;
+  oldValue: TAllValue;
 begin
   if (Index<0) or (Index>=count) then exit;
   oldValue := Fvalue[Index];
@@ -2373,9 +3033,9 @@ begin
   //ValueNotify(Value, cnAdded);
 end;
 
-procedure TuList_V.Exchange(Index1, Index2: Integer);
+procedure TuList.Exchange(Index1, Index2: Integer);
 var
-v:TValueVariant;
+v:TAllValue;
 begin
   if (Index1=Index2) then exit;
   if (Index1<0) or (Index1>=Count) then exit;
@@ -2387,19 +3047,19 @@ begin
 
 end;
 
-function TuList_V.First: TValueVariant;
+function TuList.First: TAllValue;
 begin
   result:=nil;
   if (Count<0) then exit;
   result:=fvalue[0];
 end;
 
-function TuList_V.GetCapacity: Integer;
+function TuList.GetCapacity: Integer;
 begin
   Result := Length(fvalue);
 end;
 
-procedure TuList_V.SetCount(Value: Integer);
+procedure TuList.SetCount(Value: Integer);
 begin
   if Value < 0 then
     raise Exception.Create('Error: Count less Zero');
@@ -2410,21 +3070,21 @@ begin
   FCount := Value;
 end;
 
-function TuList_V.GetItem(const Key: integer): Variant;
+function TuList.GetItem(const Key: integer): Variant;
 begin
   if (Key < 0) or (Key>=Count) then
     raise EListError.Create('Error: Not Found key');
-  Result := FValue[Key].GetValueV;
+  Result := FValue[Key].Value;
 end;
 
-function TuList_V.GetItemV(const Key: integer): TValueVariant;
+function TuList.GetItemV(const Key: integer): TAllValue;
 begin
   if (Key < 0) or (Key>=Count) then
     raise EListError.Create('Error: Not Found key');
   Result := FValue[Key];
 end;
 
-procedure TuList_V.Grow(const ACount: Integer);
+procedure TuList.Grow(const ACount: Integer);
 var
   newCap: Integer;
 begin
@@ -2438,7 +3098,7 @@ begin
   Rehash(newCap);
 end;
 
-procedure TuList_V.GrowCheck(ACount: Integer);
+procedure TuList.GrowCheck(ACount: Integer);
 begin
   if ACount > Length(fValue) then
     Grow
@@ -2446,33 +3106,22 @@ begin
     OutOfMemoryError;
 end;
 
-procedure TuList_V.Rehash(NewCapPow2: Integer);
+procedure TuList.Rehash(NewCapPow2: Integer);
 var
-  oldItems, newItems: TValueVariantArray;
   i: Integer;
 begin
   if NewCapPow2 = Length(fvalue) then
     Exit
   else if NewCapPow2 < 0 then
     OutOfMemoryError;
+  fValue := _AllValueArray_Grow(fValue,NewCapPow2);
 
-  oldItems := fValue;
-  SetLength(newItems, NewCapPow2);
-
-  fValue := newItems;
-  FGrowThreshold := NewCapPow2 shr 1 + NewCapPow2 shr 2; // 75%
-
-  for i := 0 to Length(oldItems) - 1 do
-  begin
-    fValue[i]:=oldItems[i];
-  end;
-  SetLength(oldItems, 0);
 end;
 
 
-procedure TuList_V.Remove(const Value: TObject; const LastIndex: boolean);
+procedure TuList.Remove(const Value: TObject; const LastIndex: boolean);
 var
-t:TValueVariant;
+t:TAllValue;
 Key:integer;
 begin
   Key:=IndexOf(value,LastIndex);
@@ -2486,9 +3135,9 @@ begin
 
 end;
 
-procedure TuList_V.Remove(const Value: Variant; const LastIndex: boolean);
+procedure TuList.Remove(const Value: Variant; const LastIndex: boolean);
 var
-t:TValueVariant;
+t:TAllValue;
 Key:integer;
 begin
   Key:=IndexOf(value,LastIndex);
@@ -2500,25 +3149,9 @@ begin
   end;
 end;
 
-procedure TuList_V.Remove(const Value: IInterface; const LastIndex: boolean);
+procedure TuList.Remove(const Value: IInterface; const LastIndex: boolean);
 var
-t:TValueVariant;
-Key:integer;
-begin
-  Key:=IndexOf(value,LastIndex);
-  if (Key>=0) then
-  begin
-    t:=DoRemove(Key, cnRemoved);
-    if assigned(t) then
-      t.Free;
-  end;
-
-
-end;
-
-procedure TuList_V.Remove(const Value: Pointer; const LastIndex: boolean);
-var
-t:TValueVariant;
+t:TAllValue;
 Key:integer;
 begin
   Key:=IndexOf(value,LastIndex);
@@ -2532,9 +3165,25 @@ begin
 
 end;
 
-procedure TuList_V.Remove(const value:TValueVariant;const LastIndex:boolean);
+procedure TuList.Remove(const Value: Pointer; const LastIndex: boolean);
 var
-t:TValueVariant;
+t:TAllValue;
+Key:integer;
+begin
+  Key:=IndexOf(value,LastIndex);
+  if (Key>=0) then
+  begin
+    t:=DoRemove(Key, cnRemoved);
+    if assigned(t) then
+      t.Free;
+  end;
+
+
+end;
+
+procedure TuList.Remove(const value:TAllValue;const LastIndex:boolean);
+var
+t:TAllValue;
 Key:integer;
 begin
   Key:=IndexOf(value,LastIndex);
@@ -2547,9 +3196,9 @@ begin
 
 end;
 
-procedure TuList_V.Reverse;
+procedure TuList.Reverse;
 var
-  tmp: TValueVariant;
+  tmp: TAllValue;
   b, e: Integer;
 begin
   b := 0;
@@ -2564,7 +3213,7 @@ begin
   end;
 end;
 
-procedure TuList_V.SetCapacity(ACapacity: Integer);
+procedure TuList.SetCapacity(ACapacity: Integer);
 var
   newCap: Integer;
 begin
@@ -2583,14 +3232,14 @@ begin
 end;
 
 
-procedure TuList_V.SetItem(const Key: Integer; const Value: Variant);
+procedure TuList.SetItem(const Key: Integer; const Value: Variant);
 begin
   if (Key < 0) or (Key>=Count) then
     raise EListError.Create('Error: Not Found key');
-  FValue[Key]:=TValueVariant.Create(Value);
+  FValue[Key]:=TAllValue.Create(Value);
 end;
 
-procedure TuList_V.SetItemV(const Key: integer; const Value: TValueVariant);
+procedure TuList.SetItemV(const Key: integer; const Value: TAllValue);
 begin
   if (Key < 0) or (Key>=Count) then
     raise EListError.Create('Error: Not Found key');
@@ -2598,27 +3247,43 @@ begin
 
 end;
 
-procedure TuList_V.Sort;
+procedure TuList.Sort;
 begin
   Array_AllValue_Sort(fvalue,0,Count);
 end;
 
-procedure TuList_V.Sort(const AComparer: IuComparerValue_V);
+procedure TuList.Sort(const AComparer: IuComparerValue);
 begin
   Array_AllValue_Sort(fvalue, AComparer, 0, Count);
 end;
 
-function TuList_V.ToArray: TValueVariantArray;
+function TuList.ToArray: TAllValueArray;
 begin
   result:=fvalue;
 end;
 
-procedure TuList_V.TrimExcess;
+procedure TuList.TrimExcess;
 begin
   SetCapacity(Count + 1);
 end;
 
-function TuList_V.IndexOf(const Value: TObject;const LastIndex:boolean=false): integer;
+function TuList.IndexOf(const Value: TObject;const LastIndex:boolean=false): integer;
+var
+V: TAllValue;
+begin
+  V:=TAllValue.Create(Value);
+  result:=IndexOf(v,LastIndex);
+end;
+
+function TuList.IndexOf(const Value: Pointer;const LastIndex:boolean=false): integer;
+var
+V: TAllValue;
+begin
+  V:=TAllValue.Create(Value);
+  result:=IndexOf(v,LastIndex);
+end;
+
+function TuList.IndexOf(Value: TAllValue;const LastIndex:boolean=false): integer;
 var
 n,d,i:integer;
 begin
@@ -2633,7 +3298,7 @@ begin
     i:=n-1;
   end;
   repeat
-    if (fValue[i].GetType=avt_object) and (fValue[i].GetValueO=Value) then
+    if fValue[i].Hash=Value.Hash then
     begin
       result:=i;
       exit;
@@ -2642,112 +3307,30 @@ begin
   until (i>=0) and (i<n);
 end;
 
-function TuList_V.IndexOf(const Value: Pointer;const LastIndex:boolean=false): integer;
+function TuList.IndexOf(const Value: Variant;const LastIndex:boolean=false): integer;
 var
-n,d,i:integer;
+V: TAllValue;
 begin
-  result:=-1;
-  if (Count<=0) or(Value=nil) then exit;
-  d:=1;
-  i:=0;
-  n:=Count;
-  if (LastIndex) then
-  begin
-    d:=-1;
-    i:=n-1;
-  end;
-  repeat
-    if (fValue[i].GetType=avt_pointer) and (fValue[i].GetValueP=Value) then
-    begin
-      result:=i;
-      exit;
-    end;
-    i:=i+d;
-  until (i>=0) and (i<n);
+  V:=TAllValue.Create(Value);
+  result:=IndexOf(v,LastIndex);
 end;
 
-function TuList_V.IndexOf(Value: TValueVariant;const LastIndex:boolean=false): integer;
+
+
+function TuList.IndexOf(const Value: IInterface;const LastIndex:boolean=false): integer;
 var
-n,d,i:integer;
+V: TAllValue;
 begin
-  result:=-1;
-  if (Count<=0) or(not assigned(Value)) then exit;
-  d:=1;
-  i:=0;
-  n:=Count;
-  if (LastIndex) then
-  begin
-    d:=-1;
-    i:=n-1;
-  end;
-  repeat
-    if fValue[i]=Value then
-    begin
-      result:=i;
-      exit;
-    end;
-    i:=i+d;
-  until (i>=0) and (i<n);
+  V:=TAllValue.Create(Value);
+  result:=IndexOf(v,LastIndex);
 end;
 
-function TuList_V.IndexOf(const Value: Variant;const LastIndex:boolean=false): integer;
-var
-n,d,i:integer;
+procedure TuList.Insert(Index: Integer; const Value: Variant);
 begin
-  result:=-1;
-  if (Count<=0) or(VarIsEmpty(Value)) then exit;
-  d:=1;
-  i:=0;
-  n:=Count;
-  if (LastIndex) then
-  begin
-    d:=-1;
-    i:=n-1;
-  end;
-  repeat
-    if (fValue[i].GetType=avt_variants) and (VarType(fValue[i].GetValueV)=VarType(Value)) then
-    if (fValue[i].GetValueV=Value) then
-    begin
-      result:=i;
-      exit;
-    end;
-    i:=i+d;
-  until (i>=0) and (i<n);
+  Insert(Index,TAllValue.Create(value));
 end;
 
-
-
-function TuList_V.IndexOf(const Value: IInterface;const LastIndex:boolean=false): integer;
-var
-n,d,i:integer;
-begin
-  result:=-1;
-  if (Count<=0) or(Value=nil) then exit;
-  d:=1;
-  i:=0;
-  n:=Count;
-  if (LastIndex) then
-  begin
-    d:=-1;
-    i:=n-1;
-  end;
-  repeat
-    if (fValue[i].GetType=avt_interface) and (fValue[i].GetValueI=Value) then
-    begin
-      result:=i;
-      exit;
-    end;
-    i:=i+d;
-  until (i>=0) and (i<n);
-end;
-
-
-procedure TuList_V.Insert(Index: Integer; const Value: Variant);
-begin
-  Insert(Index,TValueVariant.Create(value));
-end;
-
-procedure TuList_V.Insert(Index: Integer; const Value: TValueVariant);
+procedure TuList.Insert(Index: Integer; const Value: TAllValue);
 var
 i:integer;
 begin
@@ -2764,12 +3347,12 @@ begin
   //Notify(Value, cnAdded);
 end;
 
-procedure TuList_V.Insert(Index: Integer; const Value: Pointer);
+procedure TuList.Insert(Index: Integer; const Value: Pointer);
 begin
-  Insert(Index,TValueVariant.Create(value));
+  Insert(Index,TAllValue.Create(value));
 end;
 
-procedure TuList_V.InsertRange(Index: Integer; const Values: array of Variant);
+procedure TuList.InsertRange(Index: Integer; const Values: array of Variant);
 var
 n,i:integer;
 begin
@@ -2785,8 +3368,8 @@ begin
   end;
 end;
 
-procedure TuList_V.InsertRange(Index: Integer;
-  const Values: array of TValueVariant);
+procedure TuList.InsertRange(Index: Integer;
+  const Values: array of TAllValue);
 var
 n,i:integer;
 begin
@@ -2802,7 +3385,7 @@ begin
   end;
 end;
 
-procedure TuList_V.InsertRange(Index: Integer; const Values: array of Pointer);
+procedure TuList.InsertRange(Index: Integer; const Values: array of Pointer);
 var
 n,i:integer;
 begin
@@ -2818,7 +3401,7 @@ begin
   end;
 end;
 
-procedure TuList_V.InsertRange(Index: Integer;
+procedure TuList.InsertRange(Index: Integer;
   const Values: array of IInterface);
 var
 n,i:integer;
@@ -2835,31 +3418,31 @@ begin
   end;
 end;
 
-procedure TuList_V.Insert(Index: Integer; const Value: IInterface);
+procedure TuList.Insert(Index: Integer; const Value: IInterface);
 begin
-  Insert(Index,TValueVariant.Create(value));
+  Insert(Index,TAllValue.Create(value));
 end;
 
-function TuList_V.LastIndexOf(const Value: Pointer): integer;
+function TuList.LastIndexOf(const Value: Pointer): integer;
 begin
   result:=IndexOf(Value,true);
 end;
 
-function TuList_V.Last: TValueVariant;
+function TuList.Last: TAllValue;
 begin
   result:=nil;
   if (FCount<0) then exit;
   result:=fvalue[FCount-1];
 end;
 
-function TuList_V.LastIndexOf(const Value: IInterface): integer;
+function TuList.LastIndexOf(const Value: IInterface): integer;
 begin
   result:=IndexOf(Value,true);
 end;
 {
 procedure TuList_V.Move(CurIndex, NewIndex: Integer);
 var
-  temp: TValueVariant;
+  temp: TAllValue;
 begin
   if CurIndex = NewIndex then
     Exit;
@@ -2879,94 +3462,56 @@ end;
 }
 
 
-function TuList_V.LastIndexOf(const Value: TObject): integer;
+function TuList.LastIndexOf(const Value: TObject): integer;
 begin
   result:=IndexOf(Value,true);
 end;
 
-function TuList_V.LastIndexOf(Value: TValueVariant): integer;
+function TuList.LastIndexOf(Value: TAllValue): integer;
 begin
   result:=IndexOf(Value,true);
 end;
 
-function TuList_V.LastIndexOf(const Value: Variant): integer;
+function TuList.LastIndexOf(const Value: Variant): integer;
 begin
   result:=IndexOf(Value,true);
 end;
 
 { TuComparerValue_VDefault }
 
-function TuComparerValue_VDefault.Compare(const Left,
-  Right: TValueVariant): Integer;
+function TuComparerValue_Default.Compare(const Left,
+  Right: TAllValue): Integer;
 begin
   result:=AllValue_Compare_Default(Left,Right);
 end;
 
 { TIuEqualityComparerValue_VDefault }
 
-function TIuEqualityComparerValue_VDefault.Equals(const Left,
-  Right: TValueVariant): Boolean;
+function TIuEqualityComparerValue_Default.Equals(const Left,
+  Right: TAllValue): Boolean;
 begin
   result:=AllValue_Compare_Default(Left,Right)=0;
 end;
 
 { TuComparerValue_V }
 
-class function TuComparerValue_V.Default: IuComparerValue_V;
+class function TuComparerValue.Default: IuComparerValue;
 begin
-  result:=IuComparerValue_V(TuComparerValue_VDefault.Create);
+  result:=IuComparerValue(TuComparerValue_Default.Create);
 end;
 
-class function TuComparerValue_V.DefaultEqual: IuEqualityComparerValue_V;
+class function TuComparerValue.DefaultEqual: IuEqualityComparerValue;
 begin
-  result:=IuEqualityComparerValue_V(TIuEqualityComparerValue_VDefault.Create);
+  result:=IuEqualityComparerValue(TIuEqualityComparerValue_Default.Create);
 end;
 
-class function TuComparerValue_V.DefaultInf: IuComparerValue_V;
-begin
-  result:=IuComparerValue_V(TuComparerValue_IntfDefault.Create);
-end;
-
-class function TuComparerValue_V.DefaultObj: IuComparerValue_V;
-begin
-  result:=IuComparerValue_V(TuComparerValue_ObjDefault.Create);
-end;
-
-class function TuComparerValue_V.DefaultPtr: IuComparerValue_V;
-begin
-  result:=IuComparerValue_V(TuComparerValue_PtrDefault.Create);
-end;
-
-{ TuComparerValue_PtrDefault }
-
-function TuComparerValue_PtrDefault.Compare(const Left,
-  Right: TValueVariant): Integer;
-begin
-  result:=AllValue_Compare_Default_Ptr(Left,Right);
-end;
-
-{ TuComparerValue_IntfDefault }
-
-function TuComparerValue_IntfDefault.Compare(const Left,
-  Right: TValueVariant): Integer;
-begin
-  result:=AllValue_Compare_Default_Intf(Left,Right);
-end;
-
-{ TuComparerValue_ObjDefault }
-
-function TuComparerValue_ObjDefault.Compare(const Left,
-  Right: TValueVariant): Integer;
-begin
-  result:=AllValue_Compare_Default_Obj(Left,Right);
-end;
 
 { TuStack_V }
 
-procedure TuStack_V.Clear;
+procedure TuStack.Clear;
 var
   i: Integer;
-  oldItemsv: TValueVariantArray;
+  oldItemsv: TAllValueArray;
 begin
   for i := 0 to FCount - 1 do
   begin
@@ -2986,10 +3531,10 @@ begin
 end;
 
 
-constructor TuStack_V.Create(Collection: TValueVariantArray);
+constructor TuStack.Create(Collection: TAllValueArray);
 var
 ACapacity:integer;
-item: TValueVariant;
+item: TAllValue;
 n,i:integer;
 begin
 inherited Create;
@@ -3013,24 +3558,24 @@ if Collection<>nil then
   end;
 end;
 
-destructor TuStack_V.Destroy;
+destructor TuStack.Destroy;
 begin
   if Count<=0 then exit;
   Clear;
   inherited;
 end;
 
-function TuStack_V.Extract: TValueVariant;
+function TuStack.Extract: TAllValue;
 begin
   result:=Pop;
 end;
 
-function TuStack_V.GetCapacity: Integer;
+function TuStack.GetCapacity: Integer;
 begin
   Result := Length(fvalue);
 end;
 
-procedure TuStack_V.Grow(const ACount: Integer);
+procedure TuStack.Grow(const ACount: Integer);
 var
   newCap: Integer;
 begin
@@ -3044,7 +3589,7 @@ begin
   Rehash(newCap);
 end;
 
-function TuStack_V.Peek: TValueVariant;
+function TuStack.Peek: TAllValue;
 begin
   if Count = 0 then
     raise EListError.Create('Unbalanced stack or queue operation');
@@ -3052,45 +3597,45 @@ begin
 
 end;
 
-function TuStack_V.PopP: Pointer;
+function TuStack.PopP: Pointer;
 var
-t:TValueVariant;
+t:TAllValue;
 begin
 t:=Pop;
 result:=nil;
 if (t<>nil) then
-  result:=t.GetValueP;
+  result:=t.ValuePtr;
 end;
 
-function TuStack_V.PopI: IInterface;
+function TuStack.PopI: IInterface;
 var
-t:TValueVariant;
+t:TAllValue;
 begin
 t:=Pop;
 if (t<>nil) then
-  result:=t.GetValueI;
+  result:=t.ValueIntf;
 end;
 
-function TuStack_V.PopV: Variant;
+function TuStack.PopV: Variant;
 var
-t:TValueVariant;
+t:TAllValue;
 begin
 t:=Pop;
 if (t<>nil) then
-  result:=t.GetValueV;
+  result:=t.Value;
 end;
 
-function TuStack_V.PopO: TObject;
+function TuStack.PopO: TObject;
 var
-t:TValueVariant;
+t:TAllValue;
 begin
 t:=Pop;
 result:=nil;
 if (t<>nil) then
-  result:=t.GetValueO;
+  result:=t.ValueObj;
 end;
 
-function TuStack_V.Pop: TValueVariant;
+function TuStack.Pop: TAllValue;
 begin
   Result := nil;
   if Count = 0 then
@@ -3101,7 +3646,7 @@ begin
   //Notify(Result, Notification);
 end;
 
-procedure TuStack_V.Push(const Value: TValueVariant);
+procedure TuStack.Push(const Value: TAllValue);
 begin
   if Count = Length(fValue) then
     Grow(Count+4);
@@ -3110,31 +3655,19 @@ begin
   //Notify(Value, cnAdded);
 end;
 
-procedure TuStack_V.Rehash(NewCapPow2: Integer);
+procedure TuStack.Rehash(NewCapPow2: Integer);
 var
-  oldItems, newItems: TValueVariantArray;
   i: Integer;
 begin
   if NewCapPow2 = Length(fvalue) then
     Exit
   else if NewCapPow2 < 0 then
     OutOfMemoryError;
-
-  oldItems := fValue;
-  SetLength(newItems, NewCapPow2);
-
-  fValue := newItems;
-  FGrowThreshold := NewCapPow2 shr 1 + NewCapPow2 shr 2; // 75%
-
-  for i := 0 to Length(oldItems) - 1 do
-  begin
-    fValue[i]:=oldItems[i];
-  end;
-  SetLength(oldItems, 0);
+  fValue := _AllValueArray_Grow(fValue,NewCapPow2);
 end;
 
 
-procedure TuStack_V.SetCapacity(ACapacity: Integer);
+procedure TuStack.SetCapacity(ACapacity: Integer);
 var
   newCap: Integer;
 begin
@@ -3153,34 +3686,33 @@ begin
 end;
 
 
-function TuStack_V.ToArray: TValueVariantArray;
+function TuStack.ToArray: TAllValueArray;
 begin
   result:=fValue;
 end;
 
-procedure TuStack_V.TrimExcess;
+procedure TuStack.TrimExcess;
 begin
   SetCapacity(Count + 1);
 end;
 
-procedure  TuStack_V.PushP(const Value: Pointer);
+procedure  TuStack.PushP(const Value: Pointer);
 begin
-  push(TValueVariant.Create(Value));
+  push(TAllValue.Create(Value));
 end;
 
-procedure TuStack_V.PushI(const Value: IInterface);
+procedure TuStack.PushI(const Value: IInterface);
 begin
-  push(TValueVariant.Create(Value));
+  push(TAllValue.Create(Value));
 end;
 
-procedure TuStack_V.PushV(const Value: Variant);
+procedure TuStack.PushV(const Value: Variant);
 begin
-  push(TValueVariant.Create(Value));
+  push(TAllValue.Create(Value));
 end;
 
-procedure TuStack_V.PushO(const Value: TObject);
+procedure TuStack.PushO(const Value: TObject);
 begin
-  push(TValueVariant.Create(Value));
+  push(TAllValue.Create(Value));
 end;
-
 end.

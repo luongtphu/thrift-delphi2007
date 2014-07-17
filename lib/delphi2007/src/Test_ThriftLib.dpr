@@ -5,7 +5,6 @@ program Test_ThriftLib;
 uses
   SysUtils,
   TypInfo,
-  uTypes in 'uTypes.pas',
   Thrift.Console in 'Thrift.Console.pas',
   Thrift in 'Thrift.pas',
   Thrift.Processor.Multiplex in 'Thrift.Processor.Multiplex.pas',
@@ -35,7 +34,7 @@ type
     procedure Process();
 
   public
-    processMap_: IThriftDictionary_V_V;
+    processMap_: IThriftDictionary;
     constructor Create;
     destructor Destroy;
     procedure Me1();
@@ -43,12 +42,12 @@ type
   end;
 var
 
-Value: TValueVariant;
+Value: TAllValue;
 { TTest }
 
 constructor TTest.Create;
 var
-Value:TValueVariant;
+Value:TAllValue;
 p1,p2:Pointer;
 pp1,pp2:TMe;
 begin
@@ -58,9 +57,9 @@ begin
   p2:=@Self;
   p1:=@pp1;
 //  p2:=@pp2;
-  processMap_ := TThriftDictionary_V_VImpl.Create;
-  processMap_.AddOrSetValue( 'Me1',TValueVariant.Create(Pointer(p1)));
-  processMap_.AddOrSetValue( 'Me2',TValueVariant.Create(Pointer(p2)));
+  processMap_ := TThriftDictionaryImpl.Create;
+  processMap_.AddOrSetValue( 'Me1',TAllValue.Create(Pointer(p1)));
+  processMap_.AddOrSetValue( 'Me2',TAllValue.Create(Pointer(p2)));
 
 end;
 
@@ -93,9 +92,9 @@ pp:TMe;
 begin
   if processMap_.TryGetValue('Me2',Value) then
   begin
-    PCardinal(@pp):=Value.GetValueP;
+    PCardinal(@pp):=Value.ValuePtr;
     pp();
-    Writeln('Value....',Cardinal(Value.GetValueP));
+    Writeln('Value....',Cardinal(Value.ValuePtr));
   end;
 
 end;

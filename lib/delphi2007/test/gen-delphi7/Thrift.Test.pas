@@ -109,7 +109,7 @@ type
     property __isset_Type_: Boolean read Get__isset_Type_;
   end;
 
-  TMapType = IThriftDictionary_V_V;
+  TMapType = IThriftDictionary;
 
   IBools = interface(IBase)
     function GetIm_true: Boolean;
@@ -372,13 +372,13 @@ type
   end;
 
   IInsanity = interface(IBase)
-    function GetUserMap: IThriftDictionary_V_V;
-    procedure SetUserMap( const Value: IThriftDictionary_V_V);
-    function GetXtructs: IThriftList_V;
-    procedure SetXtructs( const Value: IThriftList_V);
+    function GetUserMap: IThriftDictionary;
+    procedure SetUserMap( const Value: IThriftDictionary);
+    function GetXtructs: IThriftList;
+    procedure SetXtructs( const Value: IThriftList);
 
-    property UserMap: IThriftDictionary_V_V read GetUserMap write SetUserMap;
-    property Xtructs: IThriftList_V read GetXtructs write SetXtructs;
+    property UserMap: IThriftDictionary read GetUserMap write SetUserMap;
+    property Xtructs: IThriftList read GetXtructs write SetXtructs;
 
     function Get__isset_UserMap: Boolean;
     function Get__isset_Xtructs: Boolean;
@@ -389,16 +389,16 @@ type
 
   TInsanityImpl = class(TInterfacedObject, IBase, IInsanity)
   private
-    FUserMap: IThriftDictionary_V_V;
-    FXtructs: IThriftList_V;
+    FUserMap: IThriftDictionary;
+    FXtructs: IThriftList;
     
     F__isset_UserMap: Boolean;
     F__isset_Xtructs: Boolean;
     
-    function GetUserMap: IThriftDictionary_V_V;
-    procedure SetUserMap( const Value: IThriftDictionary_V_V);
-    function GetXtructs: IThriftList_V;
-    procedure SetXtructs( const Value: IThriftList_V);
+    function GetUserMap: IThriftDictionary;
+    procedure SetUserMap( const Value: IThriftDictionary);
+    function GetXtructs: IThriftList;
+    procedure SetXtructs( const Value: IThriftList);
 
     function Get__isset_UserMap: Boolean;
     function Get__isset_Xtructs: Boolean;
@@ -413,8 +413,8 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property UserMap: IThriftDictionary_V_V read GetUserMap write SetUserMap;
-    property Xtructs: IThriftList_V read GetXtructs write SetXtructs;
+    property UserMap: IThriftDictionary read GetUserMap write SetUserMap;
+    property Xtructs: IThriftList read GetXtructs write SetXtructs;
 
     // isset
     property __isset_UserMap: Boolean read Get__isset_UserMap;
@@ -424,16 +424,16 @@ type
   ICrazyNesting = interface(IBase)
     function GetString_field: string;
     procedure SetString_field( const Value: string);
-    function GetSet_field: IHashSet_V;
-    procedure SetSet_field( const Value: IHashSet_V);
-    function GetList_field: IThriftList_V;
-    procedure SetList_field( const Value: IThriftList_V);
+    function GetSet_field: IHashSet;
+    procedure SetSet_field( const Value: IHashSet);
+    function GetList_field: IThriftList;
+    procedure SetList_field( const Value: IThriftList);
     function GetBinary_field: TBytes;
     procedure SetBinary_field( const Value: TBytes);
 
     property String_field: string read GetString_field write SetString_field;
-    property Set_field: IHashSet_V read GetSet_field write SetSet_field;
-    property List_field: IThriftList_V read GetList_field write SetList_field;
+    property Set_field: IHashSet read GetSet_field write SetSet_field;
+    property List_field: IThriftList read GetList_field write SetList_field;
     property Binary_field: TBytes read GetBinary_field write SetBinary_field;
 
     function Get__isset_String_field: Boolean;
@@ -448,8 +448,8 @@ type
   TCrazyNestingImpl = class(TInterfacedObject, IBase, ICrazyNesting)
   private
     FString_field: string;
-    FSet_field: IHashSet_V;
-    FList_field: IThriftList_V;
+    FSet_field: IHashSet;
+    FList_field: IThriftList;
     FBinary_field: TBytes;
     
     F__isset_String_field: Boolean;
@@ -458,10 +458,10 @@ type
     
     function GetString_field: string;
     procedure SetString_field( const Value: string);
-    function GetSet_field: IHashSet_V;
-    procedure SetSet_field( const Value: IHashSet_V);
-    function GetList_field: IThriftList_V;
-    procedure SetList_field( const Value: IThriftList_V);
+    function GetSet_field: IHashSet;
+    procedure SetSet_field( const Value: IHashSet);
+    function GetList_field: IThriftList;
+    procedure SetList_field( const Value: IThriftList);
     function GetBinary_field: TBytes;
     procedure SetBinary_field( const Value: TBytes);
 
@@ -480,8 +480,8 @@ type
 
     // Properties
     property String_field: string read GetString_field write SetString_field;
-    property Set_field: IHashSet_V read GetSet_field write SetSet_field;
-    property List_field: IThriftList_V read GetList_field write SetList_field;
+    property Set_field: IHashSet read GetSet_field write SetSet_field;
+    property List_field: IThriftList read GetList_field write SetList_field;
     property Binary_field: TBytes read GetBinary_field write SetBinary_field;
 
     // isset
@@ -810,12 +810,12 @@ type
     procedure SetNewdouble( const Value: Double);
     function GetNewstruct: IBonk;
     procedure SetNewstruct( const Value: IBonk);
-    function GetNewlist: IThriftList_V;
-    procedure SetNewlist( const Value: IThriftList_V);
-    function GetNewset: IHashSet_V;
-    procedure SetNewset( const Value: IHashSet_V);
-    function GetNewmap: IThriftDictionary_V_V;
-    procedure SetNewmap( const Value: IThriftDictionary_V_V);
+    function GetNewlist: IThriftList;
+    procedure SetNewlist( const Value: IThriftList);
+    function GetNewset: IHashSet;
+    procedure SetNewset( const Value: IHashSet);
+    function GetNewmap: IThriftDictionary;
+    procedure SetNewmap( const Value: IThriftDictionary);
     function GetNewstring: string;
     procedure SetNewstring( const Value: string);
     function GetEnd_in_both: Integer;
@@ -828,9 +828,9 @@ type
     property Newlong: Int64 read GetNewlong write SetNewlong;
     property Newdouble: Double read GetNewdouble write SetNewdouble;
     property Newstruct: IBonk read GetNewstruct write SetNewstruct;
-    property Newlist: IThriftList_V read GetNewlist write SetNewlist;
-    property Newset: IHashSet_V read GetNewset write SetNewset;
-    property Newmap: IThriftDictionary_V_V read GetNewmap write SetNewmap;
+    property Newlist: IThriftList read GetNewlist write SetNewlist;
+    property Newset: IHashSet read GetNewset write SetNewset;
+    property Newmap: IThriftDictionary read GetNewmap write SetNewmap;
     property Newstring: string read GetNewstring write SetNewstring;
     property End_in_both: Integer read GetEnd_in_both write SetEnd_in_both;
 
@@ -870,9 +870,9 @@ type
     FNewlong: Int64;
     FNewdouble: Double;
     FNewstruct: IBonk;
-    FNewlist: IThriftList_V;
-    FNewset: IHashSet_V;
-    FNewmap: IThriftDictionary_V_V;
+    FNewlist: IThriftList;
+    FNewset: IHashSet;
+    FNewmap: IThriftDictionary;
     FNewstring: string;
     FEnd_in_both: Integer;
     
@@ -903,12 +903,12 @@ type
     procedure SetNewdouble( const Value: Double);
     function GetNewstruct: IBonk;
     procedure SetNewstruct( const Value: IBonk);
-    function GetNewlist: IThriftList_V;
-    procedure SetNewlist( const Value: IThriftList_V);
-    function GetNewset: IHashSet_V;
-    procedure SetNewset( const Value: IHashSet_V);
-    function GetNewmap: IThriftDictionary_V_V;
-    procedure SetNewmap( const Value: IThriftDictionary_V_V);
+    function GetNewlist: IThriftList;
+    procedure SetNewlist( const Value: IThriftList);
+    function GetNewset: IHashSet;
+    procedure SetNewset( const Value: IHashSet);
+    function GetNewmap: IThriftDictionary;
+    procedure SetNewmap( const Value: IThriftDictionary);
     function GetNewstring: string;
     procedure SetNewstring( const Value: string);
     function GetEnd_in_both: Integer;
@@ -944,9 +944,9 @@ type
     property Newlong: Int64 read GetNewlong write SetNewlong;
     property Newdouble: Double read GetNewdouble write SetNewdouble;
     property Newstruct: IBonk read GetNewstruct write SetNewstruct;
-    property Newlist: IThriftList_V read GetNewlist write SetNewlist;
-    property Newset: IHashSet_V read GetNewset write SetNewset;
-    property Newmap: IThriftDictionary_V_V read GetNewmap write SetNewmap;
+    property Newlist: IThriftList read GetNewlist write SetNewlist;
+    property Newset: IHashSet read GetNewset write SetNewset;
+    property Newmap: IThriftDictionary read GetNewmap write SetNewmap;
     property Newstring: string read GetNewstring write SetNewstring;
     property End_in_both: Integer read GetEnd_in_both write SetEnd_in_both;
 
@@ -966,12 +966,12 @@ type
   end;
 
   IListTypeVersioningV1 = interface(IBase)
-    function GetMyints: IThriftList_V;
-    procedure SetMyints( const Value: IThriftList_V);
+    function GetMyints: IThriftList;
+    procedure SetMyints( const Value: IThriftList);
     function GetHello: string;
     procedure SetHello( const Value: string);
 
-    property Myints: IThriftList_V read GetMyints write SetMyints;
+    property Myints: IThriftList read GetMyints write SetMyints;
     property Hello: string read GetHello write SetHello;
 
     function Get__isset_Myints: Boolean;
@@ -983,14 +983,14 @@ type
 
   TListTypeVersioningV1Impl = class(TInterfacedObject, IBase, IListTypeVersioningV1)
   private
-    FMyints: IThriftList_V;
+    FMyints: IThriftList;
     FHello: string;
     
     F__isset_Myints: Boolean;
     F__isset_Hello: Boolean;
     
-    function GetMyints: IThriftList_V;
-    procedure SetMyints( const Value: IThriftList_V);
+    function GetMyints: IThriftList;
+    procedure SetMyints( const Value: IThriftList);
     function GetHello: string;
     procedure SetHello( const Value: string);
 
@@ -1007,7 +1007,7 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Myints: IThriftList_V read GetMyints write SetMyints;
+    property Myints: IThriftList read GetMyints write SetMyints;
     property Hello: string read GetHello write SetHello;
 
     // isset
@@ -1016,12 +1016,12 @@ type
   end;
 
   IListTypeVersioningV2 = interface(IBase)
-    function GetStrings: IThriftList_V;
-    procedure SetStrings( const Value: IThriftList_V);
+    function GetStrings: IThriftList;
+    procedure SetStrings( const Value: IThriftList);
     function GetHello: string;
     procedure SetHello( const Value: string);
 
-    property Strings: IThriftList_V read GetStrings write SetStrings;
+    property Strings: IThriftList read GetStrings write SetStrings;
     property Hello: string read GetHello write SetHello;
 
     function Get__isset_Strings: Boolean;
@@ -1033,14 +1033,14 @@ type
 
   TListTypeVersioningV2Impl = class(TInterfacedObject, IBase, IListTypeVersioningV2)
   private
-    FStrings: IThriftList_V;
+    FStrings: IThriftList;
     FHello: string;
     
     F__isset_Strings: Boolean;
     F__isset_Hello: Boolean;
     
-    function GetStrings: IThriftList_V;
-    procedure SetStrings( const Value: IThriftList_V);
+    function GetStrings: IThriftList;
+    procedure SetStrings( const Value: IThriftList);
     function GetHello: string;
     procedure SetHello( const Value: string);
 
@@ -1057,7 +1057,7 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Strings: IThriftList_V read GetStrings write SetStrings;
+    property Strings: IThriftList read GetStrings write SetStrings;
     property Hello: string read GetHello write SetHello;
 
     // isset
@@ -1066,10 +1066,10 @@ type
   end;
 
   IGuessProtocolStruct = interface(IBase)
-    function GetMap_field: IThriftDictionary_V_V;
-    procedure SetMap_field( const Value: IThriftDictionary_V_V);
+    function GetMap_field: IThriftDictionary;
+    procedure SetMap_field( const Value: IThriftDictionary);
 
-    property Map_field: IThriftDictionary_V_V read GetMap_field write SetMap_field;
+    property Map_field: IThriftDictionary read GetMap_field write SetMap_field;
 
     function Get__isset_Map_field: Boolean;
 
@@ -1078,12 +1078,12 @@ type
 
   TGuessProtocolStructImpl = class(TInterfacedObject, IBase, IGuessProtocolStruct)
   private
-    FMap_field: IThriftDictionary_V_V;
+    FMap_field: IThriftDictionary;
     
     F__isset_Map_field: Boolean;
     
-    function GetMap_field: IThriftDictionary_V_V;
-    procedure SetMap_field( const Value: IThriftDictionary_V_V);
+    function GetMap_field: IThriftDictionary;
+    procedure SetMap_field( const Value: IThriftDictionary);
 
     function Get__isset_Map_field: Boolean;
   public
@@ -1097,7 +1097,7 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Map_field: IThriftDictionary_V_V read GetMap_field write SetMap_field;
+    property Map_field: IThriftDictionary read GetMap_field write SetMap_field;
 
     // isset
     property __isset_Map_field: Boolean read Get__isset_Map_field;
@@ -1118,12 +1118,12 @@ type
     procedure SetCheck_false( const Value: Boolean);
     function GetVertwo2000: IVersioningTestV2;
     procedure SetVertwo2000( const Value: IVersioningTestV2);
-    function GetA_set2500: IHashSet_V;
-    procedure SetA_set2500( const Value: IHashSet_V);
+    function GetA_set2500: IHashSet;
+    procedure SetA_set2500( const Value: IHashSet);
     function GetVertwo3000: IVersioningTestV2;
     procedure SetVertwo3000( const Value: IVersioningTestV2);
-    function GetBig_numbers: IThriftList_V;
-    procedure SetBig_numbers( const Value: IThriftList_V);
+    function GetBig_numbers: IThriftList;
+    procedure SetBig_numbers( const Value: IThriftList);
 
     property B1: IBools read GetB1 write SetB1;
     property B10: IBools read GetB10 write SetB10;
@@ -1132,9 +1132,9 @@ type
     property B1000: IBools read GetB1000 write SetB1000;
     property Check_false: Boolean read GetCheck_false write SetCheck_false;
     property Vertwo2000: IVersioningTestV2 read GetVertwo2000 write SetVertwo2000;
-    property A_set2500: IHashSet_V read GetA_set2500 write SetA_set2500;
+    property A_set2500: IHashSet read GetA_set2500 write SetA_set2500;
     property Vertwo3000: IVersioningTestV2 read GetVertwo3000 write SetVertwo3000;
-    property Big_numbers: IThriftList_V read GetBig_numbers write SetBig_numbers;
+    property Big_numbers: IThriftList read GetBig_numbers write SetBig_numbers;
 
     function Get__isset_B1: Boolean;
     function Get__isset_B10: Boolean;
@@ -1168,9 +1168,9 @@ type
     FB1000: IBools;
     FCheck_false: Boolean;
     FVertwo2000: IVersioningTestV2;
-    FA_set2500: IHashSet_V;
+    FA_set2500: IHashSet;
     FVertwo3000: IVersioningTestV2;
-    FBig_numbers: IThriftList_V;
+    FBig_numbers: IThriftList;
     
     F__isset_B1: Boolean;
     F__isset_B10: Boolean;
@@ -1197,12 +1197,12 @@ type
     procedure SetCheck_false( const Value: Boolean);
     function GetVertwo2000: IVersioningTestV2;
     procedure SetVertwo2000( const Value: IVersioningTestV2);
-    function GetA_set2500: IHashSet_V;
-    procedure SetA_set2500( const Value: IHashSet_V);
+    function GetA_set2500: IHashSet;
+    procedure SetA_set2500( const Value: IHashSet);
     function GetVertwo3000: IVersioningTestV2;
     procedure SetVertwo3000( const Value: IVersioningTestV2);
-    function GetBig_numbers: IThriftList_V;
-    procedure SetBig_numbers( const Value: IThriftList_V);
+    function GetBig_numbers: IThriftList;
+    procedure SetBig_numbers( const Value: IThriftList);
 
     function Get__isset_B1: Boolean;
     function Get__isset_B10: Boolean;
@@ -1232,9 +1232,9 @@ type
     property B1000: IBools read GetB1000 write SetB1000;
     property Check_false: Boolean read GetCheck_false write SetCheck_false;
     property Vertwo2000: IVersioningTestV2 read GetVertwo2000 write SetVertwo2000;
-    property A_set2500: IHashSet_V read GetA_set2500 write SetA_set2500;
+    property A_set2500: IHashSet read GetA_set2500 write SetA_set2500;
     property Vertwo3000: IVersioningTestV2 read GetVertwo3000 write SetVertwo3000;
-    property Big_numbers: IThriftList_V read GetBig_numbers write SetBig_numbers;
+    property Big_numbers: IThriftList read GetBig_numbers write SetBig_numbers;
 
     // isset
     property __isset_B1: Boolean read Get__isset_B1;
@@ -1250,10 +1250,10 @@ type
   end;
 
   INestedListsI32x2 = interface(IBase)
-    function GetIntegerlist: IThriftList_V;
-    procedure SetIntegerlist( const Value: IThriftList_V);
+    function GetIntegerlist: IThriftList;
+    procedure SetIntegerlist( const Value: IThriftList);
 
-    property Integerlist: IThriftList_V read GetIntegerlist write SetIntegerlist;
+    property Integerlist: IThriftList read GetIntegerlist write SetIntegerlist;
 
     function Get__isset_Integerlist: Boolean;
 
@@ -1262,12 +1262,12 @@ type
 
   TNestedListsI32x2Impl = class(TInterfacedObject, IBase, INestedListsI32x2)
   private
-    FIntegerlist: IThriftList_V;
+    FIntegerlist: IThriftList;
     
     F__isset_Integerlist: Boolean;
     
-    function GetIntegerlist: IThriftList_V;
-    procedure SetIntegerlist( const Value: IThriftList_V);
+    function GetIntegerlist: IThriftList;
+    procedure SetIntegerlist( const Value: IThriftList);
 
     function Get__isset_Integerlist: Boolean;
   public
@@ -1281,17 +1281,17 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Integerlist: IThriftList_V read GetIntegerlist write SetIntegerlist;
+    property Integerlist: IThriftList read GetIntegerlist write SetIntegerlist;
 
     // isset
     property __isset_Integerlist: Boolean read Get__isset_Integerlist;
   end;
 
   INestedListsI32x3 = interface(IBase)
-    function GetIntegerlist: IThriftList_V;
-    procedure SetIntegerlist( const Value: IThriftList_V);
+    function GetIntegerlist: IThriftList;
+    procedure SetIntegerlist( const Value: IThriftList);
 
-    property Integerlist: IThriftList_V read GetIntegerlist write SetIntegerlist;
+    property Integerlist: IThriftList read GetIntegerlist write SetIntegerlist;
 
     function Get__isset_Integerlist: Boolean;
 
@@ -1300,12 +1300,12 @@ type
 
   TNestedListsI32x3Impl = class(TInterfacedObject, IBase, INestedListsI32x3)
   private
-    FIntegerlist: IThriftList_V;
+    FIntegerlist: IThriftList;
     
     F__isset_Integerlist: Boolean;
     
-    function GetIntegerlist: IThriftList_V;
-    procedure SetIntegerlist( const Value: IThriftList_V);
+    function GetIntegerlist: IThriftList;
+    procedure SetIntegerlist( const Value: IThriftList);
 
     function Get__isset_Integerlist: Boolean;
   public
@@ -1319,23 +1319,23 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Integerlist: IThriftList_V read GetIntegerlist write SetIntegerlist;
+    property Integerlist: IThriftList read GetIntegerlist write SetIntegerlist;
 
     // isset
     property __isset_Integerlist: Boolean read Get__isset_Integerlist;
   end;
 
   INestedMixedx2 = interface(IBase)
-    function GetInt_set_list: IThriftList_V;
-    procedure SetInt_set_list( const Value: IThriftList_V);
-    function GetMap_int_strset: IThriftDictionary_V_V;
-    procedure SetMap_int_strset( const Value: IThriftDictionary_V_V);
-    function GetMap_int_strset_list: IThriftList_V;
-    procedure SetMap_int_strset_list( const Value: IThriftList_V);
+    function GetInt_set_list: IThriftList;
+    procedure SetInt_set_list( const Value: IThriftList);
+    function GetMap_int_strset: IThriftDictionary;
+    procedure SetMap_int_strset( const Value: IThriftDictionary);
+    function GetMap_int_strset_list: IThriftList;
+    procedure SetMap_int_strset_list( const Value: IThriftList);
 
-    property Int_set_list: IThriftList_V read GetInt_set_list write SetInt_set_list;
-    property Map_int_strset: IThriftDictionary_V_V read GetMap_int_strset write SetMap_int_strset;
-    property Map_int_strset_list: IThriftList_V read GetMap_int_strset_list write SetMap_int_strset_list;
+    property Int_set_list: IThriftList read GetInt_set_list write SetInt_set_list;
+    property Map_int_strset: IThriftDictionary read GetMap_int_strset write SetMap_int_strset;
+    property Map_int_strset_list: IThriftList read GetMap_int_strset_list write SetMap_int_strset_list;
 
     function Get__isset_Int_set_list: Boolean;
     function Get__isset_Map_int_strset: Boolean;
@@ -1348,20 +1348,20 @@ type
 
   TNestedMixedx2Impl = class(TInterfacedObject, IBase, INestedMixedx2)
   private
-    FInt_set_list: IThriftList_V;
-    FMap_int_strset: IThriftDictionary_V_V;
-    FMap_int_strset_list: IThriftList_V;
+    FInt_set_list: IThriftList;
+    FMap_int_strset: IThriftDictionary;
+    FMap_int_strset_list: IThriftList;
     
     F__isset_Int_set_list: Boolean;
     F__isset_Map_int_strset: Boolean;
     F__isset_Map_int_strset_list: Boolean;
     
-    function GetInt_set_list: IThriftList_V;
-    procedure SetInt_set_list( const Value: IThriftList_V);
-    function GetMap_int_strset: IThriftDictionary_V_V;
-    procedure SetMap_int_strset( const Value: IThriftDictionary_V_V);
-    function GetMap_int_strset_list: IThriftList_V;
-    procedure SetMap_int_strset_list( const Value: IThriftList_V);
+    function GetInt_set_list: IThriftList;
+    procedure SetInt_set_list( const Value: IThriftList);
+    function GetMap_int_strset: IThriftDictionary;
+    procedure SetMap_int_strset( const Value: IThriftDictionary);
+    function GetMap_int_strset_list: IThriftList;
+    procedure SetMap_int_strset_list( const Value: IThriftList);
 
     function Get__isset_Int_set_list: Boolean;
     function Get__isset_Map_int_strset: Boolean;
@@ -1377,9 +1377,9 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Int_set_list: IThriftList_V read GetInt_set_list write SetInt_set_list;
-    property Map_int_strset: IThriftDictionary_V_V read GetMap_int_strset write SetMap_int_strset;
-    property Map_int_strset_list: IThriftList_V read GetMap_int_strset_list write SetMap_int_strset_list;
+    property Int_set_list: IThriftList read GetInt_set_list write SetInt_set_list;
+    property Map_int_strset: IThriftDictionary read GetMap_int_strset write SetMap_int_strset;
+    property Map_int_strset_list: IThriftList read GetMap_int_strset_list write SetMap_int_strset_list;
 
     // isset
     property __isset_Int_set_list: Boolean read Get__isset_Int_set_list;
@@ -1388,10 +1388,10 @@ type
   end;
 
   IListBonks = interface(IBase)
-    function GetBonk: IThriftList_V;
-    procedure SetBonk( const Value: IThriftList_V);
+    function GetBonk: IThriftList;
+    procedure SetBonk( const Value: IThriftList);
 
-    property Bonk: IThriftList_V read GetBonk write SetBonk;
+    property Bonk: IThriftList read GetBonk write SetBonk;
 
     function Get__isset_Bonk: Boolean;
 
@@ -1400,12 +1400,12 @@ type
 
   TListBonksImpl = class(TInterfacedObject, IBase, IListBonks)
   private
-    FBonk: IThriftList_V;
+    FBonk: IThriftList;
     
     F__isset_Bonk: Boolean;
     
-    function GetBonk: IThriftList_V;
-    procedure SetBonk( const Value: IThriftList_V);
+    function GetBonk: IThriftList;
+    procedure SetBonk( const Value: IThriftList);
 
     function Get__isset_Bonk: Boolean;
   public
@@ -1419,17 +1419,17 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Bonk: IThriftList_V read GetBonk write SetBonk;
+    property Bonk: IThriftList read GetBonk write SetBonk;
 
     // isset
     property __isset_Bonk: Boolean read Get__isset_Bonk;
   end;
 
   INestedListsBonk = interface(IBase)
-    function GetBonk: IThriftList_V;
-    procedure SetBonk( const Value: IThriftList_V);
+    function GetBonk: IThriftList;
+    procedure SetBonk( const Value: IThriftList);
 
-    property Bonk: IThriftList_V read GetBonk write SetBonk;
+    property Bonk: IThriftList read GetBonk write SetBonk;
 
     function Get__isset_Bonk: Boolean;
 
@@ -1438,12 +1438,12 @@ type
 
   TNestedListsBonkImpl = class(TInterfacedObject, IBase, INestedListsBonk)
   private
-    FBonk: IThriftList_V;
+    FBonk: IThriftList;
     
     F__isset_Bonk: Boolean;
     
-    function GetBonk: IThriftList_V;
-    procedure SetBonk( const Value: IThriftList_V);
+    function GetBonk: IThriftList;
+    procedure SetBonk( const Value: IThriftList);
 
     function Get__isset_Bonk: Boolean;
   public
@@ -1457,7 +1457,7 @@ type
     procedure Write( const oprot: IProtocol);
 
     // Properties
-    property Bonk: IThriftList_V read GetBonk write SetBonk;
+    property Bonk: IThriftList read GetBonk write SetBonk;
 
     // isset
     property __isset_Bonk: Boolean read Get__isset_Bonk;
@@ -1603,15 +1603,15 @@ type
         function testDouble(const thing: Double): Double;
         function testStruct(const thing: IXtruct): IXtruct;
         function testNest(const thing: IXtruct2): IXtruct2;
-        function testMap(const thing: IThriftDictionary_V_V): IThriftDictionary_V_V;
-        function testStringMap(const thing: IThriftDictionary_V_V): IThriftDictionary_V_V;
-        function testSet(const thing: IHashSet_V): IHashSet_V;
-        function testList(const thing: IThriftList_V): IThriftList_V;
+        function testMap(const thing: IThriftDictionary): IThriftDictionary;
+        function testStringMap(const thing: IThriftDictionary): IThriftDictionary;
+        function testSet(const thing: IHashSet): IHashSet;
+        function testList(const thing: IThriftList): IThriftList;
         function testEnum(thing: TNumberz): TNumberz;
         function testTypedef(const thing: TUserId): TUserId;
-        function testMapMap(hello: Integer): IThriftDictionary_V_V;
-        function testInsanity(const argument: IInsanity): IThriftDictionary_V_V;
-        function testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary_V_V; arg4: TNumberz; const arg5: TUserId): IXtruct;
+        function testMapMap(hello: Integer): IThriftDictionary;
+        function testInsanity(const argument: IInsanity): IThriftDictionary;
+        function testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary; arg4: TNumberz; const arg5: TUserId): IXtruct;
         procedure testException(const arg: string);
         function testMultiException(const arg0: string; const arg1: string): IXtruct;
         procedure testOneway(secondsToSleep: Integer);
@@ -1638,15 +1638,15 @@ type
         function testDouble(const thing: Double): Double;
         function testStruct(const thing: IXtruct): IXtruct;
         function testNest(const thing: IXtruct2): IXtruct2;
-        function testMap(const thing: IThriftDictionary_V_V): IThriftDictionary_V_V;
-        function testStringMap(const thing: IThriftDictionary_V_V): IThriftDictionary_V_V;
-        function testSet(const thing: IHashSet_V): IHashSet_V;
-        function testList(const thing: IThriftList_V): IThriftList_V;
+        function testMap(const thing: IThriftDictionary): IThriftDictionary;
+        function testStringMap(const thing: IThriftDictionary): IThriftDictionary;
+        function testSet(const thing: IHashSet): IHashSet;
+        function testList(const thing: IThriftList): IThriftList;
         function testEnum(thing: TNumberz): TNumberz;
         function testTypedef(const thing: TUserId): TUserId;
-        function testMapMap(hello: Integer): IThriftDictionary_V_V;
-        function testInsanity(const argument: IInsanity): IThriftDictionary_V_V;
-        function testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary_V_V; arg4: TNumberz; const arg5: TUserId): IXtruct;
+        function testMapMap(hello: Integer): IThriftDictionary;
+        function testInsanity(const argument: IInsanity): IThriftDictionary;
+        function testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary; arg4: TNumberz; const arg5: TUserId): IXtruct;
         procedure testException(const arg: string);
         function testMultiException(const arg0: string; const arg1: string): IXtruct;
         procedure testOneway(secondsToSleep: Integer);
@@ -1667,23 +1667,23 @@ type
         function recv_testStruct(): IXtruct;
         procedure send_testNest(const thing: IXtruct2);
         function recv_testNest(): IXtruct2;
-        procedure send_testMap(const thing: IThriftDictionary_V_V);
-        function recv_testMap(): IThriftDictionary_V_V;
-        procedure send_testStringMap(const thing: IThriftDictionary_V_V);
-        function recv_testStringMap(): IThriftDictionary_V_V;
-        procedure send_testSet(const thing: IHashSet_V);
-        function recv_testSet(): IHashSet_V;
-        procedure send_testList(const thing: IThriftList_V);
-        function recv_testList(): IThriftList_V;
+        procedure send_testMap(const thing: IThriftDictionary);
+        function recv_testMap(): IThriftDictionary;
+        procedure send_testStringMap(const thing: IThriftDictionary);
+        function recv_testStringMap(): IThriftDictionary;
+        procedure send_testSet(const thing: IHashSet);
+        function recv_testSet(): IHashSet;
+        procedure send_testList(const thing: IThriftList);
+        function recv_testList(): IThriftList;
         procedure send_testEnum(thing: TNumberz);
         function recv_testEnum(): TNumberz;
         procedure send_testTypedef(const thing: TUserId);
         function recv_testTypedef(): TUserId;
         procedure send_testMapMap(hello: Integer);
-        function recv_testMapMap(): IThriftDictionary_V_V;
+        function recv_testMapMap(): IThriftDictionary;
         procedure send_testInsanity(const argument: IInsanity);
-        function recv_testInsanity(): IThriftDictionary_V_V;
-        procedure send_testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary_V_V; arg4: TNumberz; const arg5: TUserId);
+        function recv_testInsanity(): IThriftDictionary;
+        procedure send_testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary; arg4: TNumberz; const arg5: TUserId);
         function recv_testMulti(): IXtruct;
         procedure send_testException(const arg: string);
         procedure recv_testException();
@@ -1702,7 +1702,7 @@ type
         type
           TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface) of object;
       protected
-        processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}
+        processMap_: IThriftDictionary;{IThriftDictionary<string, TProcessFunction>;}
       public
         function Process( const iprot: IProtocol; const oprot: IProtocol): Boolean;
         procedure testVoid_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
@@ -2294,10 +2294,10 @@ type
       end;
 
       ITestMap_args = interface(IBase)
-        function GetThing: IThriftDictionary_V_V;
-        procedure SetThing( const Value: IThriftDictionary_V_V);
+        function GetThing: IThriftDictionary;
+        procedure SetThing( const Value: IThriftDictionary);
 
-        property Thing: IThriftDictionary_V_V read GetThing write SetThing;
+        property Thing: IThriftDictionary read GetThing write SetThing;
 
         function Get__isset_Thing: Boolean;
 
@@ -2306,12 +2306,12 @@ type
 
       TTestMap_argsImpl = class(TInterfacedObject, IBase, ITestMap_args)
       private
-        FThing: IThriftDictionary_V_V;
+        FThing: IThriftDictionary;
         
         F__isset_Thing: Boolean;
         
-        function GetThing: IThriftDictionary_V_V;
-        procedure SetThing( const Value: IThriftDictionary_V_V);
+        function GetThing: IThriftDictionary;
+        procedure SetThing( const Value: IThriftDictionary);
 
         function Get__isset_Thing: Boolean;
       public
@@ -2325,17 +2325,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Thing: IThriftDictionary_V_V read GetThing write SetThing;
+        property Thing: IThriftDictionary read GetThing write SetThing;
 
         // isset
         property __isset_Thing: Boolean read Get__isset_Thing;
       end;
 
       ITestMap_result = interface(IBase)
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -2344,12 +2344,12 @@ type
 
       TTestMap_resultImpl = class(TInterfacedObject, IBase, ITestMap_result)
       private
-        FSuccess: IThriftDictionary_V_V;
+        FSuccess: IThriftDictionary;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
         function Get__isset_Success: Boolean;
       public
@@ -2363,17 +2363,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
       end;
 
       ITestStringMap_args = interface(IBase)
-        function GetThing: IThriftDictionary_V_V;
-        procedure SetThing( const Value: IThriftDictionary_V_V);
+        function GetThing: IThriftDictionary;
+        procedure SetThing( const Value: IThriftDictionary);
 
-        property Thing: IThriftDictionary_V_V read GetThing write SetThing;
+        property Thing: IThriftDictionary read GetThing write SetThing;
 
         function Get__isset_Thing: Boolean;
 
@@ -2382,12 +2382,12 @@ type
 
       TTestStringMap_argsImpl = class(TInterfacedObject, IBase, ITestStringMap_args)
       private
-        FThing: IThriftDictionary_V_V;
+        FThing: IThriftDictionary;
         
         F__isset_Thing: Boolean;
         
-        function GetThing: IThriftDictionary_V_V;
-        procedure SetThing( const Value: IThriftDictionary_V_V);
+        function GetThing: IThriftDictionary;
+        procedure SetThing( const Value: IThriftDictionary);
 
         function Get__isset_Thing: Boolean;
       public
@@ -2401,17 +2401,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Thing: IThriftDictionary_V_V read GetThing write SetThing;
+        property Thing: IThriftDictionary read GetThing write SetThing;
 
         // isset
         property __isset_Thing: Boolean read Get__isset_Thing;
       end;
 
       ITestStringMap_result = interface(IBase)
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -2420,12 +2420,12 @@ type
 
       TTestStringMap_resultImpl = class(TInterfacedObject, IBase, ITestStringMap_result)
       private
-        FSuccess: IThriftDictionary_V_V;
+        FSuccess: IThriftDictionary;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
         function Get__isset_Success: Boolean;
       public
@@ -2439,17 +2439,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
       end;
 
       ITestSet_args = interface(IBase)
-        function GetThing: IHashSet_V;
-        procedure SetThing( const Value: IHashSet_V);
+        function GetThing: IHashSet;
+        procedure SetThing( const Value: IHashSet);
 
-        property Thing: IHashSet_V read GetThing write SetThing;
+        property Thing: IHashSet read GetThing write SetThing;
 
         function Get__isset_Thing: Boolean;
 
@@ -2458,12 +2458,12 @@ type
 
       TTestSet_argsImpl = class(TInterfacedObject, IBase, ITestSet_args)
       private
-        FThing: IHashSet_V;
+        FThing: IHashSet;
         
         F__isset_Thing: Boolean;
         
-        function GetThing: IHashSet_V;
-        procedure SetThing( const Value: IHashSet_V);
+        function GetThing: IHashSet;
+        procedure SetThing( const Value: IHashSet);
 
         function Get__isset_Thing: Boolean;
       public
@@ -2477,17 +2477,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Thing: IHashSet_V read GetThing write SetThing;
+        property Thing: IHashSet read GetThing write SetThing;
 
         // isset
         property __isset_Thing: Boolean read Get__isset_Thing;
       end;
 
       ITestSet_result = interface(IBase)
-        function GetSuccess: IHashSet_V;
-        procedure SetSuccess( const Value: IHashSet_V);
+        function GetSuccess: IHashSet;
+        procedure SetSuccess( const Value: IHashSet);
 
-        property Success: IHashSet_V read GetSuccess write SetSuccess;
+        property Success: IHashSet read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -2496,12 +2496,12 @@ type
 
       TTestSet_resultImpl = class(TInterfacedObject, IBase, ITestSet_result)
       private
-        FSuccess: IHashSet_V;
+        FSuccess: IHashSet;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IHashSet_V;
-        procedure SetSuccess( const Value: IHashSet_V);
+        function GetSuccess: IHashSet;
+        procedure SetSuccess( const Value: IHashSet);
 
         function Get__isset_Success: Boolean;
       public
@@ -2515,17 +2515,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IHashSet_V read GetSuccess write SetSuccess;
+        property Success: IHashSet read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
       end;
 
       ITestList_args = interface(IBase)
-        function GetThing: IThriftList_V;
-        procedure SetThing( const Value: IThriftList_V);
+        function GetThing: IThriftList;
+        procedure SetThing( const Value: IThriftList);
 
-        property Thing: IThriftList_V read GetThing write SetThing;
+        property Thing: IThriftList read GetThing write SetThing;
 
         function Get__isset_Thing: Boolean;
 
@@ -2534,12 +2534,12 @@ type
 
       TTestList_argsImpl = class(TInterfacedObject, IBase, ITestList_args)
       private
-        FThing: IThriftList_V;
+        FThing: IThriftList;
         
         F__isset_Thing: Boolean;
         
-        function GetThing: IThriftList_V;
-        procedure SetThing( const Value: IThriftList_V);
+        function GetThing: IThriftList;
+        procedure SetThing( const Value: IThriftList);
 
         function Get__isset_Thing: Boolean;
       public
@@ -2553,17 +2553,17 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Thing: IThriftList_V read GetThing write SetThing;
+        property Thing: IThriftList read GetThing write SetThing;
 
         // isset
         property __isset_Thing: Boolean read Get__isset_Thing;
       end;
 
       ITestList_result = interface(IBase)
-        function GetSuccess: IThriftList_V;
-        procedure SetSuccess( const Value: IThriftList_V);
+        function GetSuccess: IThriftList;
+        procedure SetSuccess( const Value: IThriftList);
 
-        property Success: IThriftList_V read GetSuccess write SetSuccess;
+        property Success: IThriftList read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -2572,12 +2572,12 @@ type
 
       TTestList_resultImpl = class(TInterfacedObject, IBase, ITestList_result)
       private
-        FSuccess: IThriftList_V;
+        FSuccess: IThriftList;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftList_V;
-        procedure SetSuccess( const Value: IThriftList_V);
+        function GetSuccess: IThriftList;
+        procedure SetSuccess( const Value: IThriftList);
 
         function Get__isset_Success: Boolean;
       public
@@ -2591,7 +2591,7 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftList_V read GetSuccess write SetSuccess;
+        property Success: IThriftList read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
@@ -2788,10 +2788,10 @@ type
       end;
 
       ITestMapMap_result = interface(IBase)
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -2800,12 +2800,12 @@ type
 
       TTestMapMap_resultImpl = class(TInterfacedObject, IBase, ITestMapMap_result)
       private
-        FSuccess: IThriftDictionary_V_V;
+        FSuccess: IThriftDictionary;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
         function Get__isset_Success: Boolean;
       public
@@ -2819,7 +2819,7 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
@@ -2864,10 +2864,10 @@ type
       end;
 
       ITestInsanity_result = interface(IBase)
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         function Get__isset_Success: Boolean;
 
@@ -2876,12 +2876,12 @@ type
 
       TTestInsanity_resultImpl = class(TInterfacedObject, IBase, ITestInsanity_result)
       private
-        FSuccess: IThriftDictionary_V_V;
+        FSuccess: IThriftDictionary;
         
         F__isset_Success: Boolean;
         
-        function GetSuccess: IThriftDictionary_V_V;
-        procedure SetSuccess( const Value: IThriftDictionary_V_V);
+        function GetSuccess: IThriftDictionary;
+        procedure SetSuccess( const Value: IThriftDictionary);
 
         function Get__isset_Success: Boolean;
       public
@@ -2895,7 +2895,7 @@ type
         procedure Write( const oprot: IProtocol);
 
         // Properties
-        property Success: IThriftDictionary_V_V read GetSuccess write SetSuccess;
+        property Success: IThriftDictionary read GetSuccess write SetSuccess;
 
         // isset
         property __isset_Success: Boolean read Get__isset_Success;
@@ -2908,8 +2908,8 @@ type
         procedure SetArg1( const Value: Integer);
         function GetArg2: Int64;
         procedure SetArg2( const Value: Int64);
-        function GetArg3: IThriftDictionary_V_V;
-        procedure SetArg3( const Value: IThriftDictionary_V_V);
+        function GetArg3: IThriftDictionary;
+        procedure SetArg3( const Value: IThriftDictionary);
         function GetArg4: TNumberz;
         procedure SetArg4( const Value: TNumberz);
         function GetArg5: TUserId;
@@ -2918,7 +2918,7 @@ type
         property Arg0: ShortInt read GetArg0 write SetArg0;
         property Arg1: Integer read GetArg1 write SetArg1;
         property Arg2: Int64 read GetArg2 write SetArg2;
-        property Arg3: IThriftDictionary_V_V read GetArg3 write SetArg3;
+        property Arg3: IThriftDictionary read GetArg3 write SetArg3;
         property Arg4: TNumberz read GetArg4 write SetArg4;
         property Arg5: TUserId read GetArg5 write SetArg5;
 
@@ -2942,7 +2942,7 @@ type
         FArg0: ShortInt;
         FArg1: Integer;
         FArg2: Int64;
-        FArg3: IThriftDictionary_V_V;
+        FArg3: IThriftDictionary;
         FArg4: TNumberz;
         FArg5: TUserId;
         
@@ -2959,8 +2959,8 @@ type
         procedure SetArg1( const Value: Integer);
         function GetArg2: Int64;
         procedure SetArg2( const Value: Int64);
-        function GetArg3: IThriftDictionary_V_V;
-        procedure SetArg3( const Value: IThriftDictionary_V_V);
+        function GetArg3: IThriftDictionary;
+        procedure SetArg3( const Value: IThriftDictionary);
         function GetArg4: TNumberz;
         procedure SetArg4( const Value: TNumberz);
         function GetArg5: TUserId;
@@ -2986,7 +2986,7 @@ type
         property Arg0: ShortInt read GetArg0 write SetArg0;
         property Arg1: Integer read GetArg1 write SetArg1;
         property Arg2: Int64 read GetArg2 write SetArg2;
-        property Arg3: IThriftDictionary_V_V read GetArg3 write SetArg3;
+        property Arg3: IThriftDictionary read GetArg3 write SetArg3;
         property Arg4: TNumberz read GetArg4 write SetArg4;
         property Arg5: TUserId read GetArg5 write SetArg5;
 
@@ -3301,7 +3301,7 @@ type
         type
           TProcessFunction = {reference to }procedure( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface) of object;
       protected
-        processMap_: IThriftDictionary_V_V;{IThriftDictionary<string, TProcessFunction>;}
+        processMap_: IThriftDictionary;{IThriftDictionary<string, TProcessFunction>;}
       public
         function Process( const iprot: IProtocol; const oprot: IProtocol): Boolean;
         procedure blahBlah_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
@@ -4218,12 +4218,12 @@ begin
   inherited;
 end;
 
-function TInsanityImpl.GetUserMap: IThriftDictionary_V_V;
+function TInsanityImpl.GetUserMap: IThriftDictionary;
 begin
   Result := FUserMap;
 end;
 
-procedure TInsanityImpl.SetUserMap( const Value: IThriftDictionary_V_V);
+procedure TInsanityImpl.SetUserMap( const Value: IThriftDictionary);
 begin
   F__isset_UserMap := True;
   FUserMap := Value;
@@ -4234,12 +4234,12 @@ begin
   Result := F__isset_UserMap;
 end;
 
-function TInsanityImpl.GetXtructs: IThriftList_V;
+function TInsanityImpl.GetXtructs: IThriftList;
 begin
   Result := FXtructs;
 end;
 
-procedure TInsanityImpl.SetXtructs( const Value: IThriftList_V);
+procedure TInsanityImpl.SetXtructs( const Value: IThriftList);
 begin
   F__isset_Xtructs := True;
   FXtructs := Value;
@@ -4276,7 +4276,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            UserMap := TThriftDictionary_V_VImpl.Create;
+            UserMap := TThriftDictionaryImpl.Create;
             _map0 := iprot.ReadMapBegin();
             for _i1 := 0 to _map0.Count - 1 do
             begin
@@ -4293,7 +4293,7 @@ begin
         2: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Xtructs := TThriftList_VImpl.Create;
+            Xtructs := TThriftListImpl.Create;
             _list4 := iprot.ReadListBegin();
             for _i5 := 0 to _list4.Count - 1 do
             begin
@@ -4363,7 +4363,7 @@ begin
     ikn14:=Xtructs.Count;
     for ik13:=0 to ikn14 do 
     begin
-    _iter12:=Xtructs[ik13];
+    _iter12:=Xtructs.Items[ik13];
       _iter12.Write(oprot);
     end;
     oprot.WriteListEnd();
@@ -4416,12 +4416,12 @@ begin
   Result := F__isset_String_field;
 end;
 
-function TCrazyNestingImpl.GetSet_field: IHashSet_V;
+function TCrazyNestingImpl.GetSet_field: IHashSet;
 begin
   Result := FSet_field;
 end;
 
-procedure TCrazyNestingImpl.SetSet_field( const Value: IHashSet_V);
+procedure TCrazyNestingImpl.SetSet_field( const Value: IHashSet);
 begin
   F__isset_Set_field := True;
   FSet_field := Value;
@@ -4432,12 +4432,12 @@ begin
   Result := F__isset_Set_field;
 end;
 
-function TCrazyNestingImpl.GetList_field: IThriftList_V;
+function TCrazyNestingImpl.GetList_field: IThriftList;
 begin
   Result := FList_field;
 end;
 
-procedure TCrazyNestingImpl.SetList_field( const Value: IThriftList_V);
+procedure TCrazyNestingImpl.SetList_field( const Value: IThriftList);
 begin
   FList_field := Value;
 end;
@@ -4468,24 +4468,24 @@ var
   _elem17: IInsanity;
   _list18: IList;
   _i19: Integer;
-  _elem20: IThriftDictionary_V_V;
+  _elem20: IThriftDictionary;
   _map21: IMap;
   _i22: Integer;
-  _key23: IHashSet_V;
-  _val24: IThriftDictionary_V_V;
+  _key23: IHashSet;
+  _val24: IThriftDictionary;
   _set25: ISet;
   _i26: Integer;
   _elem27: Integer;
   _map28: IMap;
   _i29: Integer;
   _key30: Integer;
-  _val31: IHashSet_V;
+  _val31: IHashSet;
   _set32: ISet;
   _i33: Integer;
-  _elem34: IThriftList_V;
+  _elem34: IThriftList;
   _list35: IList;
   _i36: Integer;
-  _elem37: IThriftDictionary_V_V;
+  _elem37: IThriftDictionary;
   _map38: IMap;
   _i39: Integer;
   _key40: IInsanity;
@@ -4515,7 +4515,7 @@ begin
         2: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            Set_field := THashSet_VImpl.Create;
+            Set_field := THashSetImpl.Create;
             _set15 := iprot.ReadSetBegin();
             for _i16 := 0 to _set15.Count - 1 do
             begin
@@ -4532,15 +4532,15 @@ begin
         3: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            List_field := TThriftList_VImpl.Create;
+            List_field := TThriftListImpl.Create;
             _list18 := iprot.ReadListBegin();
             for _i19 := 0 to _list18.Count - 1 do
             begin
-              _elem20 := TThriftDictionary_V_VImpl.Create;
+              _elem20 := TThriftDictionaryImpl.Create;
               _map21 := iprot.ReadMapBegin();
               for _i22 := 0 to _map21.Count - 1 do
               begin
-                _key23 := THashSet_VImpl.Create;
+                _key23 := THashSetImpl.Create;
                 _set25 := iprot.ReadSetBegin();
                 for _i26 := 0 to _set25.Count - 1 do
                 begin
@@ -4548,20 +4548,20 @@ begin
                   _key23.Add(_elem27);
                 end;
                 iprot.ReadSetEnd();
-                _val24 := TThriftDictionary_V_VImpl.Create;
+                _val24 := TThriftDictionaryImpl.Create;
                 _map28 := iprot.ReadMapBegin();
                 for _i29 := 0 to _map28.Count - 1 do
                 begin
                   _key30 := iprot.ReadI32();
-                  _val31 := THashSet_VImpl.Create;
+                  _val31 := THashSetImpl.Create;
                   _set32 := iprot.ReadSetBegin();
                   for _i33 := 0 to _set32.Count - 1 do
                   begin
-                    _elem34 := TThriftList_VImpl.Create;
+                    _elem34 := TThriftListImpl.Create;
                     _list35 := iprot.ReadListBegin();
                     for _i36 := 0 to _list35.Count - 1 do
                     begin
-                      _elem37 := TThriftDictionary_V_VImpl.Create;
+                      _elem37 := TThriftDictionaryImpl.Create;
                       _map38 := iprot.ReadMapBegin();
                       for _i39 := 0 to _map38.Count - 1 do
                       begin
@@ -4625,11 +4625,11 @@ var
   list_46 : IList;
   ik48:integer;
   ikn49:integer;
-  _iter47: IThriftDictionary_V_V;
+  _iter47: IThriftDictionary;
   map50 : IMap;
   ik52:integer;
   ikn53:integer;
-  _iter51: IHashSet_V;
+  _iter51: IHashSet;
   set_54 : ISet;
   ik56:integer;
   ikn57:integer;
@@ -4641,11 +4641,11 @@ var
   set_62 : ISet;
   ik64:integer;
   ikn65:integer;
-  _iter63: IThriftList_V;
+  _iter63: IThriftList;
   list_66 : IList;
   ik68:integer;
   ikn69:integer;
-  _iter67: IThriftDictionary_V_V;
+  _iter67: IThriftDictionary;
   map70 : IMap;
   ik72:integer;
   ikn73:integer;
@@ -4674,7 +4674,7 @@ begin
     ikn45:=Set_field.Count;
     for ik44:=0 to ikn45 do 
     begin
-    _iter43:=Set_field[ik44];
+    _iter43:=Set_field.Items[ik44];
       _iter43.Write(oprot);
     end;
     oprot.WriteSetEnd();
@@ -4691,7 +4691,7 @@ begin
     ikn49:=List_field.Count;
     for ik48:=0 to ikn49 do 
     begin
-    _iter47:=List_field[ik48];
+    _iter47:=List_field.Items[ik48];
       map50 := TMapImpl.Create( {TType.}Set_, {TType.}Map, _iter47.Count);
       oprot.WriteMapBegin( map50);
       ikn53:=_iter47.Count;
@@ -4703,7 +4703,7 @@ begin
         ikn57:=_iter51.Count;
         for ik56:=0 to ikn57 do 
         begin
-        _iter55:=_iter51[ik56];
+        _iter55:=_iter51.Items[ik56];
           oprot.WriteI32(_iter55);
         end;
         oprot.WriteSetEnd();
@@ -4719,13 +4719,13 @@ begin
           ikn65:=_iter47[_iter51][_iter59].Count;
           for ik64:=0 to ikn65 do 
           begin
-          _iter63:=_iter47[_iter51][_iter59][ik64];
+          _iter63:=_iter47[_iter51][_iter59].Items[ik64];
             list_66 := TListImpl.Create({TType.}Map, _iter63.Count);
             oprot.WriteListBegin( list_66);
             ikn69:=_iter63.Count;
             for ik68:=0 to ikn69 do 
             begin
-            _iter67:=_iter63[ik68];
+            _iter67:=_iter63.Items[ik68];
               map70 := TMapImpl.Create( {TType.}Struct, {TType.}String_, _iter67.Count);
               oprot.WriteMapBegin( map70);
               ikn73:=_iter67.Count;
@@ -5668,12 +5668,12 @@ begin
   Result := F__isset_Newstruct;
 end;
 
-function TVersioningTestV2Impl.GetNewlist: IThriftList_V;
+function TVersioningTestV2Impl.GetNewlist: IThriftList;
 begin
   Result := FNewlist;
 end;
 
-procedure TVersioningTestV2Impl.SetNewlist( const Value: IThriftList_V);
+procedure TVersioningTestV2Impl.SetNewlist( const Value: IThriftList);
 begin
   F__isset_Newlist := True;
   FNewlist := Value;
@@ -5684,12 +5684,12 @@ begin
   Result := F__isset_Newlist;
 end;
 
-function TVersioningTestV2Impl.GetNewset: IHashSet_V;
+function TVersioningTestV2Impl.GetNewset: IHashSet;
 begin
   Result := FNewset;
 end;
 
-procedure TVersioningTestV2Impl.SetNewset( const Value: IHashSet_V);
+procedure TVersioningTestV2Impl.SetNewset( const Value: IHashSet);
 begin
   F__isset_Newset := True;
   FNewset := Value;
@@ -5700,12 +5700,12 @@ begin
   Result := F__isset_Newset;
 end;
 
-function TVersioningTestV2Impl.GetNewmap: IThriftDictionary_V_V;
+function TVersioningTestV2Impl.GetNewmap: IThriftDictionary;
 begin
   Result := FNewmap;
 end;
 
-procedure TVersioningTestV2Impl.SetNewmap( const Value: IThriftDictionary_V_V);
+procedure TVersioningTestV2Impl.SetNewmap( const Value: IThriftDictionary);
 begin
   F__isset_Newmap := True;
   FNewmap := Value;
@@ -5841,7 +5841,7 @@ begin
         8: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Newlist := TThriftList_VImpl.Create;
+            Newlist := TThriftListImpl.Create;
             _list74 := iprot.ReadListBegin();
             for _i75 := 0 to _list74.Count - 1 do
             begin
@@ -5857,7 +5857,7 @@ begin
         9: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            Newset := THashSet_VImpl.Create;
+            Newset := THashSetImpl.Create;
             _set77 := iprot.ReadSetBegin();
             for _i78 := 0 to _set77.Count - 1 do
             begin
@@ -5873,7 +5873,7 @@ begin
         10: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Newmap := TThriftDictionary_V_VImpl.Create;
+            Newmap := TThriftDictionaryImpl.Create;
             _map80 := iprot.ReadMapBegin();
             for _i81 := 0 to _map80.Count - 1 do
             begin
@@ -6010,7 +6010,7 @@ begin
     ikn87:=Newlist.Count;
     for ik86:=0 to ikn87 do 
     begin
-    _iter85:=Newlist[ik86];
+    _iter85:=Newlist.Items[ik86];
       oprot.WriteI32(_iter85);
     end;
     oprot.WriteListEnd();
@@ -6027,7 +6027,7 @@ begin
     ikn91:=Newset.Count;
     for ik90:=0 to ikn91 do 
     begin
-    _iter89:=Newset[ik90];
+    _iter89:=Newset.Items[ik90];
       oprot.WriteI32(_iter89);
     end;
     oprot.WriteSetEnd();
@@ -6120,12 +6120,12 @@ begin
   inherited;
 end;
 
-function TListTypeVersioningV1Impl.GetMyints: IThriftList_V;
+function TListTypeVersioningV1Impl.GetMyints: IThriftList;
 begin
   Result := FMyints;
 end;
 
-procedure TListTypeVersioningV1Impl.SetMyints( const Value: IThriftList_V);
+procedure TListTypeVersioningV1Impl.SetMyints( const Value: IThriftList);
 begin
   F__isset_Myints := True;
   FMyints := Value;
@@ -6174,7 +6174,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Myints := TThriftList_VImpl.Create;
+            Myints := TThriftListImpl.Create;
             _list96 := iprot.ReadListBegin();
             for _i97 := 0 to _list96.Count - 1 do
             begin
@@ -6230,7 +6230,7 @@ begin
     ikn102:=Myints.Count;
     for ik101:=0 to ikn102 do 
     begin
-    _iter100:=Myints[ik101];
+    _iter100:=Myints.Items[ik101];
       oprot.WriteI32(_iter100);
     end;
     oprot.WriteListEnd();
@@ -6276,12 +6276,12 @@ begin
   inherited;
 end;
 
-function TListTypeVersioningV2Impl.GetStrings: IThriftList_V;
+function TListTypeVersioningV2Impl.GetStrings: IThriftList;
 begin
   Result := FStrings;
 end;
 
-procedure TListTypeVersioningV2Impl.SetStrings( const Value: IThriftList_V);
+procedure TListTypeVersioningV2Impl.SetStrings( const Value: IThriftList);
 begin
   F__isset_Strings := True;
   FStrings := Value;
@@ -6330,7 +6330,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Strings := TThriftList_VImpl.Create;
+            Strings := TThriftListImpl.Create;
             _list103 := iprot.ReadListBegin();
             for _i104 := 0 to _list103.Count - 1 do
             begin
@@ -6386,7 +6386,7 @@ begin
     ikn109:=Strings.Count;
     for ik108:=0 to ikn109 do 
     begin
-    _iter107:=Strings[ik108];
+    _iter107:=Strings.Items[ik108];
       oprot.WriteString(_iter107);
     end;
     oprot.WriteListEnd();
@@ -6432,12 +6432,12 @@ begin
   inherited;
 end;
 
-function TGuessProtocolStructImpl.GetMap_field: IThriftDictionary_V_V;
+function TGuessProtocolStructImpl.GetMap_field: IThriftDictionary;
 begin
   Result := FMap_field;
 end;
 
-procedure TGuessProtocolStructImpl.SetMap_field( const Value: IThriftDictionary_V_V);
+procedure TGuessProtocolStructImpl.SetMap_field( const Value: IThriftDictionary);
 begin
   F__isset_Map_field := True;
   FMap_field := Value;
@@ -6471,7 +6471,7 @@ begin
         7: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Map_field := TThriftDictionary_V_VImpl.Create;
+            Map_field := TThriftDictionaryImpl.Create;
             _map110 := iprot.ReadMapBegin();
             for _i111 := 0 to _map110.Count - 1 do
             begin
@@ -6667,12 +6667,12 @@ begin
   Result := F__isset_Vertwo2000;
 end;
 
-function TLargeDeltasImpl.GetA_set2500: IHashSet_V;
+function TLargeDeltasImpl.GetA_set2500: IHashSet;
 begin
   Result := FA_set2500;
 end;
 
-procedure TLargeDeltasImpl.SetA_set2500( const Value: IHashSet_V);
+procedure TLargeDeltasImpl.SetA_set2500( const Value: IHashSet);
 begin
   F__isset_A_set2500 := True;
   FA_set2500 := Value;
@@ -6699,12 +6699,12 @@ begin
   Result := F__isset_Vertwo3000;
 end;
 
-function TLargeDeltasImpl.GetBig_numbers: IThriftList_V;
+function TLargeDeltasImpl.GetBig_numbers: IThriftList;
 begin
   Result := FBig_numbers;
 end;
 
-procedure TLargeDeltasImpl.SetBig_numbers( const Value: IThriftList_V);
+procedure TLargeDeltasImpl.SetBig_numbers( const Value: IThriftList);
 begin
   F__isset_Big_numbers := True;
   FBig_numbers := Value;
@@ -6808,7 +6808,7 @@ begin
         2500: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            A_set2500 := THashSet_VImpl.Create;
+            A_set2500 := THashSetImpl.Create;
             _set118 := iprot.ReadSetBegin();
             for _i119 := 0 to _set118.Count - 1 do
             begin
@@ -6834,7 +6834,7 @@ begin
         4000: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Big_numbers := TThriftList_VImpl.Create;
+            Big_numbers := TThriftListImpl.Create;
             _list121 := iprot.ReadListBegin();
             for _i122 := 0 to _list121.Count - 1 do
             begin
@@ -6948,7 +6948,7 @@ begin
     ikn127:=A_set2500.Count;
     for ik126:=0 to ikn127 do 
     begin
-    _iter125:=A_set2500[ik126];
+    _iter125:=A_set2500.Items[ik126];
       oprot.WriteString(_iter125);
     end;
     oprot.WriteSetEnd();
@@ -6974,7 +6974,7 @@ begin
     ikn131:=Big_numbers.Count;
     for ik130:=0 to ikn131 do 
     begin
-    _iter129:=Big_numbers[ik130];
+    _iter129:=Big_numbers.Items[ik130];
       oprot.WriteI32(_iter129);
     end;
     oprot.WriteListEnd();
@@ -7027,12 +7027,12 @@ begin
   inherited;
 end;
 
-function TNestedListsI32x2Impl.GetIntegerlist: IThriftList_V;
+function TNestedListsI32x2Impl.GetIntegerlist: IThriftList;
 begin
   Result := FIntegerlist;
 end;
 
-procedure TNestedListsI32x2Impl.SetIntegerlist( const Value: IThriftList_V);
+procedure TNestedListsI32x2Impl.SetIntegerlist( const Value: IThriftList);
 begin
   F__isset_Integerlist := True;
   FIntegerlist := Value;
@@ -7049,7 +7049,7 @@ var
   struc : IStruct;
   _list132: IList;
   _i133: Integer;
-  _elem134: IThriftList_V;
+  _elem134: IThriftList;
   _list135: IList;
   _i136: Integer;
   _elem137: Integer;
@@ -7068,11 +7068,11 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Integerlist := TThriftList_VImpl.Create;
+            Integerlist := TThriftListImpl.Create;
             _list132 := iprot.ReadListBegin();
             for _i133 := 0 to _list132.Count - 1 do
             begin
-              _elem134 := TThriftList_VImpl.Create;
+              _elem134 := TThriftListImpl.Create;
               _list135 := iprot.ReadListBegin();
               for _i136 := 0 to _list135.Count - 1 do
               begin
@@ -7106,7 +7106,7 @@ var
   list_138 : IList;
   ik140:integer;
   ikn141:integer;
-  _iter139: IThriftList_V;
+  _iter139: IThriftList;
   list_142 : IList;
   ik144:integer;
   ikn145:integer;
@@ -7126,13 +7126,13 @@ begin
     ikn141:=Integerlist.Count;
     for ik140:=0 to ikn141 do 
     begin
-    _iter139:=Integerlist[ik140];
+    _iter139:=Integerlist.Items[ik140];
       list_142 := TListImpl.Create({TType.}I32, _iter139.Count);
       oprot.WriteListBegin( list_142);
       ikn145:=_iter139.Count;
       for ik144:=0 to ikn145 do 
       begin
-      _iter143:=_iter139[ik144];
+      _iter143:=_iter139.Items[ik144];
         oprot.WriteI32(_iter143);
       end;
       oprot.WriteListEnd();
@@ -7169,12 +7169,12 @@ begin
   inherited;
 end;
 
-function TNestedListsI32x3Impl.GetIntegerlist: IThriftList_V;
+function TNestedListsI32x3Impl.GetIntegerlist: IThriftList;
 begin
   Result := FIntegerlist;
 end;
 
-procedure TNestedListsI32x3Impl.SetIntegerlist( const Value: IThriftList_V);
+procedure TNestedListsI32x3Impl.SetIntegerlist( const Value: IThriftList);
 begin
   F__isset_Integerlist := True;
   FIntegerlist := Value;
@@ -7191,10 +7191,10 @@ var
   struc : IStruct;
   _list146: IList;
   _i147: Integer;
-  _elem148: IThriftList_V;
+  _elem148: IThriftList;
   _list149: IList;
   _i150: Integer;
-  _elem151: IThriftList_V;
+  _elem151: IThriftList;
   _list152: IList;
   _i153: Integer;
   _elem154: Integer;
@@ -7213,15 +7213,15 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Integerlist := TThriftList_VImpl.Create;
+            Integerlist := TThriftListImpl.Create;
             _list146 := iprot.ReadListBegin();
             for _i147 := 0 to _list146.Count - 1 do
             begin
-              _elem148 := TThriftList_VImpl.Create;
+              _elem148 := TThriftListImpl.Create;
               _list149 := iprot.ReadListBegin();
               for _i150 := 0 to _list149.Count - 1 do
               begin
-                _elem151 := TThriftList_VImpl.Create;
+                _elem151 := TThriftListImpl.Create;
                 _list152 := iprot.ReadListBegin();
                 for _i153 := 0 to _list152.Count - 1 do
                 begin
@@ -7258,11 +7258,11 @@ var
   list_155 : IList;
   ik157:integer;
   ikn158:integer;
-  _iter156: IThriftList_V;
+  _iter156: IThriftList;
   list_159 : IList;
   ik161:integer;
   ikn162:integer;
-  _iter160: IThriftList_V;
+  _iter160: IThriftList;
   list_163 : IList;
   ik165:integer;
   ikn166:integer;
@@ -7282,19 +7282,19 @@ begin
     ikn158:=Integerlist.Count;
     for ik157:=0 to ikn158 do 
     begin
-    _iter156:=Integerlist[ik157];
+    _iter156:=Integerlist.Items[ik157];
       list_159 := TListImpl.Create({TType.}List, _iter156.Count);
       oprot.WriteListBegin( list_159);
       ikn162:=_iter156.Count;
       for ik161:=0 to ikn162 do 
       begin
-      _iter160:=_iter156[ik161];
+      _iter160:=_iter156.Items[ik161];
         list_163 := TListImpl.Create({TType.}I32, _iter160.Count);
         oprot.WriteListBegin( list_163);
         ikn166:=_iter160.Count;
         for ik165:=0 to ikn166 do 
         begin
-        _iter164:=_iter160[ik165];
+        _iter164:=_iter160.Items[ik165];
           oprot.WriteI32(_iter164);
         end;
         oprot.WriteListEnd();
@@ -7333,12 +7333,12 @@ begin
   inherited;
 end;
 
-function TNestedMixedx2Impl.GetInt_set_list: IThriftList_V;
+function TNestedMixedx2Impl.GetInt_set_list: IThriftList;
 begin
   Result := FInt_set_list;
 end;
 
-procedure TNestedMixedx2Impl.SetInt_set_list( const Value: IThriftList_V);
+procedure TNestedMixedx2Impl.SetInt_set_list( const Value: IThriftList);
 begin
   F__isset_Int_set_list := True;
   FInt_set_list := Value;
@@ -7349,12 +7349,12 @@ begin
   Result := F__isset_Int_set_list;
 end;
 
-function TNestedMixedx2Impl.GetMap_int_strset: IThriftDictionary_V_V;
+function TNestedMixedx2Impl.GetMap_int_strset: IThriftDictionary;
 begin
   Result := FMap_int_strset;
 end;
 
-procedure TNestedMixedx2Impl.SetMap_int_strset( const Value: IThriftDictionary_V_V);
+procedure TNestedMixedx2Impl.SetMap_int_strset( const Value: IThriftDictionary);
 begin
   F__isset_Map_int_strset := True;
   FMap_int_strset := Value;
@@ -7365,12 +7365,12 @@ begin
   Result := F__isset_Map_int_strset;
 end;
 
-function TNestedMixedx2Impl.GetMap_int_strset_list: IThriftList_V;
+function TNestedMixedx2Impl.GetMap_int_strset_list: IThriftList;
 begin
   Result := FMap_int_strset_list;
 end;
 
-procedure TNestedMixedx2Impl.SetMap_int_strset_list( const Value: IThriftList_V);
+procedure TNestedMixedx2Impl.SetMap_int_strset_list( const Value: IThriftList);
 begin
   F__isset_Map_int_strset_list := True;
   FMap_int_strset_list := Value;
@@ -7387,24 +7387,24 @@ var
   struc : IStruct;
   _list167: IList;
   _i168: Integer;
-  _elem169: IHashSet_V;
+  _elem169: IHashSet;
   _set170: ISet;
   _i171: Integer;
   _elem172: Integer;
   _map173: IMap;
   _i174: Integer;
   _key175: Integer;
-  _val176: IHashSet_V;
+  _val176: IHashSet;
   _set177: ISet;
   _i178: Integer;
   _elem179: string;
   _list180: IList;
   _i181: Integer;
-  _elem182: IThriftDictionary_V_V;
+  _elem182: IThriftDictionary;
   _map183: IMap;
   _i184: Integer;
   _key185: Integer;
-  _val186: IHashSet_V;
+  _val186: IHashSet;
   _set187: ISet;
   _i188: Integer;
   _elem189: string;
@@ -7423,11 +7423,11 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Int_set_list := TThriftList_VImpl.Create;
+            Int_set_list := TThriftListImpl.Create;
             _list167 := iprot.ReadListBegin();
             for _i168 := 0 to _list167.Count - 1 do
             begin
-              _elem169 := THashSet_VImpl.Create;
+              _elem169 := THashSetImpl.Create;
               _set170 := iprot.ReadSetBegin();
               for _i171 := 0 to _set170.Count - 1 do
               begin
@@ -7446,12 +7446,12 @@ begin
         2: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Map_int_strset := TThriftDictionary_V_VImpl.Create;
+            Map_int_strset := TThriftDictionaryImpl.Create;
             _map173 := iprot.ReadMapBegin();
             for _i174 := 0 to _map173.Count - 1 do
             begin
               _key175 := iprot.ReadI32();
-              _val176 := THashSet_VImpl.Create;
+              _val176 := THashSetImpl.Create;
               _set177 := iprot.ReadSetBegin();
               for _i178 := 0 to _set177.Count - 1 do
               begin
@@ -7470,16 +7470,16 @@ begin
         3: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Map_int_strset_list := TThriftList_VImpl.Create;
+            Map_int_strset_list := TThriftListImpl.Create;
             _list180 := iprot.ReadListBegin();
             for _i181 := 0 to _list180.Count - 1 do
             begin
-              _elem182 := TThriftDictionary_V_VImpl.Create;
+              _elem182 := TThriftDictionaryImpl.Create;
               _map183 := iprot.ReadMapBegin();
               for _i184 := 0 to _map183.Count - 1 do
               begin
                 _key185 := iprot.ReadI32();
-                _val186 := THashSet_VImpl.Create;
+                _val186 := THashSetImpl.Create;
                 _set187 := iprot.ReadSetBegin();
                 for _i188 := 0 to _set187.Count - 1 do
                 begin
@@ -7516,7 +7516,7 @@ var
   list_190 : IList;
   ik192:integer;
   ikn193:integer;
-  _iter191: IHashSet_V;
+  _iter191: IHashSet;
   set_194 : ISet;
   ik196:integer;
   ikn197:integer;
@@ -7532,7 +7532,7 @@ var
   list_206 : IList;
   ik208:integer;
   ikn209:integer;
-  _iter207: IThriftDictionary_V_V;
+  _iter207: IThriftDictionary;
   map210 : IMap;
   ik212:integer;
   ikn213:integer;
@@ -7556,13 +7556,13 @@ begin
     ikn193:=Int_set_list.Count;
     for ik192:=0 to ikn193 do 
     begin
-    _iter191:=Int_set_list[ik192];
+    _iter191:=Int_set_list.Items[ik192];
       set_194 := TSetImpl.Create({TType.}I32, _iter191.Count);
       oprot.WriteSetBegin( set_194);
       ikn197:=_iter191.Count;
       for ik196:=0 to ikn197 do 
       begin
-      _iter195:=_iter191[ik196];
+      _iter195:=_iter191.Items[ik196];
         oprot.WriteI32(_iter195);
       end;
       oprot.WriteSetEnd();
@@ -7588,7 +7588,7 @@ begin
       ikn205:=Map_int_strset[_iter199].Count;
       for ik204:=0 to ikn205 do 
       begin
-      _iter203:=Map_int_strset[_iter199][ik204];
+      _iter203:=Map_int_strset[_iter199].Items[ik204];
         oprot.WriteString(_iter203);
       end;
       oprot.WriteSetEnd();
@@ -7607,7 +7607,7 @@ begin
     ikn209:=Map_int_strset_list.Count;
     for ik208:=0 to ikn209 do 
     begin
-    _iter207:=Map_int_strset_list[ik208];
+    _iter207:=Map_int_strset_list.Items[ik208];
       map210 := TMapImpl.Create( {TType.}I32, {TType.}Set_, _iter207.Count);
       oprot.WriteMapBegin( map210);
       ikn213:=_iter207.Count;
@@ -7620,7 +7620,7 @@ begin
         ikn217:=_iter207[_iter211].Count;
         for ik216:=0 to ikn217 do 
         begin
-        _iter215:=_iter207[_iter211][ik216];
+        _iter215:=_iter207[_iter211].Items[ik216];
           oprot.WriteString(_iter215);
         end;
         oprot.WriteSetEnd();
@@ -7663,12 +7663,12 @@ begin
   inherited;
 end;
 
-function TListBonksImpl.GetBonk: IThriftList_V;
+function TListBonksImpl.GetBonk: IThriftList;
 begin
   Result := FBonk;
 end;
 
-procedure TListBonksImpl.SetBonk( const Value: IThriftList_V);
+procedure TListBonksImpl.SetBonk( const Value: IThriftList);
 begin
   F__isset_Bonk := True;
   FBonk := Value;
@@ -7701,7 +7701,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Bonk := TThriftList_VImpl.Create;
+            Bonk := TThriftListImpl.Create;
             _list218 := iprot.ReadListBegin();
             for _i219 := 0 to _list218.Count - 1 do
             begin
@@ -7749,7 +7749,7 @@ begin
     ikn224:=Bonk.Count;
     for ik223:=0 to ikn224 do 
     begin
-    _iter222:=Bonk[ik223];
+    _iter222:=Bonk.Items[ik223];
       _iter222.Write(oprot);
     end;
     oprot.WriteListEnd();
@@ -7784,12 +7784,12 @@ begin
   inherited;
 end;
 
-function TNestedListsBonkImpl.GetBonk: IThriftList_V;
+function TNestedListsBonkImpl.GetBonk: IThriftList;
 begin
   Result := FBonk;
 end;
 
-procedure TNestedListsBonkImpl.SetBonk( const Value: IThriftList_V);
+procedure TNestedListsBonkImpl.SetBonk( const Value: IThriftList);
 begin
   F__isset_Bonk := True;
   FBonk := Value;
@@ -7806,10 +7806,10 @@ var
   struc : IStruct;
   _list225: IList;
   _i226: Integer;
-  _elem227: IThriftList_V;
+  _elem227: IThriftList;
   _list228: IList;
   _i229: Integer;
-  _elem230: IThriftList_V;
+  _elem230: IThriftList;
   _list231: IList;
   _i232: Integer;
   _elem233: IBonk;
@@ -7828,15 +7828,15 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Bonk := TThriftList_VImpl.Create;
+            Bonk := TThriftListImpl.Create;
             _list225 := iprot.ReadListBegin();
             for _i226 := 0 to _list225.Count - 1 do
             begin
-              _elem227 := TThriftList_VImpl.Create;
+              _elem227 := TThriftListImpl.Create;
               _list228 := iprot.ReadListBegin();
               for _i229 := 0 to _list228.Count - 1 do
               begin
-                _elem230 := TThriftList_VImpl.Create;
+                _elem230 := TThriftListImpl.Create;
                 _list231 := iprot.ReadListBegin();
                 for _i232 := 0 to _list231.Count - 1 do
                 begin
@@ -7874,11 +7874,11 @@ var
   list_234 : IList;
   ik236:integer;
   ikn237:integer;
-  _iter235: IThriftList_V;
+  _iter235: IThriftList;
   list_238 : IList;
   ik240:integer;
   ikn241:integer;
-  _iter239: IThriftList_V;
+  _iter239: IThriftList;
   list_242 : IList;
   ik244:integer;
   ikn245:integer;
@@ -7898,19 +7898,19 @@ begin
     ikn237:=Bonk.Count;
     for ik236:=0 to ikn237 do 
     begin
-    _iter235:=Bonk[ik236];
+    _iter235:=Bonk.Items[ik236];
       list_238 := TListImpl.Create({TType.}List, _iter235.Count);
       oprot.WriteListBegin( list_238);
       ikn241:=_iter235.Count;
       for ik240:=0 to ikn241 do 
       begin
-      _iter239:=_iter235[ik240];
+      _iter239:=_iter235.Items[ik240];
         list_242 := TListImpl.Create({TType.}Struct, _iter239.Count);
         oprot.WriteListBegin( list_242);
         ikn245:=_iter239.Count;
         for ik244:=0 to ikn245 do 
         begin
-        _iter243:=_iter239[ik244];
+        _iter243:=_iter239.Items[ik244];
           _iter243.Write(oprot);
         end;
         oprot.WriteListEnd();
@@ -8680,13 +8680,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testNest failed: unknown result');
 end;
 
-function TThriftTest.TClient.testMap(const thing: IThriftDictionary_V_V): IThriftDictionary_V_V;
+function TThriftTest.TClient.testMap(const thing: IThriftDictionary): IThriftDictionary;
 begin
   send_testMap(thing);
   Result := recv_testMap();
 end;
 
-procedure TThriftTest.TClient.send_testMap(const thing: IThriftDictionary_V_V);
+procedure TThriftTest.TClient.send_testMap(const thing: IThriftDictionary);
 var
   args : ITestMap_args;
   msg : IMessage;
@@ -8702,7 +8702,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TThriftTest.TClient.recv_testMap(): IThriftDictionary_V_V;
+function TThriftTest.TClient.recv_testMap(): IThriftDictionary;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -8727,13 +8727,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testMap failed: unknown result');
 end;
 
-function TThriftTest.TClient.testStringMap(const thing: IThriftDictionary_V_V): IThriftDictionary_V_V;
+function TThriftTest.TClient.testStringMap(const thing: IThriftDictionary): IThriftDictionary;
 begin
   send_testStringMap(thing);
   Result := recv_testStringMap();
 end;
 
-procedure TThriftTest.TClient.send_testStringMap(const thing: IThriftDictionary_V_V);
+procedure TThriftTest.TClient.send_testStringMap(const thing: IThriftDictionary);
 var
   args : ITestStringMap_args;
   msg : IMessage;
@@ -8749,7 +8749,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TThriftTest.TClient.recv_testStringMap(): IThriftDictionary_V_V;
+function TThriftTest.TClient.recv_testStringMap(): IThriftDictionary;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -8774,13 +8774,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testStringMap failed: unknown result');
 end;
 
-function TThriftTest.TClient.testSet(const thing: IHashSet_V): IHashSet_V;
+function TThriftTest.TClient.testSet(const thing: IHashSet): IHashSet;
 begin
   send_testSet(thing);
   Result := recv_testSet();
 end;
 
-procedure TThriftTest.TClient.send_testSet(const thing: IHashSet_V);
+procedure TThriftTest.TClient.send_testSet(const thing: IHashSet);
 var
   args : ITestSet_args;
   msg : IMessage;
@@ -8796,7 +8796,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TThriftTest.TClient.recv_testSet(): IHashSet_V;
+function TThriftTest.TClient.recv_testSet(): IHashSet;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -8821,13 +8821,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testSet failed: unknown result');
 end;
 
-function TThriftTest.TClient.testList(const thing: IThriftList_V): IThriftList_V;
+function TThriftTest.TClient.testList(const thing: IThriftList): IThriftList;
 begin
   send_testList(thing);
   Result := recv_testList();
 end;
 
-procedure TThriftTest.TClient.send_testList(const thing: IThriftList_V);
+procedure TThriftTest.TClient.send_testList(const thing: IThriftList);
 var
   args : ITestList_args;
   msg : IMessage;
@@ -8843,7 +8843,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TThriftTest.TClient.recv_testList(): IThriftList_V;
+function TThriftTest.TClient.recv_testList(): IThriftList;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -8960,7 +8960,7 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testTypedef failed: unknown result');
 end;
 
-function TThriftTest.TClient.testMapMap(hello: Integer): IThriftDictionary_V_V;
+function TThriftTest.TClient.testMapMap(hello: Integer): IThriftDictionary;
 begin
   send_testMapMap(hello);
   Result := recv_testMapMap();
@@ -8982,7 +8982,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TThriftTest.TClient.recv_testMapMap(): IThriftDictionary_V_V;
+function TThriftTest.TClient.recv_testMapMap(): IThriftDictionary;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -9007,7 +9007,7 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testMapMap failed: unknown result');
 end;
 
-function TThriftTest.TClient.testInsanity(const argument: IInsanity): IThriftDictionary_V_V;
+function TThriftTest.TClient.testInsanity(const argument: IInsanity): IThriftDictionary;
 begin
   send_testInsanity(argument);
   Result := recv_testInsanity();
@@ -9029,7 +9029,7 @@ begin
   oprot_.Transport.Flush();
 end;
 
-function TThriftTest.TClient.recv_testInsanity(): IThriftDictionary_V_V;
+function TThriftTest.TClient.recv_testInsanity(): IThriftDictionary;
 var
   msg : IMessage;
   x : TApplicationException;
@@ -9054,13 +9054,13 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'testInsanity failed: unknown result');
 end;
 
-function TThriftTest.TClient.testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary_V_V; arg4: TNumberz; const arg5: TUserId): IXtruct;
+function TThriftTest.TClient.testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary; arg4: TNumberz; const arg5: TUserId): IXtruct;
 begin
   send_testMulti(arg0, arg1, arg2, arg3, arg4, arg5);
   Result := recv_testMulti();
 end;
 
-procedure TThriftTest.TClient.send_testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary_V_V; arg4: TNumberz; const arg5: TUserId);
+procedure TThriftTest.TClient.send_testMulti(arg0: ShortInt; arg1: Integer; const arg2: Int64; const arg3: IThriftDictionary; arg4: TNumberz; const arg5: TUserId);
 var
   args : ITestMulti_args;
   msg : IMessage;
@@ -9244,7 +9244,7 @@ tmpmethod:TProcessFunction;
 begin
   inherited Create;
   Self.iface_ := iface_;
-  processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;
+  processMap_ := TThriftDictionaryImpl{<string, TProcessFunction>}.Create;
   //processMap_.AddOrSetValue( 'testVoid', testVoid_Process);
   tmpmethod:=Self.testVoid_Process;
   processMap_.AddOrSetValue( 'testVoid',Pointer(@tmpmethod));
@@ -11259,12 +11259,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestMap_argsImpl.GetThing: IThriftDictionary_V_V;
+function TThriftTest.TTestMap_argsImpl.GetThing: IThriftDictionary;
 begin
   Result := FThing;
 end;
 
-procedure TThriftTest.TTestMap_argsImpl.SetThing( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestMap_argsImpl.SetThing( const Value: IThriftDictionary);
 begin
   F__isset_Thing := True;
   FThing := Value;
@@ -11298,7 +11298,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Thing := TThriftDictionary_V_VImpl.Create;
+            Thing := TThriftDictionaryImpl.Create;
             _map246 := iprot.ReadMapBegin();
             for _i247 := 0 to _map246.Count - 1 do
             begin
@@ -11382,12 +11382,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestMap_resultImpl.GetSuccess: IThriftDictionary_V_V;
+function TThriftTest.TTestMap_resultImpl.GetSuccess: IThriftDictionary;
 begin
   Result := FSuccess;
 end;
 
-procedure TThriftTest.TTestMap_resultImpl.SetSuccess( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestMap_resultImpl.SetSuccess( const Value: IThriftDictionary);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -11421,7 +11421,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Success := TThriftDictionary_V_VImpl.Create;
+            Success := TThriftDictionaryImpl.Create;
             _map254 := iprot.ReadMapBegin();
             for _i255 := 0 to _map254.Count - 1 do
             begin
@@ -11505,12 +11505,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestStringMap_argsImpl.GetThing: IThriftDictionary_V_V;
+function TThriftTest.TTestStringMap_argsImpl.GetThing: IThriftDictionary;
 begin
   Result := FThing;
 end;
 
-procedure TThriftTest.TTestStringMap_argsImpl.SetThing( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestStringMap_argsImpl.SetThing( const Value: IThriftDictionary);
 begin
   F__isset_Thing := True;
   FThing := Value;
@@ -11544,7 +11544,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Thing := TThriftDictionary_V_VImpl.Create;
+            Thing := TThriftDictionaryImpl.Create;
             _map262 := iprot.ReadMapBegin();
             for _i263 := 0 to _map262.Count - 1 do
             begin
@@ -11628,12 +11628,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestStringMap_resultImpl.GetSuccess: IThriftDictionary_V_V;
+function TThriftTest.TTestStringMap_resultImpl.GetSuccess: IThriftDictionary;
 begin
   Result := FSuccess;
 end;
 
-procedure TThriftTest.TTestStringMap_resultImpl.SetSuccess( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestStringMap_resultImpl.SetSuccess( const Value: IThriftDictionary);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -11667,7 +11667,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Success := TThriftDictionary_V_VImpl.Create;
+            Success := TThriftDictionaryImpl.Create;
             _map270 := iprot.ReadMapBegin();
             for _i271 := 0 to _map270.Count - 1 do
             begin
@@ -11751,12 +11751,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestSet_argsImpl.GetThing: IHashSet_V;
+function TThriftTest.TTestSet_argsImpl.GetThing: IHashSet;
 begin
   Result := FThing;
 end;
 
-procedure TThriftTest.TTestSet_argsImpl.SetThing( const Value: IHashSet_V);
+procedure TThriftTest.TTestSet_argsImpl.SetThing( const Value: IHashSet);
 begin
   F__isset_Thing := True;
   FThing := Value;
@@ -11789,7 +11789,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            Thing := THashSet_VImpl.Create;
+            Thing := THashSetImpl.Create;
             _set278 := iprot.ReadSetBegin();
             for _i279 := 0 to _set278.Count - 1 do
             begin
@@ -11836,7 +11836,7 @@ begin
     ikn284:=Thing.Count;
     for ik283:=0 to ikn284 do 
     begin
-    _iter282:=Thing[ik283];
+    _iter282:=Thing.Items[ik283];
       oprot.WriteI32(_iter282);
     end;
     oprot.WriteSetEnd();
@@ -11871,12 +11871,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestSet_resultImpl.GetSuccess: IHashSet_V;
+function TThriftTest.TTestSet_resultImpl.GetSuccess: IHashSet;
 begin
   Result := FSuccess;
 end;
 
-procedure TThriftTest.TTestSet_resultImpl.SetSuccess( const Value: IHashSet_V);
+procedure TThriftTest.TTestSet_resultImpl.SetSuccess( const Value: IHashSet);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -11909,7 +11909,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Set_) then
           begin
-            Success := THashSet_VImpl.Create;
+            Success := THashSetImpl.Create;
             _set285 := iprot.ReadSetBegin();
             for _i286 := 0 to _set285.Count - 1 do
             begin
@@ -11956,7 +11956,7 @@ begin
     ikn291:=Success.Count;
     for ik290:=0 to ikn291 do 
     begin
-    _iter289:=Success[ik290];
+    _iter289:=Success.Items[ik290];
       oprot.WriteI32(_iter289);
     end;
     oprot.WriteSetEnd();
@@ -11991,12 +11991,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestList_argsImpl.GetThing: IThriftList_V;
+function TThriftTest.TTestList_argsImpl.GetThing: IThriftList;
 begin
   Result := FThing;
 end;
 
-procedure TThriftTest.TTestList_argsImpl.SetThing( const Value: IThriftList_V);
+procedure TThriftTest.TTestList_argsImpl.SetThing( const Value: IThriftList);
 begin
   F__isset_Thing := True;
   FThing := Value;
@@ -12029,7 +12029,7 @@ begin
         1: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Thing := TThriftList_VImpl.Create;
+            Thing := TThriftListImpl.Create;
             _list292 := iprot.ReadListBegin();
             for _i293 := 0 to _list292.Count - 1 do
             begin
@@ -12076,7 +12076,7 @@ begin
     ikn298:=Thing.Count;
     for ik297:=0 to ikn298 do 
     begin
-    _iter296:=Thing[ik297];
+    _iter296:=Thing.Items[ik297];
       oprot.WriteI32(_iter296);
     end;
     oprot.WriteListEnd();
@@ -12111,12 +12111,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestList_resultImpl.GetSuccess: IThriftList_V;
+function TThriftTest.TTestList_resultImpl.GetSuccess: IThriftList;
 begin
   Result := FSuccess;
 end;
 
-procedure TThriftTest.TTestList_resultImpl.SetSuccess( const Value: IThriftList_V);
+procedure TThriftTest.TTestList_resultImpl.SetSuccess( const Value: IThriftList);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -12149,7 +12149,7 @@ begin
         0: begin
           if (field_.Type_ = {TType.}List) then
           begin
-            Success := TThriftList_VImpl.Create;
+            Success := TThriftListImpl.Create;
             _list299 := iprot.ReadListBegin();
             for _i300 := 0 to _list299.Count - 1 do
             begin
@@ -12196,7 +12196,7 @@ begin
     ikn305:=Success.Count;
     for ik304:=0 to ikn305 do 
     begin
-    _iter303:=Success[ik304];
+    _iter303:=Success.Items[ik304];
       oprot.WriteI32(_iter303);
     end;
     oprot.WriteListEnd();
@@ -12721,12 +12721,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestMapMap_resultImpl.GetSuccess: IThriftDictionary_V_V;
+function TThriftTest.TTestMapMap_resultImpl.GetSuccess: IThriftDictionary;
 begin
   Result := FSuccess;
 end;
 
-procedure TThriftTest.TTestMapMap_resultImpl.SetSuccess( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestMapMap_resultImpl.SetSuccess( const Value: IThriftDictionary);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -12744,7 +12744,7 @@ var
   _map306: IMap;
   _i307: Integer;
   _key308: Integer;
-  _val309: IThriftDictionary_V_V;
+  _val309: IThriftDictionary;
   _map310: IMap;
   _i311: Integer;
   _key312: Integer;
@@ -12764,12 +12764,12 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Success := TThriftDictionary_V_VImpl.Create;
+            Success := TThriftDictionaryImpl.Create;
             _map306 := iprot.ReadMapBegin();
             for _i307 := 0 to _map306.Count - 1 do
             begin
               _key308 := iprot.ReadI32();
-              _val309 := TThriftDictionary_V_VImpl.Create;
+              _val309 := TThriftDictionaryImpl.Create;
               _map310 := iprot.ReadMapBegin();
               for _i311 := 0 to _map310.Count - 1 do
               begin
@@ -12968,12 +12968,12 @@ begin
   inherited;
 end;
 
-function TThriftTest.TTestInsanity_resultImpl.GetSuccess: IThriftDictionary_V_V;
+function TThriftTest.TTestInsanity_resultImpl.GetSuccess: IThriftDictionary;
 begin
   Result := FSuccess;
 end;
 
-procedure TThriftTest.TTestInsanity_resultImpl.SetSuccess( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestInsanity_resultImpl.SetSuccess( const Value: IThriftDictionary);
 begin
   F__isset_Success := True;
   FSuccess := Value;
@@ -12991,7 +12991,7 @@ var
   _map322: IMap;
   _i323: Integer;
   _key324: TUserId;
-  _val325: IThriftDictionary_V_V;
+  _val325: IThriftDictionary;
   _map326: IMap;
   _i327: Integer;
   _key328: TNumberz;
@@ -13011,12 +13011,12 @@ begin
         0: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Success := TThriftDictionary_V_VImpl.Create;
+            Success := TThriftDictionaryImpl.Create;
             _map322 := iprot.ReadMapBegin();
             for _i323 := 0 to _map322.Count - 1 do
             begin
               _key324 := iprot.ReadI64();
-              _val325 := TThriftDictionary_V_VImpl.Create;
+              _val325 := TThriftDictionaryImpl.Create;
               _map326 := iprot.ReadMapBegin();
               for _i327 := 0 to _map326.Count - 1 do
               begin
@@ -13165,12 +13165,12 @@ begin
   Result := F__isset_Arg2;
 end;
 
-function TThriftTest.TTestMulti_argsImpl.GetArg3: IThriftDictionary_V_V;
+function TThriftTest.TTestMulti_argsImpl.GetArg3: IThriftDictionary;
 begin
   Result := FArg3;
 end;
 
-procedure TThriftTest.TTestMulti_argsImpl.SetArg3( const Value: IThriftDictionary_V_V);
+procedure TThriftTest.TTestMulti_argsImpl.SetArg3( const Value: IThriftDictionary);
 begin
   F__isset_Arg3 := True;
   FArg3 := Value;
@@ -13263,7 +13263,7 @@ begin
         4: begin
           if (field_.Type_ = {TType.}Map) then
           begin
-            Arg3 := TThriftDictionary_V_VImpl.Create;
+            Arg3 := TThriftDictionaryImpl.Create;
             _map338 := iprot.ReadMapBegin();
             for _i339 := 0 to _map338.Count - 1 do
             begin
@@ -14166,7 +14166,7 @@ tmpmethod:TProcessFunction;
 begin
   inherited Create;
   Self.iface_ := iface_;
-  processMap_ := TThriftDictionary_V_VImpl{<string, TProcessFunction>}.Create;
+  processMap_ := TThriftDictionaryImpl{<string, TProcessFunction>}.Create;
   //processMap_.AddOrSetValue( 'blahBlah', blahBlah_Process);
   tmpmethod:=Self.blahBlah_Process;
   processMap_.AddOrSetValue( 'blahBlah',Pointer(@tmpmethod));

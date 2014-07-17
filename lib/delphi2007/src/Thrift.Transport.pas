@@ -45,7 +45,6 @@ uses
   SysUtils,
   Math,
   Sockets,
-  uTypes,
   uCollections,
   Thrift.Utils,
   Thrift.Stream,
@@ -106,11 +105,11 @@ type
     function GetConnectionTimeout: Integer;
     procedure SetReadTimeout(const Value: Integer);
     function GetReadTimeout: Integer;
-    function GetCustomHeaders: IThriftDictionary_V_V;
+    function GetCustomHeaders: IThriftDictionary;
     procedure SendRequest;
     property ConnectionTimeout: Integer read GetConnectionTimeout write SetConnectionTimeout;
     property ReadTimeout: Integer read GetReadTimeout write SetReadTimeout;
-    property CustomHeaders: IThriftDictionary_V_V read GetCustomHeaders;
+    property CustomHeaders: IThriftDictionary read GetCustomHeaders;
   end;
 
   THTTPClientImpl = class( TTransportImpl, IHTTPClient)
@@ -120,7 +119,7 @@ type
     FOutputStream : IThriftStream;
     FConnectionTimeout : Integer;
     FReadTimeout : Integer;
-    FCustomHeaders : IThriftDictionary_V_V;
+    FCustomHeaders : IThriftDictionary;
 
     function CreateRequest: IXMLHTTPRequest;
   protected
@@ -135,11 +134,11 @@ type
     function GetConnectionTimeout: Integer;
     procedure SetReadTimeout(const Value: Integer);
     function GetReadTimeout: Integer;
-    function GetCustomHeaders: IThriftDictionary_V_V;
+    function GetCustomHeaders: IThriftDictionary;
     procedure SendRequest;
     property ConnectionTimeout: Integer read GetConnectionTimeout write SetConnectionTimeout;
     property ReadTimeout: Integer read GetReadTimeout write SetReadTimeout;
-    property CustomHeaders: IThriftDictionary_V_V read GetCustomHeaders;
+    property CustomHeaders: IThriftDictionary read GetCustomHeaders;
   public
     constructor Create( const AUri: string);
     destructor Destroy; override;
@@ -395,7 +394,7 @@ constructor THTTPClientImpl.Create(const AUri: string);
 begin
   inherited Create;
   FUri := AUri;
-  FCustomHeaders := TThriftDictionary_V_VImpl.Create;
+  FCustomHeaders := TThriftDictionaryImpl.Create;
   FOutputStream := TThriftStreamAdapterDelphi.Create( TMemoryStream.Create, True);
 end;
 
@@ -411,7 +410,7 @@ var
  //#MODIFY NEW
  {begin}
 i,n:integer;
-pair:TPair_V_V;
+pair:TAllValuePair;
 {end}
 begin
  //#MODIFY SAVE
@@ -451,7 +450,7 @@ begin
     pair:=FCustomHeaders.GetPair(i);
     if assigned(pair) then
     begin
-      Result.setRequestHeader( pair.Key, pair.Value.AsString);
+      Result.setRequestHeader( pair.Key.AsString, pair.Value.AsString);
     end;
   end;
  {end}
@@ -478,7 +477,7 @@ begin
   Result := FConnectionTimeout;
 end;
 
-function THTTPClientImpl.GetCustomHeaders: IThriftDictionary_V_V;
+function THTTPClientImpl.GetCustomHeaders: IThriftDictionary;
 begin
   Result := FCustomHeaders;
 end;

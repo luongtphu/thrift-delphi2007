@@ -79,7 +79,7 @@ type
     end;
 
   private
-    FServiceProcessorMap : TuDictionary_V_V{TDictionary<String, IProcessor>};
+    FServiceProcessorMap : TuDictionary{TDictionary<String, IProcessor>};
 
     procedure Error( const oprot : IProtocol; const msg : IMessage;
                      extype : {TApplicationException.}TExceptionType; const etxt : string);
@@ -125,7 +125,7 @@ end;
 constructor TMultiplexedProcessorImpl.Create;
 begin
   inherited Create;
-  FServiceProcessorMap :=TuDictionary_V_V.Create {TDictionary<string,IProcessor>.Create};
+  FServiceProcessorMap :=TuDictionary.Create {TDictionary<string,IProcessor>.Create};
 end;
 
 
@@ -141,7 +141,7 @@ end;
 
 procedure TMultiplexedProcessorImpl.RegisterProcessor( const serviceName : String; const processor : IProcessor);
 begin
-  FServiceProcessorMap.Add( serviceName, processor);
+  FServiceProcessorMap.Add( _AllValue(serviceName), processor);
 end;
 
 

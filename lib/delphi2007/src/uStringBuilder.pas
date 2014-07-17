@@ -6,7 +6,7 @@
 unit uStringBuilder;
 
 interface
-uses SysUtils,classes,uRTLConsts,uSysUtils,uTypes;
+uses SysUtils,classes,uRTLConsts,uSysUtils;
 
 {$I uDefine.inc}
 {$ifdef NO_TStringBuilder}
@@ -14,6 +14,7 @@ uses SysUtils,classes,uRTLConsts,uSysUtils,uTypes;
 
 
 type
+TCharArray = array of char;
 TStringBuilder = class
   private const
     DefaultCapacity = $10;
