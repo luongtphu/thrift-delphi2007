@@ -25,7 +25,7 @@ program client;
 uses
   SysUtils,
   TestClient in 'TestClient.pas',
-  Thrift.Test, // in 'gen-delphi\Thrift.Test.pas',
+  Thrift.Test  in 'gen-delphi7\Thrift.Test.pas',
   Thrift in '..\src\Thrift.pas',
   Thrift.Transport in '..\src\Thrift.Transport.pas',
   Thrift.Transport.Pipes in '..\src\Thrift.Transport.Pipes.pas',

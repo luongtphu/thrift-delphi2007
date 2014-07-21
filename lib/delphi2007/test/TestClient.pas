@@ -27,7 +27,7 @@ interface
 uses
   Windows, SysUtils, Classes,
   DateUtils,
-  Generics.Collections,
+  uCollections,
   TestConstants,
   Thrift,
   Thrift.Protocol.JSON,
@@ -303,7 +303,7 @@ begin
   except
     on E: Exception do
     begin
-      Console.WriteLine( E.Message + ' ST: ' + E.StackTrace );
+      Console.WriteLine( E.Message + ' ST: ' + E.Message {E.StackTrace} );
     end;
   end;
 
@@ -325,40 +325,40 @@ var
   o2 : IXtruct2;
   i : IXtruct;
   i2 : IXtruct2;
-  mapout : IThriftDictionary<Integer,Integer>;
-  mapin : IThriftDictionary<Integer,Integer>;
-  strmapout : IThriftDictionary<string,string>;
-  strmapin : IThriftDictionary<string,string>;
+  mapout : IThriftDictionary{IThriftDictionary<Integer,Integer>};
+  mapin : IThriftDictionary{IThriftDictionary<Integer,Integer>};
+  strmapout : IThriftDictionary{IThriftDictionary<string,string>};
+  strmapin : IThriftDictionary{IThriftDictionary<string,string>};
   j : Integer;
   first : Boolean;
   key : Integer;
   strkey : string;
-  listout : IThriftList<Integer>;
-  listin : IThriftList<Integer>;
-  setout : IHashSet<Integer>;
-  setin : IHashSet<Integer>;
+  listout : IThriftList{IThriftList<Integer>};
+  listin : IThriftList{IThriftList<Integer>};
+  setout : IHashSet{IHashSet<Integer>};
+  setin : IHashSet{IHashSet<Integer>};
   ret : TNumberz;
   uid : Int64;
-  mm : IThriftDictionary<Integer, IThriftDictionary<Integer, Integer>>;
-  pos : IThriftDictionary<Integer, Integer>;
-  neg : IThriftDictionary<Integer, Integer>;
-  m2 : IThriftDictionary<Integer, Integer>;
+  mm : IThriftDictionary{IThriftDictionary<Integer, IThriftDictionary<Integer, Integer>>};
+  pos : IThriftDictionary{IThriftDictionary<Integer, Integer>};
+  neg : IThriftDictionary{IThriftDictionary<Integer, Integer>};
+  m2 : IThriftDictionary{IThriftDictionary<Integer, Integer>};
   k2 : Integer;
   insane : IInsanity;
   truck : IXtruct;
-  whoa : IThriftDictionary<Int64, IThriftDictionary<TNumberz, IInsanity>>;
+  whoa : IThriftDictionary{IThriftDictionary<Int64, IThriftDictionary<TNumberz, IInsanity>>};
   key64 : Int64;
-  val : IThriftDictionary<TNumberz, IInsanity>;
+  val : IThriftDictionary{IThriftDictionary<TNumberz, IInsanity>};
   k2_2 : TNumberz;
   k3 : TNumberz;
   v2 : IInsanity;
-  userMap : IThriftDictionary<TNumberz, Int64>;
-  xtructs : IThriftList<IXtruct>;
+  userMap : IThriftDictionary{IThriftDictionary<TNumberz, Int64>};
+  xtructs : IThriftList{IThriftList<IXtruct>};
   x : IXtruct;
   arg0 : ShortInt;
   arg1 : Integer;
   arg2 : Int64;
-  arg3 : IThriftDictionary<SmallInt, string>;
+  arg3 : IThriftDictionary{IThriftDictionary<SmallInt, string>};
   arg4 : TNumberz;
   arg5 : Int64;
   StartTick : Cardinal;
@@ -367,8 +367,8 @@ var
   hello, goodbye : IXtruct;
   crazy : IInsanity;
   looney : IInsanity;
-  first_map : IThriftDictionary<TNumberz, IInsanity>;
-  second_map : IThriftDictionary<TNumberz, IInsanity>;
+  first_map : IThriftDictionary{IThriftDictionary<TNumberz, IInsanity>};
+  second_map : IThriftDictionary{IThriftDictionary<TNumberz, IInsanity>};
 
 begin
   client := TThriftTest.TClient.Create( FProtocol);
@@ -393,7 +393,7 @@ begin
       Expect( e.Message_  = 'Xception', 'error message');
       Console.WriteLine( ' = ' + IntToStr(e.ErrorCode) + ', ' + e.Message_ );
     end;
-    on e:TTransportException do Expect( FALSE, 'Unexpected : "'+e.ToString+'"');
+    on e:TTransportException do Expect( FALSE, 'Unexpected : "'+e.Message+'"');
     on e:Exception do Expect( FALSE, 'Unexpected exception type "'+e.ClassName+'"');
   end;
 
@@ -417,7 +417,7 @@ begin
     client.testException('something');
     Expect( TRUE, 'testException(''something''): must not trow an exception');
   except
-    on e:TTransportException do Expect( FALSE, 'Unexpected : "'+e.ToString+'"');
+    on e:TTransportException do Expect( FALSE, 'Unexpected : "'+e.Message+'"');
     on e:Exception do Expect( FALSE, 'Unexpected exception "'+e.ClassName+'"');
   end;
 
@@ -492,7 +492,7 @@ begin
   // map<type1,type2>: A map of strictly unique keys to values.
   // Translates to an STL map, Java HashMap, PHP associative array, Python/Ruby dictionary, etc.
   StartTestGroup( 'testMap');
-  mapout := TThriftDictionaryImpl<Integer,Integer>.Create;
+  mapout := TThriftDictionaryImpl{<Integer,Integer>}.Create;
   for j := 0 to 4 do
   begin
     mapout.AddOrSetValue( j, j - 10);
@@ -524,7 +524,7 @@ begin
   // map<type1,type2>: A map of strictly unique keys to values.
   // Translates to an STL map, Java HashMap, PHP associative array, Python/Ruby dictionary, etc.
   StartTestGroup( 'testStringMap');
-  strmapout := TThriftDictionaryImpl<string,string>.Create;
+  strmapout := TThriftDictionaryImpl{<string,string>}.Create;
   for j := 0 to 4 do
   begin
     strmapout.AddOrSetValue( IntToStr(j), IntToStr(j - 10));
@@ -559,7 +559,7 @@ begin
   // Translates to an STL set, Java HashSet, set in Python, etc.
   // Note: PHP does not support sets, so it is treated similar to a List
   StartTestGroup( 'testSet');
-  setout := THashSetImpl<Integer>.Create;
+  setout := THashSetImpl{<Integer>}.Create;
   for j := -2 to 2 do
   begin
     setout.Add( j );
@@ -586,7 +586,7 @@ begin
   // list<type>: An ordered list of elements.
   // Translates to an STL vector, Java ArrayList, native arrays in scripting languages, etc.
   StartTestGroup( 'testList');
-  listout := TThriftListImpl<Integer>.Create;
+  listout := TThriftListImpl{<Integer>}.Create;
   listout.Add( +1);
   listout.Add( -2);
   listout.Add( +3);
@@ -665,14 +665,14 @@ begin
   // insanity
   StartTestGroup( 'testInsanity');
   insane := TInsanityImpl.Create;
-  insane.UserMap := TThriftDictionaryImpl<TNumberz, Int64>.Create;
+  insane.UserMap := TThriftDictionaryImpl{<TNumberz, Int64>}.Create;
   insane.UserMap.AddOrSetValue( TNumberz.FIVE, 5000);
   truck := TXtructImpl.Create;
   truck.String_thing := 'Truck';
   truck.Byte_thing := 8;
   truck.I32_thing := 8;
   truck.I64_thing := 8;
-  insane.Xtructs := TThriftListImpl<IXtruct>.Create;
+  insane.Xtructs := TThriftListImpl{<IXtruct>}.Create;
   insane.Xtructs.Add( truck );
   whoa := client.testInsanity( insane );
   Console.Write(' = {');
@@ -722,17 +722,17 @@ begin
 
   // verify result data
   Expect( whoa.Count = 2, 'whoa.Count = '+IntToStr(whoa.Count));
-  //
-  first_map  := whoa[1];
-  second_map := whoa[2];
+  //#
+  first_map  := whoa.Items[_AllValue(1)].ValueObj as IThriftDictionary;
+  second_map := whoa.Items[_AllValue(2)].ValueObj as IThriftDictionary;
   Expect( first_map.Count = 2, 'first_map.Count = '+IntToStr(first_map.Count));
   Expect( second_map.Count = 1, 'second_map.Count = '+IntToStr(second_map.Count));
-  //
+  //#
   looney := second_map[TNumberz.SIX];
   Expect( Assigned(looney), 'Assigned(looney) = '+BoolToString(Assigned(looney)));
   Expect( not looney.__isset_UserMap, 'looney.__isset_UserMap = '+BoolToString(looney.__isset_UserMap));
   Expect( not looney.__isset_Xtructs, 'looney.__isset_Xtructs = '+BoolToString(looney.__isset_Xtructs));
-  //
+  //#
   for ret in [TNumberz.TWO, TNumberz.THREE] do begin
     crazy := first_map[ret];
     Console.WriteLine('first_map['+intToStr(Ord(ret))+']');
@@ -773,7 +773,7 @@ begin
   arg0 := 1;
   arg1 := 2;
   arg2 := High(Int64);
-  arg3 := TThriftDictionaryImpl<SmallInt, string>.Create;
+  arg3 := TThriftDictionaryImpl{<SmallInt, string>}.Create;
   arg3.AddOrSetValue( 1, 'one');
   arg4 := TNumberz.FIVE;
   arg5 := 5000000;

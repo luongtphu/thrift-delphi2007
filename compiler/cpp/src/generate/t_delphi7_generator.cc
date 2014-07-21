@@ -133,8 +133,9 @@ class t_delphi7_generator : public t_oop_generator
     void generate_deserialize_set_element (std::ostream& out, bool is_xception, t_set* tset, std::string prefix, std::ostream& local_vars);
     void generate_deserialize_map_element (std::ostream& out, bool is_xception, t_map* tmap, std::string prefix, std::ostream& local_vars);
     void generate_deserialize_list_element (std::ostream& out, bool is_xception, t_list* list, std::string prefix, std::ostream& local_vars);
-
-    void generate_serialize_field (std::ostream& out, bool is_xception, t_field* tfield, std::string prefix, std::ostream& local_vars);
+	//{# Add field const bool bAllValue=false
+	//void generate_serialize_field (std::ostream& out, bool is_xception, t_field* tfield, std::string prefix, std::ostream& local_vars);
+    void generate_serialize_field (std::ostream& out, bool is_xception, t_field* tfield, std::string prefix, std::ostream& local_vars,const bool bAllValue=false);
     void generate_serialize_struct (std::ostream& out, t_struct* tstruct, std::string prefix, std::ostream& local_vars);
     void generate_serialize_container (std::ostream& out, bool is_xception, t_type* ttype, std::string prefix, std::ostream& local_vars);
     void generate_serialize_map_element (std::ostream& out, bool is_xception, t_map* tmap, std::string iter, std::string map, std::ostream& local_vars);
@@ -2131,8 +2132,8 @@ void t_delphi7_generator::generate_deserialize_list_element(ostream& out, bool i
   indent_impl(out) <<
     prefix << ".Add(" << elem << ");" << endl;
 }
-
-void t_delphi7_generator::generate_serialize_field(ostream& out, bool is_xception, t_field* tfield, string prefix, ostream& local_vars) {
+//{#Add const bool bAllValue}
+void t_delphi7_generator::generate_serialize_field(ostream& out, bool is_xception, t_field* tfield, string prefix, ostream& local_vars,const bool bAllValue) {
   (void) local_vars;
 
   t_type* type = tfield->get_type();
@@ -2141,7 +2142,10 @@ void t_delphi7_generator::generate_serialize_field(ostream& out, bool is_xceptio
   }
 
   string name = prefix + prop_name(tfield, is_xception);
-  
+  if (bAllValue)
+  {
+	  //name+=".Value";
+  }
   if (type->is_void()) {
     throw "CANNOT GENERATE SERIALIZE CODE FOR void TYPE: " + name;
   }
@@ -2243,42 +2247,179 @@ void t_delphi7_generator::generate_serialize_container(ostream& out, bool is_xce
   }
 
   string iter = tmp("_iter");
+  string itervalue = tmp("_iterv");
   string iterik = tmp("ik");
   string iterikn = tmp("ikn");
   if (ttype->is_map()) {
 	local_vars << "  " << iterik << ":integer;"  << endl;
 	local_vars << "  " << iterikn << ":integer;"  << endl;
-    local_vars << "  " << iter << ": " << type_name(((t_map*)ttype)->get_key_type()) << ";" << endl;
+    //{# replace TAllValue}
+	//{#}key
+	//local_vars << "  " << iter << ": " << type_name(((t_map*)ttype)->get_key_type()) << ";" << endl;
+	if (((t_map*)ttype)->get_key_type()->is_base_type()||((t_map*)ttype)->get_key_type()->is_enum())
+	{
+		local_vars << "  " << iter << ":Variant"<< ";" << endl;
+	}
+	else if (((t_map*)ttype)->get_key_type()->is_map())
+	{
+		local_vars << "  " << iter << ":IThriftDictionary"<< ";" << endl;
+	}
+	else if (((t_map*)ttype)->get_key_type()->is_list())
+	{
+		local_vars << "  " << iter << ":IThriftList"<< ";" << endl;
+	}
+	else if (((t_map*)ttype)->get_key_type()->is_set())
+	{
+		local_vars << "  " << iter << ":IHashSet"<< ";" << endl;
+	}
+	else
+	{
+		local_vars << "  " << iter << ": " << type_name(((t_map*)ttype)->get_key_type()) << ";" << endl;
+	}
+	//{#}Value
+	if (((t_map*)ttype)->get_val_type()->is_base_type()||((t_map*)ttype)->get_val_type()->is_enum())
+	{
+		local_vars << "  " << itervalue << ":Variant"<< ";" << endl;
+	}
+	else if (((t_map*)ttype)->get_val_type()->is_map())
+	{
+		local_vars << "  " << itervalue << ":IThriftDictionary"<< ";" << endl;
+	}
+	else if (((t_map*)ttype)->get_val_type()->is_list())
+	{
+		local_vars << "  " << itervalue << ":IThriftList"<< ";" << endl;
+	}
+	else if (((t_map*)ttype)->get_val_type()->is_set())
+	{
+		local_vars << "  " << itervalue << ":IHashSet"<< ";" << endl;
+	}
+	else
+	{
+		local_vars << "  " << itervalue << ": " << type_name(((t_map*)ttype)->get_val_type()) << ";" << endl;
+	}
     //indent_impl(out) << "for " << iter << " in " << prefix << ".Keys do" << endl;
-	indent_impl(out) << iterikn<<":="<<prefix << ".Count;" << endl;
+	indent_impl(out) << iterikn<<":="<<prefix << ".Count-1;" << endl;
 	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
-	indent_impl(out) << iter<<":="<<prefix << ".Keys["<<iterik<<"];" << endl;
+	//{#}Key
+	if (((t_map*)ttype)->get_key_type()->is_base_type()||((t_map*)ttype)->get_key_type()->is_enum())
+	{
+		indent_impl(out) << iter<<":="<<prefix << ".Keys["<<iterik<<"].Value;" << endl;
+	}
+	else if (((t_map*)ttype)->get_key_type()->is_map())
+	{
+		indent_impl(out) << iter<<":=IThriftDictionary("<<prefix << ".Keys["<<iterik<<"].AsIntf);" << endl;
+	}
+	else if (((t_map*)ttype)->get_key_type()->is_list())
+	{		
+		indent_impl(out) << iter<<":=IThriftList("<<prefix << ".Keys["<<iterik<<"].AsIntf);" << endl;
+	}
+	else if (((t_map*)ttype)->get_key_type()->is_set())
+	{
+		indent_impl(out) << iter<<":=IHashSet("<<prefix << ".Keys["<<iterik<<"].AsIntf);" << endl;
+	}
+	else
+	{
+		indent_impl(out) << iter<<":="<<type_name(((t_map*)ttype)->get_key_type()) <<"("<<prefix << ".Keys["<<iterik<<"].AsIntf);" << endl;
+	}
+
+	//{#}Value
+	if (((t_map*)ttype)->get_val_type()->is_base_type()||((t_map*)ttype)->get_val_type()->is_enum())
+	{
+		indent_impl(out) << itervalue<<":="<<prefix << ".Values["<<iterik<<"].Value;" << endl;
+	}
+	else if (((t_map*)ttype)->get_val_type()->is_map())
+	{
+		indent_impl(out) << itervalue<<":=IThriftDictionary("<<prefix << ".Values["<<iterik<<"].AsIntf);" << endl;
+	}
+	else if (((t_map*)ttype)->get_val_type()->is_list())
+	{		
+		indent_impl(out) << itervalue<<":=IThriftList("<<prefix << ".Values["<<iterik<<"].AsIntf);" << endl;
+	}
+	else if (((t_map*)ttype)->get_val_type()->is_set())
+	{
+		indent_impl(out) << itervalue<<":=IHashSet("<<prefix << ".Values["<<iterik<<"].AsIntf);" << endl;
+	}
+	else
+	{
+		indent_impl(out) << itervalue<<":="<<type_name(((t_map*)ttype)->get_val_type()) <<"("<<prefix << ".Values["<<iterik<<"].AsIntf);" << endl;
+	}
+
     indent_up_impl();
   } else if (ttype->is_set()) {
 	local_vars << "  " << iterik << ":integer;"  << endl;
 	local_vars << "  " << iterikn << ":integer;"  << endl;
-    local_vars << "  " << iter << ": " << type_name(((t_set*)ttype)->get_elem_type()) << ";" << endl;
+	//{# replace TAllValue}
+    //local_vars << "  " << iter << ": " << type_name(((t_set*)ttype)->get_elem_type()) << ";" << endl;
+	if (((t_set*)ttype)->get_elem_type()->is_base_type()||((t_set*)ttype)->get_elem_type()->is_enum())
+	{
+		local_vars << "  " << iter << ":Variant"<< ";" << endl;
+	}
     //indent_impl(out) << "for " << iter << " in " << prefix << " do" << endl;
-	indent_impl(out) << iterikn<<":="<<prefix << ".Count;" << endl;
+	indent_impl(out) << iterikn<<":="<<prefix << ".Count-1;" << endl;
 	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
-	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"];" << endl;
+	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"].Value;" << endl;
     indent_up_impl();
   } else if (ttype->is_list()) {
 	local_vars << "  " << iterik << ":integer;"  << endl;
 	local_vars << "  " << iterikn << ":integer;"  << endl;
-    local_vars << "  " << iter << ": " << type_name(((t_list*)ttype)->get_elem_type()) << ";" << endl;
+	//{# replace TAllValue}
+    //local_vars << "  " << iter << ": " << type_name(((t_list*)ttype)->get_elem_type()) << ";" << endl;
+	if (((t_list*)ttype)->get_elem_type()->is_base_type()||((t_list*)ttype)->get_elem_type()->is_enum())
+	{
+		local_vars << "  " << iter << ":Variant"<< ";" << endl;
+	}
+	else if (((t_list*)ttype)->get_elem_type()->is_map())
+	{
+		local_vars << "  " << iter << ":IThriftDictionary"<< ";" << endl;
+	}
+	else if (((t_list*)ttype)->get_elem_type()->is_list())
+	{
+		local_vars << "  " << iter << ":IThriftList"<< ";" << endl;
+	}
+	else if (((t_list*)ttype)->get_elem_type()->is_set())
+	{
+		local_vars << "  " << iter << ":IHashSet"<< ";" << endl;
+	}
+	else
+	{
+		local_vars << "  " << iter << ": " << type_name(((t_list*)ttype)->get_elem_type()) << ";" << endl;
+	}
     //indent_impl(out) << "for " << iter << " in " << prefix << " do" << endl;
-	indent_impl(out) << iterikn<<":="<<prefix << ".Count;" << endl;
+	indent_impl(out) << iterikn<<":="<<prefix << ".Count-1;" << endl;
 	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
-	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"];" << endl;
+	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"].Value;" << endl;
+
+	if (((t_list*)ttype)->get_elem_type()->is_base_type()||((t_list*)ttype)->get_elem_type()->is_enum())
+	{
+		indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"].Value;" << endl;
+	}
+	else if (((t_list*)ttype)->get_elem_type()->is_map())
+	{
+		indent_impl(out) << iter<<":=IThriftDictionary("<<prefix << ".Items["<<iterik<<"].AsIntf);" << endl;
+	}
+	else if (((t_list*)ttype)->get_elem_type()->is_list())
+	{		
+		indent_impl(out) << iter<<":=IThriftList("<<prefix << ".Items["<<iterik<<"].AsIntf);" << endl;
+	}
+	else if (((t_list*)ttype)->get_elem_type()->is_set())
+	{
+		indent_impl(out) << iter<<":=IHashSet("<<prefix << ".Items["<<iterik<<"].AsIntf);" << endl;
+	}
+	else
+	{
+		indent_impl(out) << iter<<":="<<type_name(((t_list*)ttype)->get_elem_type()) <<"("<<prefix << ".Items["<<iterik<<"].AsIntf);" << endl;
+	}
+
     indent_up_impl();
   }
 
   if (ttype->is_map()) {
-    generate_serialize_map_element(out, is_xception, (t_map*)ttype, iter, prefix, local_vars);
+	  //{#}
+    //generate_serialize_map_element(out, is_xception, (t_map*)ttype, iter, prefix, local_vars);
+	generate_serialize_map_element(out, is_xception, (t_map*)ttype, iter, itervalue, local_vars);	  
   } else if (ttype->is_set()) {
     generate_serialize_set_element(out, is_xception, (t_set*)ttype, iter, local_vars);
   } else if (ttype->is_list()) {
@@ -2296,22 +2437,22 @@ void t_delphi7_generator::generate_serialize_container(ostream& out, bool is_xce
     indent_impl(out) << "oprot.WriteListEnd();" << endl;
   }
 }
-
+//{#}
 void t_delphi7_generator::generate_serialize_map_element(ostream& out, bool is_xception, t_map* tmap, string iter, string map, ostream& local_vars) {
   t_field kfield(tmap->get_key_type(), iter);
-  generate_serialize_field(out, is_xception, &kfield, "", local_vars);
-  t_field vfield(tmap->get_val_type(), map + "[" + iter + "]");
-  generate_serialize_field(out, is_xception, &vfield, "", local_vars);
+  generate_serialize_field(out, is_xception, &kfield, "", local_vars,true);
+  t_field vfield(tmap->get_val_type(), map);
+  generate_serialize_field(out, is_xception, &vfield, "", local_vars,true);
 }
-
+//{#}
 void t_delphi7_generator::generate_serialize_set_element(ostream& out, bool is_xception, t_set* tset, string iter, ostream& local_vars) {
   t_field efield(tset->get_elem_type(), iter);
-  generate_serialize_field(out, is_xception, &efield, "", local_vars);
+  generate_serialize_field(out, is_xception, &efield, "", local_vars,true);
 }
-
+//{#}
 void t_delphi7_generator::generate_serialize_list_element(ostream& out, bool is_xception, t_list* tlist, string iter, ostream& local_vars) {
   t_field efield(tlist->get_elem_type(), iter);
-  generate_serialize_field(out, is_xception, &efield, "", local_vars);
+  generate_serialize_field(out, is_xception, &efield, "", local_vars,true);
 }
 
 void t_delphi7_generator::generate_property(ostream& out, t_field* tfield, bool isPublic, bool is_xception) {
@@ -2319,7 +2460,7 @@ void t_delphi7_generator::generate_property(ostream& out, t_field* tfield, bool 
 }
 
 void t_delphi7_generator::generate_delphi_property(ostream& out, bool struct_is_xception, t_field* tfield, bool isPublic, std::string fieldPrefix) {
-  (void) isPublic;
+	(void) isPublic;
 
   t_type* ftype = tfield->get_type();
   bool is_xception = ftype->is_xception();

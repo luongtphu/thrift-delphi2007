@@ -4325,11 +4325,11 @@ var
   map7 : IMap;
   ik9:integer;
   ikn10:integer;
-  _iter8: TNumberz;
+  _iter8:TAllValue;
   list_11 : IList;
   ik13:integer;
   ikn14:integer;
-  _iter12: IXtruct;
+  _iter12:TAllValue;
 begin
   struc := TStructImpl.Create('Insanity');
   oprot.WriteStructBegin(struc);
@@ -4342,12 +4342,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map7 := TMapImpl.Create( {TType.}I32, {TType.}I64, UserMap.Count);
     oprot.WriteMapBegin( map7);
-    ikn10:=UserMap.Count;
+    ikn10:=UserMap.Count-1;
     for ik9:=0 to ikn10 do 
     begin
     _iter8:=UserMap.Keys[ik9];
-      oprot.WriteI32(Integer(_iter8));
-      oprot.WriteI64(UserMap[_iter8]);
+      oprot.WriteI32(Integer(_iter8.Value));
+      oprot.WriteI64(UserMap.Items[_iter8].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -4360,11 +4360,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_11 := TListImpl.Create({TType.}Struct, Xtructs.Count);
     oprot.WriteListBegin( list_11);
-    ikn14:=Xtructs.Count;
+    ikn14:=Xtructs.Count-1;
     for ik13:=0 to ikn14 do 
     begin
     _iter12:=Xtructs.Items[ik13];
-      _iter12.Write(oprot);
+      _iter12.Value.Write(oprot);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -4621,35 +4621,35 @@ var
   set_42 : ISet;
   ik44:integer;
   ikn45:integer;
-  _iter43: IInsanity;
+  _iter43:TAllValue;
   list_46 : IList;
   ik48:integer;
   ikn49:integer;
-  _iter47: IThriftDictionary;
+  _iter47:TAllValue;
   map50 : IMap;
   ik52:integer;
   ikn53:integer;
-  _iter51: IHashSet;
+  _iter51:TAllValue;
   set_54 : ISet;
   ik56:integer;
   ikn57:integer;
-  _iter55: Integer;
+  _iter55:TAllValue;
   map58 : IMap;
   ik60:integer;
   ikn61:integer;
-  _iter59: Integer;
+  _iter59:TAllValue;
   set_62 : ISet;
   ik64:integer;
   ikn65:integer;
-  _iter63: IThriftList;
+  _iter63:TAllValue;
   list_66 : IList;
   ik68:integer;
   ikn69:integer;
-  _iter67: IThriftDictionary;
+  _iter67:TAllValue;
   map70 : IMap;
   ik72:integer;
   ikn73:integer;
-  _iter71: IInsanity;
+  _iter71:TAllValue;
 begin
   struc := TStructImpl.Create('CrazyNesting');
   oprot.WriteStructBegin(struc);
@@ -4671,11 +4671,11 @@ begin
     oprot.WriteFieldBegin(field_);
     set_42 := TSetImpl.Create({TType.}Struct, Set_field.Count);
     oprot.WriteSetBegin( set_42);
-    ikn45:=Set_field.Count;
+    ikn45:=Set_field.Count-1;
     for ik44:=0 to ikn45 do 
     begin
     _iter43:=Set_field.Items[ik44];
-      _iter43.Write(oprot);
+      _iter43.Value.Write(oprot);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -4688,52 +4688,52 @@ begin
     oprot.WriteFieldBegin(field_);
     list_46 := TListImpl.Create({TType.}Map, List_field.Count);
     oprot.WriteListBegin( list_46);
-    ikn49:=List_field.Count;
+    ikn49:=List_field.Count-1;
     for ik48:=0 to ikn49 do 
     begin
     _iter47:=List_field.Items[ik48];
-      map50 := TMapImpl.Create( {TType.}Set_, {TType.}Map, _iter47.Count);
+      map50 := TMapImpl.Create( {TType.}Set_, {TType.}Map, _iter47.Value.Count);
       oprot.WriteMapBegin( map50);
-      ikn53:=_iter47.Count;
+      ikn53:=_iter47.Value.Count-1;
       for ik52:=0 to ikn53 do 
       begin
-      _iter51:=_iter47.Keys[ik52];
-        set_54 := TSetImpl.Create({TType.}I32, _iter51.Count);
+      _iter51:=_iter47.Value.Keys[ik52];
+        set_54 := TSetImpl.Create({TType.}I32, _iter51.Value.Count);
         oprot.WriteSetBegin( set_54);
-        ikn57:=_iter51.Count;
+        ikn57:=_iter51.Value.Count-1;
         for ik56:=0 to ikn57 do 
         begin
-        _iter55:=_iter51.Items[ik56];
-          oprot.WriteI32(_iter55);
+        _iter55:=_iter51.Value.Items[ik56];
+          oprot.WriteI32(_iter55.Value);
         end;
         oprot.WriteSetEnd();
-        map58 := TMapImpl.Create( {TType.}I32, {TType.}Set_, _iter47[_iter51].Count);
+        map58 := TMapImpl.Create( {TType.}I32, {TType.}Set_, _iter47.Value.Items[_iter51].Value.Count);
         oprot.WriteMapBegin( map58);
-        ikn61:=_iter47[_iter51].Count;
+        ikn61:=_iter47.Value.Items[_iter51].Value.Count-1;
         for ik60:=0 to ikn61 do 
         begin
-        _iter59:=_iter47[_iter51].Keys[ik60];
-          oprot.WriteI32(_iter59);
-          set_62 := TSetImpl.Create({TType.}List, _iter47[_iter51][_iter59].Count);
+        _iter59:=_iter47.Value.Items[_iter51].Value.Keys[ik60];
+          oprot.WriteI32(_iter59.Value);
+          set_62 := TSetImpl.Create({TType.}List, _iter47.Value.Items[_iter51].Value.Items[_iter59].Value.Count);
           oprot.WriteSetBegin( set_62);
-          ikn65:=_iter47[_iter51][_iter59].Count;
+          ikn65:=_iter47.Value.Items[_iter51].Value.Items[_iter59].Value.Count-1;
           for ik64:=0 to ikn65 do 
           begin
-          _iter63:=_iter47[_iter51][_iter59].Items[ik64];
-            list_66 := TListImpl.Create({TType.}Map, _iter63.Count);
+          _iter63:=_iter47.Value.Items[_iter51].Value.Items[_iter59].Value.Items[ik64];
+            list_66 := TListImpl.Create({TType.}Map, _iter63.Value.Count);
             oprot.WriteListBegin( list_66);
-            ikn69:=_iter63.Count;
+            ikn69:=_iter63.Value.Count-1;
             for ik68:=0 to ikn69 do 
             begin
-            _iter67:=_iter63.Items[ik68];
-              map70 := TMapImpl.Create( {TType.}Struct, {TType.}String_, _iter67.Count);
+            _iter67:=_iter63.Value.Items[ik68];
+              map70 := TMapImpl.Create( {TType.}Struct, {TType.}String_, _iter67.Value.Count);
               oprot.WriteMapBegin( map70);
-              ikn73:=_iter67.Count;
+              ikn73:=_iter67.Value.Count-1;
               for ik72:=0 to ikn73 do 
               begin
-              _iter71:=_iter67.Keys[ik72];
-                _iter71.Write(oprot);
-                oprot.WriteString(_iter67[_iter71]);
+              _iter71:=_iter67.Value.Keys[ik72];
+                _iter71.Value.Write(oprot);
+                oprot.WriteString(_iter67.Value.Items[_iter71].Value);
               end;
               oprot.WriteMapEnd();
             end;
@@ -5923,15 +5923,15 @@ var
   list_84 : IList;
   ik86:integer;
   ikn87:integer;
-  _iter85: Integer;
+  _iter85:TAllValue;
   set_88 : ISet;
   ik90:integer;
   ikn91:integer;
-  _iter89: Integer;
+  _iter89:TAllValue;
   map92 : IMap;
   ik94:integer;
   ikn95:integer;
-  _iter93: Integer;
+  _iter93:TAllValue;
 begin
   struc := TStructImpl.Create('VersioningTestV2');
   oprot.WriteStructBegin(struc);
@@ -6007,11 +6007,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_84 := TListImpl.Create({TType.}I32, Newlist.Count);
     oprot.WriteListBegin( list_84);
-    ikn87:=Newlist.Count;
+    ikn87:=Newlist.Count-1;
     for ik86:=0 to ikn87 do 
     begin
     _iter85:=Newlist.Items[ik86];
-      oprot.WriteI32(_iter85);
+      oprot.WriteI32(_iter85.Value);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -6024,11 +6024,11 @@ begin
     oprot.WriteFieldBegin(field_);
     set_88 := TSetImpl.Create({TType.}I32, Newset.Count);
     oprot.WriteSetBegin( set_88);
-    ikn91:=Newset.Count;
+    ikn91:=Newset.Count-1;
     for ik90:=0 to ikn91 do 
     begin
     _iter89:=Newset.Items[ik90];
-      oprot.WriteI32(_iter89);
+      oprot.WriteI32(_iter89.Value);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -6041,12 +6041,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map92 := TMapImpl.Create( {TType.}I32, {TType.}I32, Newmap.Count);
     oprot.WriteMapBegin( map92);
-    ikn95:=Newmap.Count;
+    ikn95:=Newmap.Count-1;
     for ik94:=0 to ikn95 do 
     begin
     _iter93:=Newmap.Keys[ik94];
-      oprot.WriteI32(_iter93);
-      oprot.WriteI32(Newmap[_iter93]);
+      oprot.WriteI32(_iter93.Value);
+      oprot.WriteI32(Newmap.Items[_iter93].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -6214,7 +6214,7 @@ var
   list_99 : IList;
   ik101:integer;
   ikn102:integer;
-  _iter100: Integer;
+  _iter100:TAllValue;
 begin
   struc := TStructImpl.Create('ListTypeVersioningV1');
   oprot.WriteStructBegin(struc);
@@ -6227,11 +6227,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_99 := TListImpl.Create({TType.}I32, Myints.Count);
     oprot.WriteListBegin( list_99);
-    ikn102:=Myints.Count;
+    ikn102:=Myints.Count-1;
     for ik101:=0 to ikn102 do 
     begin
     _iter100:=Myints.Items[ik101];
-      oprot.WriteI32(_iter100);
+      oprot.WriteI32(_iter100.Value);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -6370,7 +6370,7 @@ var
   list_106 : IList;
   ik108:integer;
   ikn109:integer;
-  _iter107: string;
+  _iter107:TAllValue;
 begin
   struc := TStructImpl.Create('ListTypeVersioningV2');
   oprot.WriteStructBegin(struc);
@@ -6383,11 +6383,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_106 := TListImpl.Create({TType.}String_, Strings.Count);
     oprot.WriteListBegin( list_106);
-    ikn109:=Strings.Count;
+    ikn109:=Strings.Count-1;
     for ik108:=0 to ikn109 do 
     begin
     _iter107:=Strings.Items[ik108];
-      oprot.WriteString(_iter107);
+      oprot.WriteString(_iter107.Value);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -6503,7 +6503,7 @@ var
   map114 : IMap;
   ik116:integer;
   ikn117:integer;
-  _iter115: string;
+  _iter115:TAllValue;
 begin
   struc := TStructImpl.Create('GuessProtocolStruct');
   oprot.WriteStructBegin(struc);
@@ -6516,12 +6516,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map114 := TMapImpl.Create( {TType.}String_, {TType.}String_, Map_field.Count);
     oprot.WriteMapBegin( map114);
-    ikn117:=Map_field.Count;
+    ikn117:=Map_field.Count-1;
     for ik116:=0 to ikn117 do 
     begin
     _iter115:=Map_field.Keys[ik116];
-      oprot.WriteString(_iter115);
-      oprot.WriteString(Map_field[_iter115]);
+      oprot.WriteString(_iter115.Value);
+      oprot.WriteString(Map_field.Items[_iter115].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -6865,11 +6865,11 @@ var
   set_124 : ISet;
   ik126:integer;
   ikn127:integer;
-  _iter125: string;
+  _iter125:TAllValue;
   list_128 : IList;
   ik130:integer;
   ikn131:integer;
-  _iter129: Integer;
+  _iter129:TAllValue;
 begin
   struc := TStructImpl.Create('LargeDeltas');
   oprot.WriteStructBegin(struc);
@@ -6945,11 +6945,11 @@ begin
     oprot.WriteFieldBegin(field_);
     set_124 := TSetImpl.Create({TType.}String_, A_set2500.Count);
     oprot.WriteSetBegin( set_124);
-    ikn127:=A_set2500.Count;
+    ikn127:=A_set2500.Count-1;
     for ik126:=0 to ikn127 do 
     begin
     _iter125:=A_set2500.Items[ik126];
-      oprot.WriteString(_iter125);
+      oprot.WriteString(_iter125.Value);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -6971,11 +6971,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_128 := TListImpl.Create({TType.}I32, Big_numbers.Count);
     oprot.WriteListBegin( list_128);
-    ikn131:=Big_numbers.Count;
+    ikn131:=Big_numbers.Count-1;
     for ik130:=0 to ikn131 do 
     begin
     _iter129:=Big_numbers.Items[ik130];
-      oprot.WriteI32(_iter129);
+      oprot.WriteI32(_iter129.Value);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -7106,11 +7106,11 @@ var
   list_138 : IList;
   ik140:integer;
   ikn141:integer;
-  _iter139: IThriftList;
+  _iter139:TAllValue;
   list_142 : IList;
   ik144:integer;
   ikn145:integer;
-  _iter143: Integer;
+  _iter143:TAllValue;
 begin
   struc := TStructImpl.Create('NestedListsI32x2');
   oprot.WriteStructBegin(struc);
@@ -7123,17 +7123,17 @@ begin
     oprot.WriteFieldBegin(field_);
     list_138 := TListImpl.Create({TType.}List, Integerlist.Count);
     oprot.WriteListBegin( list_138);
-    ikn141:=Integerlist.Count;
+    ikn141:=Integerlist.Count-1;
     for ik140:=0 to ikn141 do 
     begin
     _iter139:=Integerlist.Items[ik140];
-      list_142 := TListImpl.Create({TType.}I32, _iter139.Count);
+      list_142 := TListImpl.Create({TType.}I32, _iter139.Value.Count);
       oprot.WriteListBegin( list_142);
-      ikn145:=_iter139.Count;
+      ikn145:=_iter139.Value.Count-1;
       for ik144:=0 to ikn145 do 
       begin
-      _iter143:=_iter139.Items[ik144];
-        oprot.WriteI32(_iter143);
+      _iter143:=_iter139.Value.Items[ik144];
+        oprot.WriteI32(_iter143.Value);
       end;
       oprot.WriteListEnd();
     end;
@@ -7258,15 +7258,15 @@ var
   list_155 : IList;
   ik157:integer;
   ikn158:integer;
-  _iter156: IThriftList;
+  _iter156:TAllValue;
   list_159 : IList;
   ik161:integer;
   ikn162:integer;
-  _iter160: IThriftList;
+  _iter160:TAllValue;
   list_163 : IList;
   ik165:integer;
   ikn166:integer;
-  _iter164: Integer;
+  _iter164:TAllValue;
 begin
   struc := TStructImpl.Create('NestedListsI32x3');
   oprot.WriteStructBegin(struc);
@@ -7279,23 +7279,23 @@ begin
     oprot.WriteFieldBegin(field_);
     list_155 := TListImpl.Create({TType.}List, Integerlist.Count);
     oprot.WriteListBegin( list_155);
-    ikn158:=Integerlist.Count;
+    ikn158:=Integerlist.Count-1;
     for ik157:=0 to ikn158 do 
     begin
     _iter156:=Integerlist.Items[ik157];
-      list_159 := TListImpl.Create({TType.}List, _iter156.Count);
+      list_159 := TListImpl.Create({TType.}List, _iter156.Value.Count);
       oprot.WriteListBegin( list_159);
-      ikn162:=_iter156.Count;
+      ikn162:=_iter156.Value.Count-1;
       for ik161:=0 to ikn162 do 
       begin
-      _iter160:=_iter156.Items[ik161];
-        list_163 := TListImpl.Create({TType.}I32, _iter160.Count);
+      _iter160:=_iter156.Value.Items[ik161];
+        list_163 := TListImpl.Create({TType.}I32, _iter160.Value.Count);
         oprot.WriteListBegin( list_163);
-        ikn166:=_iter160.Count;
+        ikn166:=_iter160.Value.Count-1;
         for ik165:=0 to ikn166 do 
         begin
-        _iter164:=_iter160.Items[ik165];
-          oprot.WriteI32(_iter164);
+        _iter164:=_iter160.Value.Items[ik165];
+          oprot.WriteI32(_iter164.Value);
         end;
         oprot.WriteListEnd();
       end;
@@ -7516,31 +7516,31 @@ var
   list_190 : IList;
   ik192:integer;
   ikn193:integer;
-  _iter191: IHashSet;
+  _iter191:TAllValue;
   set_194 : ISet;
   ik196:integer;
   ikn197:integer;
-  _iter195: Integer;
+  _iter195:TAllValue;
   map198 : IMap;
   ik200:integer;
   ikn201:integer;
-  _iter199: Integer;
+  _iter199:TAllValue;
   set_202 : ISet;
   ik204:integer;
   ikn205:integer;
-  _iter203: string;
+  _iter203:TAllValue;
   list_206 : IList;
   ik208:integer;
   ikn209:integer;
-  _iter207: IThriftDictionary;
+  _iter207:TAllValue;
   map210 : IMap;
   ik212:integer;
   ikn213:integer;
-  _iter211: Integer;
+  _iter211:TAllValue;
   set_214 : ISet;
   ik216:integer;
   ikn217:integer;
-  _iter215: string;
+  _iter215:TAllValue;
 begin
   struc := TStructImpl.Create('NestedMixedx2');
   oprot.WriteStructBegin(struc);
@@ -7553,17 +7553,17 @@ begin
     oprot.WriteFieldBegin(field_);
     list_190 := TListImpl.Create({TType.}Set_, Int_set_list.Count);
     oprot.WriteListBegin( list_190);
-    ikn193:=Int_set_list.Count;
+    ikn193:=Int_set_list.Count-1;
     for ik192:=0 to ikn193 do 
     begin
     _iter191:=Int_set_list.Items[ik192];
-      set_194 := TSetImpl.Create({TType.}I32, _iter191.Count);
+      set_194 := TSetImpl.Create({TType.}I32, _iter191.Value.Count);
       oprot.WriteSetBegin( set_194);
-      ikn197:=_iter191.Count;
+      ikn197:=_iter191.Value.Count-1;
       for ik196:=0 to ikn197 do 
       begin
-      _iter195:=_iter191.Items[ik196];
-        oprot.WriteI32(_iter195);
+      _iter195:=_iter191.Value.Items[ik196];
+        oprot.WriteI32(_iter195.Value);
       end;
       oprot.WriteSetEnd();
     end;
@@ -7578,18 +7578,18 @@ begin
     oprot.WriteFieldBegin(field_);
     map198 := TMapImpl.Create( {TType.}I32, {TType.}Set_, Map_int_strset.Count);
     oprot.WriteMapBegin( map198);
-    ikn201:=Map_int_strset.Count;
+    ikn201:=Map_int_strset.Count-1;
     for ik200:=0 to ikn201 do 
     begin
     _iter199:=Map_int_strset.Keys[ik200];
-      oprot.WriteI32(_iter199);
-      set_202 := TSetImpl.Create({TType.}String_, Map_int_strset[_iter199].Count);
+      oprot.WriteI32(_iter199.Value);
+      set_202 := TSetImpl.Create({TType.}String_, Map_int_strset.Items[_iter199].Value.Count);
       oprot.WriteSetBegin( set_202);
-      ikn205:=Map_int_strset[_iter199].Count;
+      ikn205:=Map_int_strset.Items[_iter199].Value.Count-1;
       for ik204:=0 to ikn205 do 
       begin
-      _iter203:=Map_int_strset[_iter199].Items[ik204];
-        oprot.WriteString(_iter203);
+      _iter203:=Map_int_strset.Items[_iter199].Value.Items[ik204];
+        oprot.WriteString(_iter203.Value);
       end;
       oprot.WriteSetEnd();
     end;
@@ -7604,24 +7604,24 @@ begin
     oprot.WriteFieldBegin(field_);
     list_206 := TListImpl.Create({TType.}Map, Map_int_strset_list.Count);
     oprot.WriteListBegin( list_206);
-    ikn209:=Map_int_strset_list.Count;
+    ikn209:=Map_int_strset_list.Count-1;
     for ik208:=0 to ikn209 do 
     begin
     _iter207:=Map_int_strset_list.Items[ik208];
-      map210 := TMapImpl.Create( {TType.}I32, {TType.}Set_, _iter207.Count);
+      map210 := TMapImpl.Create( {TType.}I32, {TType.}Set_, _iter207.Value.Count);
       oprot.WriteMapBegin( map210);
-      ikn213:=_iter207.Count;
+      ikn213:=_iter207.Value.Count-1;
       for ik212:=0 to ikn213 do 
       begin
-      _iter211:=_iter207.Keys[ik212];
-        oprot.WriteI32(_iter211);
-        set_214 := TSetImpl.Create({TType.}String_, _iter207[_iter211].Count);
+      _iter211:=_iter207.Value.Keys[ik212];
+        oprot.WriteI32(_iter211.Value);
+        set_214 := TSetImpl.Create({TType.}String_, _iter207.Value.Items[_iter211].Value.Count);
         oprot.WriteSetBegin( set_214);
-        ikn217:=_iter207[_iter211].Count;
+        ikn217:=_iter207.Value.Items[_iter211].Value.Count-1;
         for ik216:=0 to ikn217 do 
         begin
-        _iter215:=_iter207[_iter211].Items[ik216];
-          oprot.WriteString(_iter215);
+        _iter215:=_iter207.Value.Items[_iter211].Value.Items[ik216];
+          oprot.WriteString(_iter215.Value);
         end;
         oprot.WriteSetEnd();
       end;
@@ -7733,7 +7733,7 @@ var
   list_221 : IList;
   ik223:integer;
   ikn224:integer;
-  _iter222: IBonk;
+  _iter222:TAllValue;
 begin
   struc := TStructImpl.Create('ListBonks');
   oprot.WriteStructBegin(struc);
@@ -7746,11 +7746,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_221 := TListImpl.Create({TType.}Struct, Bonk.Count);
     oprot.WriteListBegin( list_221);
-    ikn224:=Bonk.Count;
+    ikn224:=Bonk.Count-1;
     for ik223:=0 to ikn224 do 
     begin
     _iter222:=Bonk.Items[ik223];
-      _iter222.Write(oprot);
+      _iter222.Value.Write(oprot);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -7874,15 +7874,15 @@ var
   list_234 : IList;
   ik236:integer;
   ikn237:integer;
-  _iter235: IThriftList;
+  _iter235:TAllValue;
   list_238 : IList;
   ik240:integer;
   ikn241:integer;
-  _iter239: IThriftList;
+  _iter239:TAllValue;
   list_242 : IList;
   ik244:integer;
   ikn245:integer;
-  _iter243: IBonk;
+  _iter243:TAllValue;
 begin
   struc := TStructImpl.Create('NestedListsBonk');
   oprot.WriteStructBegin(struc);
@@ -7895,23 +7895,23 @@ begin
     oprot.WriteFieldBegin(field_);
     list_234 := TListImpl.Create({TType.}List, Bonk.Count);
     oprot.WriteListBegin( list_234);
-    ikn237:=Bonk.Count;
+    ikn237:=Bonk.Count-1;
     for ik236:=0 to ikn237 do 
     begin
     _iter235:=Bonk.Items[ik236];
-      list_238 := TListImpl.Create({TType.}List, _iter235.Count);
+      list_238 := TListImpl.Create({TType.}List, _iter235.Value.Count);
       oprot.WriteListBegin( list_238);
-      ikn241:=_iter235.Count;
+      ikn241:=_iter235.Value.Count-1;
       for ik240:=0 to ikn241 do 
       begin
-      _iter239:=_iter235.Items[ik240];
-        list_242 := TListImpl.Create({TType.}Struct, _iter239.Count);
+      _iter239:=_iter235.Value.Items[ik240];
+        list_242 := TListImpl.Create({TType.}Struct, _iter239.Value.Count);
         oprot.WriteListBegin( list_242);
-        ikn245:=_iter239.Count;
+        ikn245:=_iter239.Value.Count-1;
         for ik244:=0 to ikn245 do 
         begin
-        _iter243:=_iter239.Items[ik244];
-          _iter243.Write(oprot);
+        _iter243:=_iter239.Value.Items[ik244];
+          _iter243.Value.Write(oprot);
         end;
         oprot.WriteListEnd();
       end;
@@ -11330,7 +11330,7 @@ var
   map250 : IMap;
   ik252:integer;
   ikn253:integer;
-  _iter251: Integer;
+  _iter251:TAllValue;
 begin
   struc := TStructImpl.Create('testMap_args');
   oprot.WriteStructBegin(struc);
@@ -11343,12 +11343,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map250 := TMapImpl.Create( {TType.}I32, {TType.}I32, Thing.Count);
     oprot.WriteMapBegin( map250);
-    ikn253:=Thing.Count;
+    ikn253:=Thing.Count-1;
     for ik252:=0 to ikn253 do 
     begin
     _iter251:=Thing.Keys[ik252];
-      oprot.WriteI32(_iter251);
-      oprot.WriteI32(Thing[_iter251]);
+      oprot.WriteI32(_iter251.Value);
+      oprot.WriteI32(Thing.Items[_iter251].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -11453,7 +11453,7 @@ var
   map258 : IMap;
   ik260:integer;
   ikn261:integer;
-  _iter259: Integer;
+  _iter259:TAllValue;
 begin
   struc := TStructImpl.Create('testMap_result');
   oprot.WriteStructBegin(struc);
@@ -11466,12 +11466,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map258 := TMapImpl.Create( {TType.}I32, {TType.}I32, Success.Count);
     oprot.WriteMapBegin( map258);
-    ikn261:=Success.Count;
+    ikn261:=Success.Count-1;
     for ik260:=0 to ikn261 do 
     begin
     _iter259:=Success.Keys[ik260];
-      oprot.WriteI32(_iter259);
-      oprot.WriteI32(Success[_iter259]);
+      oprot.WriteI32(_iter259.Value);
+      oprot.WriteI32(Success.Items[_iter259].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -11576,7 +11576,7 @@ var
   map266 : IMap;
   ik268:integer;
   ikn269:integer;
-  _iter267: string;
+  _iter267:TAllValue;
 begin
   struc := TStructImpl.Create('testStringMap_args');
   oprot.WriteStructBegin(struc);
@@ -11589,12 +11589,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map266 := TMapImpl.Create( {TType.}String_, {TType.}String_, Thing.Count);
     oprot.WriteMapBegin( map266);
-    ikn269:=Thing.Count;
+    ikn269:=Thing.Count-1;
     for ik268:=0 to ikn269 do 
     begin
     _iter267:=Thing.Keys[ik268];
-      oprot.WriteString(_iter267);
-      oprot.WriteString(Thing[_iter267]);
+      oprot.WriteString(_iter267.Value);
+      oprot.WriteString(Thing.Items[_iter267].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -11699,7 +11699,7 @@ var
   map274 : IMap;
   ik276:integer;
   ikn277:integer;
-  _iter275: string;
+  _iter275:TAllValue;
 begin
   struc := TStructImpl.Create('testStringMap_result');
   oprot.WriteStructBegin(struc);
@@ -11712,12 +11712,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map274 := TMapImpl.Create( {TType.}String_, {TType.}String_, Success.Count);
     oprot.WriteMapBegin( map274);
-    ikn277:=Success.Count;
+    ikn277:=Success.Count-1;
     for ik276:=0 to ikn277 do 
     begin
     _iter275:=Success.Keys[ik276];
-      oprot.WriteString(_iter275);
-      oprot.WriteString(Success[_iter275]);
+      oprot.WriteString(_iter275.Value);
+      oprot.WriteString(Success.Items[_iter275].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -11820,7 +11820,7 @@ var
   set_281 : ISet;
   ik283:integer;
   ikn284:integer;
-  _iter282: Integer;
+  _iter282:TAllValue;
 begin
   struc := TStructImpl.Create('testSet_args');
   oprot.WriteStructBegin(struc);
@@ -11833,11 +11833,11 @@ begin
     oprot.WriteFieldBegin(field_);
     set_281 := TSetImpl.Create({TType.}I32, Thing.Count);
     oprot.WriteSetBegin( set_281);
-    ikn284:=Thing.Count;
+    ikn284:=Thing.Count-1;
     for ik283:=0 to ikn284 do 
     begin
     _iter282:=Thing.Items[ik283];
-      oprot.WriteI32(_iter282);
+      oprot.WriteI32(_iter282.Value);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -11940,7 +11940,7 @@ var
   set_288 : ISet;
   ik290:integer;
   ikn291:integer;
-  _iter289: Integer;
+  _iter289:TAllValue;
 begin
   struc := TStructImpl.Create('testSet_result');
   oprot.WriteStructBegin(struc);
@@ -11953,11 +11953,11 @@ begin
     oprot.WriteFieldBegin(field_);
     set_288 := TSetImpl.Create({TType.}I32, Success.Count);
     oprot.WriteSetBegin( set_288);
-    ikn291:=Success.Count;
+    ikn291:=Success.Count-1;
     for ik290:=0 to ikn291 do 
     begin
     _iter289:=Success.Items[ik290];
-      oprot.WriteI32(_iter289);
+      oprot.WriteI32(_iter289.Value);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -12060,7 +12060,7 @@ var
   list_295 : IList;
   ik297:integer;
   ikn298:integer;
-  _iter296: Integer;
+  _iter296:TAllValue;
 begin
   struc := TStructImpl.Create('testList_args');
   oprot.WriteStructBegin(struc);
@@ -12073,11 +12073,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_295 := TListImpl.Create({TType.}I32, Thing.Count);
     oprot.WriteListBegin( list_295);
-    ikn298:=Thing.Count;
+    ikn298:=Thing.Count-1;
     for ik297:=0 to ikn298 do 
     begin
     _iter296:=Thing.Items[ik297];
-      oprot.WriteI32(_iter296);
+      oprot.WriteI32(_iter296.Value);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -12180,7 +12180,7 @@ var
   list_302 : IList;
   ik304:integer;
   ikn305:integer;
-  _iter303: Integer;
+  _iter303:TAllValue;
 begin
   struc := TStructImpl.Create('testList_result');
   oprot.WriteStructBegin(struc);
@@ -12193,11 +12193,11 @@ begin
     oprot.WriteFieldBegin(field_);
     list_302 := TListImpl.Create({TType.}I32, Success.Count);
     oprot.WriteListBegin( list_302);
-    ikn305:=Success.Count;
+    ikn305:=Success.Count-1;
     for ik304:=0 to ikn305 do 
     begin
     _iter303:=Success.Items[ik304];
-      oprot.WriteI32(_iter303);
+      oprot.WriteI32(_iter303.Value);
     end;
     oprot.WriteListEnd();
     oprot.WriteFieldEnd();
@@ -12804,11 +12804,11 @@ var
   map314 : IMap;
   ik316:integer;
   ikn317:integer;
-  _iter315: Integer;
+  _iter315:TAllValue;
   map318 : IMap;
   ik320:integer;
   ikn321:integer;
-  _iter319: Integer;
+  _iter319:TAllValue;
 begin
   struc := TStructImpl.Create('testMapMap_result');
   oprot.WriteStructBegin(struc);
@@ -12821,19 +12821,19 @@ begin
     oprot.WriteFieldBegin(field_);
     map314 := TMapImpl.Create( {TType.}I32, {TType.}Map, Success.Count);
     oprot.WriteMapBegin( map314);
-    ikn317:=Success.Count;
+    ikn317:=Success.Count-1;
     for ik316:=0 to ikn317 do 
     begin
     _iter315:=Success.Keys[ik316];
-      oprot.WriteI32(_iter315);
-      map318 := TMapImpl.Create( {TType.}I32, {TType.}I32, Success[_iter315].Count);
+      oprot.WriteI32(_iter315.Value);
+      map318 := TMapImpl.Create( {TType.}I32, {TType.}I32, Success.Items[_iter315].Value.Count);
       oprot.WriteMapBegin( map318);
-      ikn321:=Success[_iter315].Count;
+      ikn321:=Success.Items[_iter315].Value.Count-1;
       for ik320:=0 to ikn321 do 
       begin
-      _iter319:=Success[_iter315].Keys[ik320];
-        oprot.WriteI32(_iter319);
-        oprot.WriteI32(Success[_iter315][_iter319]);
+      _iter319:=Success.Items[_iter315].Value.Keys[ik320];
+        oprot.WriteI32(_iter319.Value);
+        oprot.WriteI32(Success.Items[_iter315].Value.Items[_iter319].Value);
       end;
       oprot.WriteMapEnd();
     end;
@@ -13052,11 +13052,11 @@ var
   map330 : IMap;
   ik332:integer;
   ikn333:integer;
-  _iter331: TUserId;
+  _iter331:TAllValue;
   map334 : IMap;
   ik336:integer;
   ikn337:integer;
-  _iter335: TNumberz;
+  _iter335:TAllValue;
 begin
   struc := TStructImpl.Create('testInsanity_result');
   oprot.WriteStructBegin(struc);
@@ -13069,19 +13069,19 @@ begin
     oprot.WriteFieldBegin(field_);
     map330 := TMapImpl.Create( {TType.}I64, {TType.}Map, Success.Count);
     oprot.WriteMapBegin( map330);
-    ikn333:=Success.Count;
+    ikn333:=Success.Count-1;
     for ik332:=0 to ikn333 do 
     begin
     _iter331:=Success.Keys[ik332];
-      oprot.WriteI64(_iter331);
-      map334 := TMapImpl.Create( {TType.}I32, {TType.}Struct, Success[_iter331].Count);
+      oprot.WriteI64(_iter331.Value);
+      map334 := TMapImpl.Create( {TType.}I32, {TType.}Struct, Success.Items[_iter331].Value.Count);
       oprot.WriteMapBegin( map334);
-      ikn337:=Success[_iter331].Count;
+      ikn337:=Success.Items[_iter331].Value.Count-1;
       for ik336:=0 to ikn337 do 
       begin
-      _iter335:=Success[_iter331].Keys[ik336];
-        oprot.WriteI32(Integer(_iter335));
-        Success[_iter331][_iter335].Write(oprot);
+      _iter335:=Success.Items[_iter331].Value.Keys[ik336];
+        oprot.WriteI32(Integer(_iter335.Value));
+        Success.Items[_iter331].Value.Items[_iter335].Value.Write(oprot);
       end;
       oprot.WriteMapEnd();
     end;
@@ -13313,7 +13313,7 @@ var
   map342 : IMap;
   ik344:integer;
   ikn345:integer;
-  _iter343: SmallInt;
+  _iter343:TAllValue;
 begin
   struc := TStructImpl.Create('testMulti_args');
   oprot.WriteStructBegin(struc);
@@ -13353,12 +13353,12 @@ begin
     oprot.WriteFieldBegin(field_);
     map342 := TMapImpl.Create( {TType.}I16, {TType.}String_, Arg3.Count);
     oprot.WriteMapBegin( map342);
-    ikn345:=Arg3.Count;
+    ikn345:=Arg3.Count-1;
     for ik344:=0 to ikn345 do 
     begin
     _iter343:=Arg3.Keys[ik344];
-      oprot.WriteI16(_iter343);
-      oprot.WriteString(Arg3[_iter343]);
+      oprot.WriteI16(_iter343.Value);
+      oprot.WriteString(Arg3.Items[_iter343].Value);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();

@@ -11,8 +11,10 @@ uses sysutils,variants,classes;
 type
 TAllValueType=(avtNull,avtEmpty,avtPointer,avtBool,avtInt,avtFloat,
 avtString,avtObject,avtIntf);
+TThreadProcedure=procedure;
 type
 TAllValueRec=record
+  i:IInterface;
   case TAllValueType of
     avtPointer:(p:Pointer);
     avtBool:(b:Boolean);
@@ -20,14 +22,15 @@ TAllValueRec=record
     avtFloat:(f:double);
     avtString:(s:PAnsiString);
     avtobject:(o:Tobject);
-    avtIntf:(i:^IInterface);
+
 end;
-TAllValue=class
+TAllValue=class(TObject)
   private
     fprefree:boolean;
     fvt:TAllValueType;
     fv:TAllValueRec;
     fhash:int64;
+  private
     procedure setvalue(v:Variant);overload;
     function getvalue:Variant;
     procedure setvalueobj(v:Tobject);overload;
@@ -42,7 +45,7 @@ TAllValue=class
     constructor Create(v: Tobject; const prefree:boolean=false);overload;
     constructor Create(v:IInterface);overload;
     constructor Create(v:Pointer);overload;
-    destructor Destroy;virtual;
+    destructor Destroy;override;
   public
     function IsEmpty:Boolean;
     function IsNull:Boolean;
@@ -366,8 +369,10 @@ type
 
     function GetKeys: TAllValueArray;
     function GetValues: TAllValueArray;
-    function GetItem(const Key: TAllValue): Variant;
-    procedure SetItem(const Key: TAllValue; const Value: Variant);
+    function GetItemI(const Key: TAllValue): Variant;
+    procedure SetItemI(const Key: TAllValue; const Value: Variant);
+    function GetItem(const Key: Variant): Variant;
+    procedure SetItem(const Key: Variant; const Value: Variant);
     function GetItemV(const Key: TAllValue): TAllValue;
     procedure SetItemV(const Key: TAllValue; const Value: TAllValue);
 
@@ -436,7 +441,8 @@ type
 
 
     property Items[const Key: TAllValue]: TAllValue read GetItemV write SetItemV;
-    property Value[const Key: TAllValue]: Variant read GetItem write SetItem;default;
+    property ValueI[const Key: TAllValue]: Variant read GetItemI write SetItemI;
+    property Value[const Key: Variant]: Variant read GetItem write SetItem;default;
     property Count: Integer read GetCount;
     property Keys: TAllValueArray read GetKeys;
     property Values: TAllValueArray read GetValues;
@@ -451,8 +457,10 @@ type
 
     function GetKeys: TAllValueArray;
     function GetValues: TAllValueArray;
-    function GetItem(const Key: TAllValue): Variant;
-    procedure SetItem(const Key: TAllValue; const Value: Variant);
+    function GetItemI(const Key: TAllValue): Variant;
+    procedure SetItemI(const Key: TAllValue; const Value: Variant);
+    function GetItem(const Key: Variant): Variant;
+    procedure SetItem(const Key: Variant; const Value: Variant);
     function GetItemV(const Key: TAllValue): TAllValue;
     procedure SetItemV(const Key: TAllValue; const Value: TAllValue);
 
@@ -522,7 +530,8 @@ type
 
 
     property Items[const Key: TAllValue]: TAllValue read GetItemV write SetItemV;
-    property Value[const Key: TAllValue]: Variant read GetItem write SetItem;default;
+    property ValueI[const Key: TAllValue]: Variant read GetItemI write SetItemI;
+    property Value[const Key: Variant]: Variant read GetItem write SetItem;default;
     property Count: Integer read GetCount;
     property Keys: TAllValueArray read GetKeys;
     property Values: TAllValueArray read GetValues;
@@ -961,7 +970,12 @@ begin
   nold:=length(a);
   for i := 0 to nold - 1 do
   begin
-    a[i].Free;
+  if (a[i]<>nil) then
+    if (assigned(a[i])) then
+    begin
+      a[i].Free;
+      a[i]:=nil;
+    end;
   end;
   setlength(a,0);
 end;
@@ -1069,7 +1083,7 @@ end;
 function TAllValue.getvalueIntf: IInterface;
 begin
   if (fvt=avtIntf) and (fv.i<>nil) then
-    result:=fv.i^;
+    result:=IInterface(fv.i);
 end;
 
 function TAllValue.getvalueObj: Tobject;
@@ -1129,7 +1143,7 @@ end;
 procedure TAllValue.setvalueintf(v: IInterface);
 begin
   fvt:=avtIntf;
-  fv.i:=@v;
+  fv.i:=v;
   fhash:=int64(Pointer(fv.i));
 end;
 
@@ -1354,7 +1368,12 @@ begin
 end;
 
 
-function TThriftDictionaryImpl.GetItem(
+function TThriftDictionaryImpl.GetItem(const Key: Variant): Variant;
+begin
+  result:=FDictionaly.GetItem(_AllValue(Key));
+end;
+
+function TThriftDictionaryImpl.GetItemI(
   const Key: TAllValue): Variant;
 begin
   result:=FDictionaly.GetItem(Key);
@@ -1391,7 +1410,12 @@ begin
   FDictionaly.Remove(Key);
 end;
 
-procedure TThriftDictionaryImpl.SetItem(const Key: TAllValue;
+procedure TThriftDictionaryImpl.SetItem(const Key, Value: Variant);
+begin
+  FDictionaly.SetItem(_AllValue(Key),Value);
+end;
+
+procedure TThriftDictionaryImpl.SetItemI(const Key: TAllValue;
   const Value: Variant);
 begin
   FDictionaly.SetItem(Key,Value);
@@ -2848,7 +2872,7 @@ function TuList.BinarySearch(const Item: TObject;
 var
 Itemt:TAllValue;
 begin
-  Itemt.Create(Item,true);
+  Itemt:=TAllValue.Create(Item,true);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
@@ -2858,7 +2882,7 @@ function TuList.BinarySearch(const Item: Variant;
 var
 Itemt:TAllValue;
 begin
-  Itemt.Create(Item);
+  Itemt:=TAllValue.Create(Item);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
@@ -2867,7 +2891,7 @@ function TuList.BinarySearch(const Item: IInterface;
 var
 Itemt:TAllValue;
 begin
-  Itemt.Create(Item);
+  Itemt:=TAllValue.Create(Item);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 
@@ -2882,7 +2906,7 @@ function TuList.BinarySearch(const Item: Pointer;
 var
 Itemt:TAllValue;
 begin
-  Itemt.Create(Item);
+  Itemt:=TAllValue.Create(Item);
   result:=Array_AllValue_BinarySearch(fvalue,Itemt,Index);
 end;
 

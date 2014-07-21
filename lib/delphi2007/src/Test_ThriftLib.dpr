@@ -101,10 +101,22 @@ end;
 
 var
 t:TTest;
+argm:IThriftDictionary;
+v,i,n:integer;
+va:TAllValue;
 begin
-  t:=TTest.Create;
-  t.Process;
+    argm:=TThriftDictionaryImpl.Create;
+    argm.Add(5,2);
+    argm.Add(2,3);
+    argm.Add(3,4);
+    n:=argm.Count;
+    v:=argm[5];
+    writeln(v);
+    for i:=0 to n - 1 do
+    begin
+        writeln('(',argm.Keys[i].Value,',',argm.Values[i].Value,')');
+    end;
 
-  Writeln('Test Lib....');
+
   Readln;
 end.

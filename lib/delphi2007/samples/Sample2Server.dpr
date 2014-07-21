@@ -23,9 +23,11 @@ type
     function echoI32(arg: Integer): Integer;
     function echoI64(const arg: Int64): Int64;
     function echoString(const arg: string): string;
-    function echoList(const arg: IThriftList_V): IThriftList_V;
-    function echoSet(const arg: IHashSet_V): IHashSet_V;
-    function echoMap(const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+    function echoXtruct(const arg: IXtruct): IXtruct;
+    function echoList(const arg: IThriftList): IThriftList;
+    function echoSet(const arg: IHashSet): IHashSet;
+    function echoMap(const arg: IThriftDictionary): IThriftDictionary;
+    function echoMapXtruct(const arg: IThriftDictionary): IThriftDictionary;
   public
     constructor Create;
     destructor Destroy;  override;
@@ -78,38 +80,82 @@ end;
 
 function TSample2Handler.echoByte(arg: ShortInt): ShortInt;
 begin
-
+  result:=arg;
 end;
 
 function TSample2Handler.echoI32(arg: Integer): Integer;
 begin
-
+  result:=arg;
 end;
 
 function TSample2Handler.echoI64(const arg: Int64): Int64;
 begin
-
+  result:=arg;
 end;
 
-function TSample2Handler.echoList(const arg: IThriftList_V): IThriftList_V;
+function TSample2Handler.echoList(const arg: IThriftList): IThriftList;
+var
+i,n:integer;
 begin
-
+  result:=arg;
+  n:=arg.Count;
+  WriteLn( '===CALL echoList(...)');
+  writeln('.Count:',n);
+  for i:= 0 to n - 1 do
+  begin
+    writeln(arg[i]);
+  end;
+  WriteLn( '===CALL echoList(...) End');
 end;
 
 function TSample2Handler.echoMap(
-  const arg: IThriftDictionary_V_V): IThriftDictionary_V_V;
+  const arg: IThriftDictionary): IThriftDictionary;
+var
+i,n:integer;
 begin
-
+  result:=arg;
+  n:=arg.Count;
+  WriteLn( '===CALL echoMap(...)');
+  writeln('.Count:',n);
+  for i:= 0 to n - 1 do
+  begin
+    writeln('(',arg.Keys[i].Value,',',arg.Values[i].Value,')');
+  end;
+  WriteLn( '===CALL echoMap(...) End');
 end;
 
-function TSample2Handler.echoSet(const arg: IHashSet_V): IHashSet_V;
+function TSample2Handler.echoMapXtruct(
+  const arg: IThriftDictionary): IThriftDictionary;
+var
+i,n:integer;
+x:IXtruct;
+begin
+  result:=arg;
+  n:=arg.Count;
+  WriteLn( '===CALL echoMapXtruct(...)');
+  writeln('.Count:',n);
+  for i:= 0 to n - 1 do
+  begin
+    writeln('=>(Key=',arg.Keys[i].Value,')');
+    x:=IXtruct(arg.Values[i].AsIntf);
+    WriteLn( '.String_thing:',x.String_thing);
+    WriteLn( '.Byte_thing:',x.Byte_thing);
+    WriteLn( '.I32_thing:',x.I32_thing);
+    WriteLn( '.I64_thing:',x.I64_thing); 
+  end;
+  WriteLn( '===CALL echoMapXtruct(...) End');
+end;
+
+function TSample2Handler.echoSet(const arg: IHashSet): IHashSet;
 begin
 
 end;
 
 function TSample2Handler.echoString(const arg: string): string;
 begin
-
+  WriteLn( '===CALL echoString(',arg,')');
+  result:=arg;
+  WriteLn( '===CALL echoString() End');
 end;
 
 procedure TSample2Handler.echoVoid;
@@ -117,9 +163,20 @@ begin
 
 end;
 
+function TSample2Handler.echoXtruct(const arg: IXtruct): IXtruct;
+begin
+  result:=arg;
+  WriteLn( '===CALL echoXtruct(...)');
+  WriteLn( '.String_thing:',arg.String_thing);
+  WriteLn( '.Byte_thing:',arg.Byte_thing);
+  WriteLn( '.I32_thing:',arg.I32_thing);
+  WriteLn( '.I64_thing:',arg.I64_thing);
+  WriteLn( '===CALL echoXtruct() End');
+end;
+
 procedure TSample2Handler.ping;
 begin
-  WriteLn( 'ping()');
+  WriteLn( 'CALL ping()');
 end;
 
 {Main App}
