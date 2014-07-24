@@ -313,6 +313,7 @@ type
         function echoString(const arg: string): string;
         function echoXtruct(const arg: IXtruct): IXtruct;
         function echoList(const arg: IThriftList): IThriftList;
+        function echoListXtruct(const arg: IThriftList): IThriftList;
         function echoSet(const arg: IHashSet): IHashSet;
         function echoMap(const arg: IThriftDictionary): IThriftDictionary;
         function echoMapXtruct(const arg: IThriftDictionary): IThriftDictionary;
@@ -342,6 +343,7 @@ type
         function echoString(const arg: string): string;
         function echoXtruct(const arg: IXtruct): IXtruct;
         function echoList(const arg: IThriftList): IThriftList;
+        function echoListXtruct(const arg: IThriftList): IThriftList;
         function echoSet(const arg: IHashSet): IHashSet;
         function echoMap(const arg: IThriftDictionary): IThriftDictionary;
         function echoMapXtruct(const arg: IThriftDictionary): IThriftDictionary;
@@ -367,6 +369,8 @@ type
         function recv_echoXtruct(): IXtruct;
         procedure send_echoList(const arg: IThriftList);
         function recv_echoList(): IThriftList;
+        procedure send_echoListXtruct(const arg: IThriftList);
+        function recv_echoListXtruct(): IThriftList;
         procedure send_echoSet(const arg: IHashSet);
         function recv_echoSet(): IHashSet;
         procedure send_echoMap(const arg: IThriftDictionary);
@@ -399,6 +403,7 @@ type
         procedure echoString_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure echoXtruct_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure echoList_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+        procedure echoListXtruct_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure echoSet_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure echoMap_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
         procedure echoMapXtruct_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
@@ -1091,6 +1096,82 @@ type
       end;
 
       TEchoList_resultImpl = class(TInterfacedObject, IBase, IEchoList_result)
+      private
+        FSuccess: IThriftList;
+        
+        F__isset_Success: Boolean;
+        
+        function GetSuccess: IThriftList;
+        procedure SetSuccess( const Value: IThriftList);
+
+        function Get__isset_Success: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Success: IThriftList read GetSuccess write SetSuccess;
+
+        // isset
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      IEchoListXtruct_args = interface(IBase)
+        function GetArg: IThriftList;
+        procedure SetArg( const Value: IThriftList);
+
+        property Arg: IThriftList read GetArg write SetArg;
+
+        function Get__isset_Arg: Boolean;
+
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      TEchoListXtruct_argsImpl = class(TInterfacedObject, IBase, IEchoListXtruct_args)
+      private
+        FArg: IThriftList;
+        
+        F__isset_Arg: Boolean;
+        
+        function GetArg: IThriftList;
+        procedure SetArg( const Value: IThriftList);
+
+        function Get__isset_Arg: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function ToString: string; {override}
+
+        // IBase
+        procedure Read( const iprot: IProtocol);
+        procedure Write( const oprot: IProtocol);
+
+        // Properties
+        property Arg: IThriftList read GetArg write SetArg;
+
+        // isset
+        property __isset_Arg: Boolean read Get__isset_Arg;
+      end;
+
+      IEchoListXtruct_result = interface(IBase)
+        function GetSuccess: IThriftList;
+        procedure SetSuccess( const Value: IThriftList);
+
+        property Success: IThriftList read GetSuccess write SetSuccess;
+
+        function Get__isset_Success: Boolean;
+
+        property __isset_Success: Boolean read Get__isset_Success;
+      end;
+
+      TEchoListXtruct_resultImpl = class(TInterfacedObject, IBase, IEchoListXtruct_result)
       private
         FSuccess: IThriftList;
         
@@ -2480,6 +2561,53 @@ begin
   raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoList failed: unknown result');
 end;
 
+function TSample2.TClient.echoListXtruct(const arg: IThriftList): IThriftList;
+begin
+  send_echoListXtruct(arg);
+  Result := recv_echoListXtruct();
+end;
+
+procedure TSample2.TClient.send_echoListXtruct(const arg: IThriftList);
+var
+  args : IEchoListXtruct_args;
+  msg : IMessage;
+begin
+  seqid_ := seqid_ + 1;
+  msg := TMessageImpl.Create('echoListXtruct', {TMessageType.}Call, seqid_);
+  oprot_.WriteMessageBegin( msg );
+  args := TEchoListXtruct_argsImpl.Create();
+  args.Arg := arg;
+  args.Write(oprot_);
+  args.Arg := nil;
+  oprot_.WriteMessageEnd();
+  oprot_.Transport.Flush();
+end;
+
+function TSample2.TClient.recv_echoListXtruct(): IThriftList;
+var
+  msg : IMessage;
+  x : TApplicationException;
+  ret : IEchoListXtruct_result;
+begin
+  msg := iprot_.ReadMessageBegin();
+  if (msg.Type_ = {TMessageType.}Exception_) then
+  begin
+    x := TApplicationException.Read(iprot_);
+    iprot_.ReadMessageEnd();
+    raise x;
+  end;
+  ret := TEchoListXtruct_resultImpl.Create();
+  ret.Read(iprot_);
+  iprot_.ReadMessageEnd();
+  if (ret.__isset_success) then
+  begin
+    Result := ret.Success;
+    ret.Success := nil;
+    Exit;
+  end;
+  raise TApplicationException.Create({TApplicationException.TExceptionType.}MissingResult, 'echoListXtruct failed: unknown result');
+end;
+
 function TSample2.TClient.echoSet(const arg: IHashSet): IHashSet;
 begin
   send_echoSet(arg);
@@ -2677,6 +2805,9 @@ begin
   //processMap_.AddOrSetValue( 'echoList', echoList_Process);
   tmpmethod:=Self.echoList_Process;
   processMap_.AddOrSetValue( 'echoList',Pointer(@tmpmethod));
+  //processMap_.AddOrSetValue( 'echoListXtruct', echoListXtruct_Process);
+  tmpmethod:=Self.echoListXtruct_Process;
+  processMap_.AddOrSetValue( 'echoListXtruct',Pointer(@tmpmethod));
   //processMap_.AddOrSetValue( 'echoSet', echoSet_Process);
   tmpmethod:=Self.echoSet_Process;
   processMap_.AddOrSetValue( 'echoSet',Pointer(@tmpmethod));
@@ -2931,6 +3062,26 @@ begin
   ret.Success := miface_.echoList(args.Arg);
   args.Arg := nil;
   msg := TMessageImpl.Create('echoList', {TMessageType.}Reply, seqid); 
+  oprot.WriteMessageBegin( msg); 
+  ret.Write(oprot);
+  oprot.WriteMessageEnd();
+  oprot.Transport.Flush();
+end;
+
+// both way processor
+procedure TSample2.TProcessorImpl.echoListXtruct_Process( seqid: Integer; const iprot: IProtocol; const oprot: IProtocol;miface_: Iface);
+var
+  args: IEchoListXtruct_args;
+  msg: IMessage;
+  ret: IEchoListXtruct_result;
+begin
+  args := TEchoListXtruct_argsImpl.Create;
+  args.Read(iprot);
+  iprot.ReadMessageEnd();
+  ret := TEchoListXtruct_resultImpl.Create;
+  ret.Success := miface_.echoListXtruct(args.Arg);
+  args.Arg := nil;
+  msg := TMessageImpl.Create('echoListXtruct', {TMessageType.}Reply, seqid); 
   oprot.WriteMessageBegin( msg); 
   ret.Write(oprot);
   oprot.WriteMessageEnd();
@@ -4812,7 +4963,6 @@ begin
     for ik6:=0 to ikn7 do 
     begin
     _iter4:=Arg.Items[ik6].Value;
-    _iter4:=Arg.Items[ik6].Value;
       oprot.WriteByte(_iter4);
     end;
     oprot.WriteListEnd();
@@ -4933,7 +5083,6 @@ begin
     for ik14:=0 to ikn15 do 
     begin
     _iter12:=Success.Items[ik14].Value;
-    _iter12:=Success.Items[ik14].Value;
       oprot.WriteByte(_iter12);
     end;
     oprot.WriteListEnd();
@@ -4944,6 +5093,248 @@ begin
 end;
 
 function TSample2.TEchoList_resultImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Success: ');
+    sb.Append(Success);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoListXtruct_argsImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoListXtruct_argsImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoListXtruct_argsImpl.GetArg: IThriftList;
+begin
+  Result := FArg;
+end;
+
+procedure TSample2.TEchoListXtruct_argsImpl.SetArg( const Value: IThriftList);
+begin
+  F__isset_Arg := True;
+  FArg := Value;
+end;
+
+function TSample2.TEchoListXtruct_argsImpl.Get__isset_Arg: Boolean;
+begin
+  Result := F__isset_Arg;
+end;
+
+procedure TSample2.TEchoListXtruct_argsImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _list16: IList;
+  _i17: Integer;
+  _elem18: IXtruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        1: begin
+          if (field_.Type_ = {TType.}List) then
+          begin
+            Arg := TThriftListImpl.Create;
+            _list16 := iprot.ReadListBegin();
+            for _i17 := 0 to _list16.Count - 1 do
+            begin
+              _elem18 := TXtructImpl.Create;
+              _elem18.Read(iprot);
+              Arg.Add(_elem18);
+            end;
+            iprot.ReadListEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoListXtruct_argsImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  list_19 : IList;
+  ik22:integer;
+  ikn23:integer;
+  _iter20: IXtruct;
+begin
+  struc := TStructImpl.Create('echoListXtruct_args');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Arg <> nil) and __isset_Arg then
+  begin
+    field_.Name := 'arg';
+    field_.Type_  := {TType.}List;
+    field_.ID := 1;
+    oprot.WriteFieldBegin(field_);
+    list_19 := TListImpl.Create({TType.}Struct, Arg.Count);
+    oprot.WriteListBegin( list_19);
+    ikn23:=Arg.Count-1;
+    for ik22:=0 to ikn23 do 
+    begin
+    _iter20:=IXtruct(Arg.Items[ik22].AsIntf);
+      _iter20.Write(oprot);
+    end;
+    oprot.WriteListEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoListXtruct_argsImpl.ToString: string;
+var
+  sb : TThriftStringBuilder;
+begin
+  sb := TThriftStringBuilder.Create('(');
+  try
+    sb.Append('Arg: ');
+    sb.Append(Arg);
+    sb.Append(')');
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+constructor TSample2.TEchoListXtruct_resultImpl.Create;
+begin
+  inherited;
+end;
+
+destructor TSample2.TEchoListXtruct_resultImpl.Destroy;
+begin
+  inherited;
+end;
+
+function TSample2.TEchoListXtruct_resultImpl.GetSuccess: IThriftList;
+begin
+  Result := FSuccess;
+end;
+
+procedure TSample2.TEchoListXtruct_resultImpl.SetSuccess( const Value: IThriftList);
+begin
+  F__isset_Success := True;
+  FSuccess := Value;
+end;
+
+function TSample2.TEchoListXtruct_resultImpl.Get__isset_Success: Boolean;
+begin
+  Result := F__isset_Success;
+end;
+
+procedure TSample2.TEchoListXtruct_resultImpl.Read( const iprot: IProtocol);
+var
+  field_ : IField;
+  struc : IStruct;
+  _list24: IList;
+  _i25: Integer;
+  _elem26: IXtruct;
+
+begin
+  struc := iprot.ReadStructBegin;
+  try
+    while (true) do
+    begin
+      field_ := iprot.ReadFieldBegin();
+      if (field_.Type_ = {TType.}Stop) then
+      begin
+        Break;
+      end;
+      case field_.ID of
+        0: begin
+          if (field_.Type_ = {TType.}List) then
+          begin
+            Success := TThriftListImpl.Create;
+            _list24 := iprot.ReadListBegin();
+            for _i25 := 0 to _list24.Count - 1 do
+            begin
+              _elem26 := TXtructImpl.Create;
+              _elem26.Read(iprot);
+              Success.Add(_elem26);
+            end;
+            iprot.ReadListEnd();
+          end else
+          begin
+            TProtocolUtil.Skip(iprot, field_.Type_);
+          end;
+        end
+        else begin
+          TProtocolUtil.Skip(iprot, field_.Type_);
+        end;
+      end;
+      iprot.ReadFieldEnd;
+    end;
+  finally
+    iprot.ReadStructEnd;
+  end;
+end;
+
+procedure TSample2.TEchoListXtruct_resultImpl.Write( const oprot: IProtocol);
+var
+  struc : IStruct;
+  field_ : IField;
+  list_27 : IList;
+  ik30:integer;
+  ikn31:integer;
+  _iter28: IXtruct;
+begin
+  struc := TStructImpl.Create('echoListXtruct_result');
+  oprot.WriteStructBegin(struc);
+  field_ := TFieldImpl.Create;
+  if (Success <> nil) and __isset_Success then
+  begin
+    field_.Name := 'Success';
+    field_.Type_  := {TType.}List;
+    field_.ID := 0;
+    oprot.WriteFieldBegin(field_);
+    list_27 := TListImpl.Create({TType.}Struct, Success.Count);
+    oprot.WriteListBegin( list_27);
+    ikn31:=Success.Count-1;
+    for ik30:=0 to ikn31 do 
+    begin
+    _iter28:=IXtruct(Success.Items[ik30].AsIntf);
+      _iter28.Write(oprot);
+    end;
+    oprot.WriteListEnd();
+    oprot.WriteFieldEnd();
+  end;
+  oprot.WriteFieldStop();
+  oprot.WriteStructEnd();
+end;
+
+function TSample2.TEchoListXtruct_resultImpl.ToString: string;
 var
   sb : TThriftStringBuilder;
 begin
@@ -4988,9 +5379,9 @@ procedure TSample2.TEchoSet_argsImpl.Read( const iprot: IProtocol);
 var
   field_ : IField;
   struc : IStruct;
-  _set16: ISet;
-  _i17: Integer;
-  _elem18: ShortInt;
+  _set32: ISet;
+  _i33: Integer;
+  _elem34: ShortInt;
 
 begin
   struc := iprot.ReadStructBegin;
@@ -5007,11 +5398,11 @@ begin
           if (field_.Type_ = {TType.}Set_) then
           begin
             Arg := THashSetImpl.Create;
-            _set16 := iprot.ReadSetBegin();
-            for _i17 := 0 to _set16.Count - 1 do
+            _set32 := iprot.ReadSetBegin();
+            for _i33 := 0 to _set32.Count - 1 do
             begin
-              _elem18 := iprot.ReadByte();
-              Arg.Add(_elem18);
+              _elem34 := iprot.ReadByte();
+              Arg.Add(_elem34);
             end;
             iprot.ReadSetEnd();
           end else
@@ -5034,10 +5425,10 @@ procedure TSample2.TEchoSet_argsImpl.Write( const oprot: IProtocol);
 var
   struc : IStruct;
   field_ : IField;
-  set_19 : ISet;
-  ik22:integer;
-  ikn23:integer;
-  _iter20:Variant;
+  set_35 : ISet;
+  ik38:integer;
+  ikn39:integer;
+  _iter36:Variant;
 begin
   struc := TStructImpl.Create('echoSet_args');
   oprot.WriteStructBegin(struc);
@@ -5048,13 +5439,13 @@ begin
     field_.Type_  := {TType.}Set_;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
-    set_19 := TSetImpl.Create({TType.}Byte_, Arg.Count);
-    oprot.WriteSetBegin( set_19);
-    ikn23:=Arg.Count-1;
-    for ik22:=0 to ikn23 do 
+    set_35 := TSetImpl.Create({TType.}Byte_, Arg.Count);
+    oprot.WriteSetBegin( set_35);
+    ikn39:=Arg.Count-1;
+    for ik38:=0 to ikn39 do 
     begin
-    _iter20:=Arg.Items[ik22].Value;
-      oprot.WriteByte(_iter20);
+    _iter36:=Arg.Items[ik38].Value;
+      oprot.WriteByte(_iter36);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -5108,9 +5499,9 @@ procedure TSample2.TEchoSet_resultImpl.Read( const iprot: IProtocol);
 var
   field_ : IField;
   struc : IStruct;
-  _set24: ISet;
-  _i25: Integer;
-  _elem26: ShortInt;
+  _set40: ISet;
+  _i41: Integer;
+  _elem42: ShortInt;
 
 begin
   struc := iprot.ReadStructBegin;
@@ -5127,11 +5518,11 @@ begin
           if (field_.Type_ = {TType.}Set_) then
           begin
             Success := THashSetImpl.Create;
-            _set24 := iprot.ReadSetBegin();
-            for _i25 := 0 to _set24.Count - 1 do
+            _set40 := iprot.ReadSetBegin();
+            for _i41 := 0 to _set40.Count - 1 do
             begin
-              _elem26 := iprot.ReadByte();
-              Success.Add(_elem26);
+              _elem42 := iprot.ReadByte();
+              Success.Add(_elem42);
             end;
             iprot.ReadSetEnd();
           end else
@@ -5154,10 +5545,10 @@ procedure TSample2.TEchoSet_resultImpl.Write( const oprot: IProtocol);
 var
   struc : IStruct;
   field_ : IField;
-  set_27 : ISet;
-  ik30:integer;
-  ikn31:integer;
-  _iter28:Variant;
+  set_43 : ISet;
+  ik46:integer;
+  ikn47:integer;
+  _iter44:Variant;
 begin
   struc := TStructImpl.Create('echoSet_result');
   oprot.WriteStructBegin(struc);
@@ -5168,13 +5559,13 @@ begin
     field_.Type_  := {TType.}Set_;
     field_.ID := 0;
     oprot.WriteFieldBegin(field_);
-    set_27 := TSetImpl.Create({TType.}Byte_, Success.Count);
-    oprot.WriteSetBegin( set_27);
-    ikn31:=Success.Count-1;
-    for ik30:=0 to ikn31 do 
+    set_43 := TSetImpl.Create({TType.}Byte_, Success.Count);
+    oprot.WriteSetBegin( set_43);
+    ikn47:=Success.Count-1;
+    for ik46:=0 to ikn47 do 
     begin
-    _iter28:=Success.Items[ik30].Value;
-      oprot.WriteByte(_iter28);
+    _iter44:=Success.Items[ik46].Value;
+      oprot.WriteByte(_iter44);
     end;
     oprot.WriteSetEnd();
     oprot.WriteFieldEnd();
@@ -5228,10 +5619,10 @@ procedure TSample2.TEchoMap_argsImpl.Read( const iprot: IProtocol);
 var
   field_ : IField;
   struc : IStruct;
-  _map32: IMap;
-  _i33: Integer;
-  _key34: ShortInt;
-  _val35: ShortInt;
+  _map48: IMap;
+  _i49: Integer;
+  _key50: ShortInt;
+  _val51: ShortInt;
 
 begin
   struc := iprot.ReadStructBegin;
@@ -5248,12 +5639,12 @@ begin
           if (field_.Type_ = {TType.}Map) then
           begin
             Arg := TThriftDictionaryImpl.Create;
-            _map32 := iprot.ReadMapBegin();
-            for _i33 := 0 to _map32.Count - 1 do
+            _map48 := iprot.ReadMapBegin();
+            for _i49 := 0 to _map48.Count - 1 do
             begin
-              _key34 := iprot.ReadByte();
-              _val35 := iprot.ReadByte();
-              Arg.AddOrSetValue( _key34, _val35);
+              _key50 := iprot.ReadByte();
+              _val51 := iprot.ReadByte();
+              Arg.AddOrSetValue( _key50, _val51);
             end;
             iprot.ReadMapEnd();
           end else
@@ -5276,11 +5667,11 @@ procedure TSample2.TEchoMap_argsImpl.Write( const oprot: IProtocol);
 var
   struc : IStruct;
   field_ : IField;
-  map36 : IMap;
-  ik39:integer;
-  ikn40:integer;
-  _iter37:Variant;
-  _iterv38:Variant;
+  map52 : IMap;
+  ik55:integer;
+  ikn56:integer;
+  _iter53:Variant;
+  _iterv54:Variant;
 begin
   struc := TStructImpl.Create('echoMap_args');
   oprot.WriteStructBegin(struc);
@@ -5291,15 +5682,15 @@ begin
     field_.Type_  := {TType.}Map;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
-    map36 := TMapImpl.Create( {TType.}Byte_, {TType.}Byte_, Arg.Count);
-    oprot.WriteMapBegin( map36);
-    ikn40:=Arg.Count-1;
-    for ik39:=0 to ikn40 do 
+    map52 := TMapImpl.Create( {TType.}Byte_, {TType.}Byte_, Arg.Count);
+    oprot.WriteMapBegin( map52);
+    ikn56:=Arg.Count-1;
+    for ik55:=0 to ikn56 do 
     begin
-    _iter37:=Arg.Keys[ik39].Value;
-    _iterv38:=Arg.Values[ik39].Value;
-      oprot.WriteByte(_iter37);
-      oprot.WriteByte(_iterv38);
+    _iter53:=Arg.Keys[ik55].Value;
+    _iterv54:=Arg.Values[ik55].Value;
+      oprot.WriteByte(_iter53);
+      oprot.WriteByte(_iterv54);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -5353,10 +5744,10 @@ procedure TSample2.TEchoMap_resultImpl.Read( const iprot: IProtocol);
 var
   field_ : IField;
   struc : IStruct;
-  _map41: IMap;
-  _i42: Integer;
-  _key43: ShortInt;
-  _val44: ShortInt;
+  _map57: IMap;
+  _i58: Integer;
+  _key59: ShortInt;
+  _val60: ShortInt;
 
 begin
   struc := iprot.ReadStructBegin;
@@ -5373,12 +5764,12 @@ begin
           if (field_.Type_ = {TType.}Map) then
           begin
             Success := TThriftDictionaryImpl.Create;
-            _map41 := iprot.ReadMapBegin();
-            for _i42 := 0 to _map41.Count - 1 do
+            _map57 := iprot.ReadMapBegin();
+            for _i58 := 0 to _map57.Count - 1 do
             begin
-              _key43 := iprot.ReadByte();
-              _val44 := iprot.ReadByte();
-              Success.AddOrSetValue( _key43, _val44);
+              _key59 := iprot.ReadByte();
+              _val60 := iprot.ReadByte();
+              Success.AddOrSetValue( _key59, _val60);
             end;
             iprot.ReadMapEnd();
           end else
@@ -5401,11 +5792,11 @@ procedure TSample2.TEchoMap_resultImpl.Write( const oprot: IProtocol);
 var
   struc : IStruct;
   field_ : IField;
-  map45 : IMap;
-  ik48:integer;
-  ikn49:integer;
-  _iter46:Variant;
-  _iterv47:Variant;
+  map61 : IMap;
+  ik64:integer;
+  ikn65:integer;
+  _iter62:Variant;
+  _iterv63:Variant;
 begin
   struc := TStructImpl.Create('echoMap_result');
   oprot.WriteStructBegin(struc);
@@ -5416,15 +5807,15 @@ begin
     field_.Type_  := {TType.}Map;
     field_.ID := 0;
     oprot.WriteFieldBegin(field_);
-    map45 := TMapImpl.Create( {TType.}Byte_, {TType.}Byte_, Success.Count);
-    oprot.WriteMapBegin( map45);
-    ikn49:=Success.Count-1;
-    for ik48:=0 to ikn49 do 
+    map61 := TMapImpl.Create( {TType.}Byte_, {TType.}Byte_, Success.Count);
+    oprot.WriteMapBegin( map61);
+    ikn65:=Success.Count-1;
+    for ik64:=0 to ikn65 do 
     begin
-    _iter46:=Success.Keys[ik48].Value;
-    _iterv47:=Success.Values[ik48].Value;
-      oprot.WriteByte(_iter46);
-      oprot.WriteByte(_iterv47);
+    _iter62:=Success.Keys[ik64].Value;
+    _iterv63:=Success.Values[ik64].Value;
+      oprot.WriteByte(_iter62);
+      oprot.WriteByte(_iterv63);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -5478,10 +5869,10 @@ procedure TSample2.TEchoMapXtruct_argsImpl.Read( const iprot: IProtocol);
 var
   field_ : IField;
   struc : IStruct;
-  _map50: IMap;
-  _i51: Integer;
-  _key52: ShortInt;
-  _val53: IXtruct;
+  _map66: IMap;
+  _i67: Integer;
+  _key68: ShortInt;
+  _val69: IXtruct;
 
 begin
   struc := iprot.ReadStructBegin;
@@ -5498,13 +5889,13 @@ begin
           if (field_.Type_ = {TType.}Map) then
           begin
             Arg := TThriftDictionaryImpl.Create;
-            _map50 := iprot.ReadMapBegin();
-            for _i51 := 0 to _map50.Count - 1 do
+            _map66 := iprot.ReadMapBegin();
+            for _i67 := 0 to _map66.Count - 1 do
             begin
-              _key52 := iprot.ReadByte();
-              _val53 := TXtructImpl.Create;
-              _val53.Read(iprot);
-              Arg.AddOrSetValue( _key52, _val53);
+              _key68 := iprot.ReadByte();
+              _val69 := TXtructImpl.Create;
+              _val69.Read(iprot);
+              Arg.AddOrSetValue( _key68, _val69);
             end;
             iprot.ReadMapEnd();
           end else
@@ -5527,11 +5918,11 @@ procedure TSample2.TEchoMapXtruct_argsImpl.Write( const oprot: IProtocol);
 var
   struc : IStruct;
   field_ : IField;
-  map54 : IMap;
-  ik57:integer;
-  ikn58:integer;
-  _iter55:Variant;
-  _iterv56: IXtruct;
+  map70 : IMap;
+  ik73:integer;
+  ikn74:integer;
+  _iter71:Variant;
+  _iterv72: IXtruct;
 begin
   struc := TStructImpl.Create('echoMapXtruct_args');
   oprot.WriteStructBegin(struc);
@@ -5542,15 +5933,15 @@ begin
     field_.Type_  := {TType.}Map;
     field_.ID := 1;
     oprot.WriteFieldBegin(field_);
-    map54 := TMapImpl.Create( {TType.}Byte_, {TType.}Struct, Arg.Count);
-    oprot.WriteMapBegin( map54);
-    ikn58:=Arg.Count-1;
-    for ik57:=0 to ikn58 do 
+    map70 := TMapImpl.Create( {TType.}Byte_, {TType.}Struct, Arg.Count);
+    oprot.WriteMapBegin( map70);
+    ikn74:=Arg.Count-1;
+    for ik73:=0 to ikn74 do 
     begin
-    _iter55:=Arg.Keys[ik57].Value;
-    _iterv56:=IXtruct(Arg.Values[ik57].AsIntf);
-      oprot.WriteByte(_iter55);
-      _iterv56.Write(oprot);
+    _iter71:=Arg.Keys[ik73].Value;
+    _iterv72:=IXtruct(Arg.Values[ik73].AsIntf);
+      oprot.WriteByte(_iter71);
+      _iterv72.Write(oprot);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();
@@ -5604,10 +5995,10 @@ procedure TSample2.TEchoMapXtruct_resultImpl.Read( const iprot: IProtocol);
 var
   field_ : IField;
   struc : IStruct;
-  _map59: IMap;
-  _i60: Integer;
-  _key61: ShortInt;
-  _val62: IXtruct;
+  _map75: IMap;
+  _i76: Integer;
+  _key77: ShortInt;
+  _val78: IXtruct;
 
 begin
   struc := iprot.ReadStructBegin;
@@ -5624,13 +6015,13 @@ begin
           if (field_.Type_ = {TType.}Map) then
           begin
             Success := TThriftDictionaryImpl.Create;
-            _map59 := iprot.ReadMapBegin();
-            for _i60 := 0 to _map59.Count - 1 do
+            _map75 := iprot.ReadMapBegin();
+            for _i76 := 0 to _map75.Count - 1 do
             begin
-              _key61 := iprot.ReadByte();
-              _val62 := TXtructImpl.Create;
-              _val62.Read(iprot);
-              Success.AddOrSetValue( _key61, _val62);
+              _key77 := iprot.ReadByte();
+              _val78 := TXtructImpl.Create;
+              _val78.Read(iprot);
+              Success.AddOrSetValue( _key77, _val78);
             end;
             iprot.ReadMapEnd();
           end else
@@ -5653,11 +6044,11 @@ procedure TSample2.TEchoMapXtruct_resultImpl.Write( const oprot: IProtocol);
 var
   struc : IStruct;
   field_ : IField;
-  map63 : IMap;
-  ik66:integer;
-  ikn67:integer;
-  _iter64:Variant;
-  _iterv65: IXtruct;
+  map79 : IMap;
+  ik82:integer;
+  ikn83:integer;
+  _iter80:Variant;
+  _iterv81: IXtruct;
 begin
   struc := TStructImpl.Create('echoMapXtruct_result');
   oprot.WriteStructBegin(struc);
@@ -5668,15 +6059,15 @@ begin
     field_.Type_  := {TType.}Map;
     field_.ID := 0;
     oprot.WriteFieldBegin(field_);
-    map63 := TMapImpl.Create( {TType.}Byte_, {TType.}Struct, Success.Count);
-    oprot.WriteMapBegin( map63);
-    ikn67:=Success.Count-1;
-    for ik66:=0 to ikn67 do 
+    map79 := TMapImpl.Create( {TType.}Byte_, {TType.}Struct, Success.Count);
+    oprot.WriteMapBegin( map79);
+    ikn83:=Success.Count-1;
+    for ik82:=0 to ikn83 do 
     begin
-    _iter64:=Success.Keys[ik66].Value;
-    _iterv65:=IXtruct(Success.Values[ik66].AsIntf);
-      oprot.WriteByte(_iter64);
-      _iterv65.Write(oprot);
+    _iter80:=Success.Keys[ik82].Value;
+    _iterv81:=IXtruct(Success.Values[ik82].AsIntf);
+      oprot.WriteByte(_iter80);
+      _iterv81.Write(oprot);
     end;
     oprot.WriteMapEnd();
     oprot.WriteFieldEnd();

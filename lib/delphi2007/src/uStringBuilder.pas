@@ -45,7 +45,7 @@ TStringBuilder = class
     function Append(const Value: Boolean): TStringBuilder; overload;
     function Append(const Value: Byte): TStringBuilder; overload;
     function Append(const Value: Char): TStringBuilder; overload;
-    function Append(const Value: Currency): TStringBuilder; overload;
+    //function Append(const Value: Currency): TStringBuilder; overload;
     function Append(const Value: Double): TStringBuilder; overload;
     function Append(const Value: Smallint): TStringBuilder; overload;
     function Append(const Value: Integer): TStringBuilder; overload;
@@ -203,13 +203,13 @@ begin
   FData[Length - 1] := Value;
   Result := Self;
 end;
-
+{
 function TStringBuilder.Append(const Value: Currency): TStringBuilder;
 begin
   Append(CurrToStr(Value));
   Result := Self;
 end;
-
+}
 function TStringBuilder.Append(const Value: Boolean): TStringBuilder;
 begin
   Append(BoolToStr(Value, True));

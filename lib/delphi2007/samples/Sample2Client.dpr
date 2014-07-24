@@ -158,6 +158,37 @@ begin
       do Writeln( '....Invalid operation: ' + io.Why);
     end;
     {=========================================================}
+    argl.Clear;
+    argstruct:=TXtructImpl.Create;
+    argstruct.String_thing:='HELLO';
+    argstruct.Byte_thing:=123;
+    argstruct.I32_thing:=123456789;
+    argstruct.I64_thing:=123456789123456789;
+    argl:=TThriftListImpl.Create;
+    argl.Add(argstruct);
+    argl.Add(argstruct);
+    argl.Add(argstruct);
+    sum:=argl.Count;
+    try
+      Writeln( 'Echo ListXStruct:',sum);
+      argl:=client.echoListXtruct(argl);
+      sum:=argl.Count;
+      Writeln( Format('->Count=%d',[sum]));
+      for i:=0 to sum - 1 do
+      begin
+        argstruct:=IXtruct(argl.Items[i].AsIntf);
+        WriteLn( '.String_thing:',argstruct.String_thing);
+        WriteLn( '.Byte_thing:',argstruct.Byte_thing);
+        WriteLn( '.I32_thing:',argstruct.I32_thing);
+        WriteLn( '.I64_thing:',argstruct.I64_thing);
+      end;
+
+    except
+      on io: TInvalidOperation
+      do Writeln( '....Invalid operation: ' + io.Why);
+    end;
+
+    {=========================================================}
     argm:=TThriftDictionaryImpl.Create;
     argm.Add(1,2);
     argm.Add(2,3);
@@ -179,11 +210,11 @@ begin
     end;
     {=========================================================}    
     argm.Clear;
-    argstruct:=TXtructImpl.Create;
+    {argstruct:=TXtructImpl.Create;
     argstruct.String_thing:='HELLO';
     argstruct.Byte_thing:=123;
     argstruct.I32_thing:=123456789;
-    argstruct.I64_thing:=123456789123456789;
+    argstruct.I64_thing:=123456789123456789;}
     argm:=TThriftDictionaryImpl.Create;
     argm.Add(1,argstruct);
     argm.Add(2,argstruct);

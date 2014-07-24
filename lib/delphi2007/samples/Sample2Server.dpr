@@ -25,6 +25,7 @@ type
     function echoString(const arg: string): string;
     function echoXtruct(const arg: IXtruct): IXtruct;
     function echoList(const arg: IThriftList): IThriftList;
+    function echoListXtruct(const arg: IThriftList): IThriftList;
     function echoSet(const arg: IHashSet): IHashSet;
     function echoMap(const arg: IThriftDictionary): IThriftDictionary;
     function echoMapXtruct(const arg: IThriftDictionary): IThriftDictionary;
@@ -108,6 +109,26 @@ begin
   WriteLn( '===CALL echoList(...) End');
 end;
 
+function TSample2Handler.echoListXtruct(const arg: IThriftList): IThriftList;
+var
+i,n:integer;
+x:IXtruct;
+begin
+  result:=arg;
+  n:=arg.Count;
+  WriteLn( '===CALL echoListXtruct(...)');
+  writeln('.Count:',n);
+  for i:= 0 to n - 1 do
+  begin
+    x:=IXtruct(arg.Items[i].AsIntf);
+    WriteLn( '.String_thing:',x.String_thing);
+    WriteLn( '.Byte_thing:',x.Byte_thing);
+    WriteLn( '.I32_thing:',x.I32_thing);
+    WriteLn( '.I64_thing:',x.I64_thing);
+  end;
+  WriteLn( '===CALL echoMapXtruct(...) End');
+end;
+
 function TSample2Handler.echoMap(
   const arg: IThriftDictionary): IThriftDictionary;
 var
@@ -141,7 +162,7 @@ begin
     WriteLn( '.String_thing:',x.String_thing);
     WriteLn( '.Byte_thing:',x.Byte_thing);
     WriteLn( '.I32_thing:',x.I32_thing);
-    WriteLn( '.I64_thing:',x.I64_thing); 
+    WriteLn( '.I64_thing:',x.I64_thing);
   end;
   WriteLn( '===CALL echoMapXtruct(...) End');
 end;

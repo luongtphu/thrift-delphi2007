@@ -104,7 +104,12 @@ t:TTest;
 argm:IThriftDictionary;
 v,i,n:integer;
 va:TAllValue;
+sb:TStringBuilder;
+d:Double;
 begin
+    sb:=TStringBuilder.Create;
+    d:=2.3;
+    sb.Append(d);
     argm:=TThriftDictionaryImpl.Create;
     argm.Add(5,2);
     argm.Add(2,3);

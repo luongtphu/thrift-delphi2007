@@ -2390,7 +2390,7 @@ void t_delphi7_generator::generate_serialize_container(ostream& out, bool is_xce
 	indent_impl(out) << iterikn<<":="<<prefix << ".Count-1;" << endl;
 	indent_impl(out) << "for " << iterik << ":=0 to " << iterikn << " do " << endl;
     indent_impl(out) << "begin" << endl;
-	indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"].Value;" << endl;
+	//indent_impl(out) << iter<<":="<<prefix << ".Items["<<iterik<<"].Value;" << endl;
 
 	if (((t_list*)ttype)->get_elem_type()->is_base_type()||((t_list*)ttype)->get_elem_type()->is_enum())
 	{

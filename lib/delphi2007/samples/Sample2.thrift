@@ -84,6 +84,7 @@ service Sample2 {
 	string echoString(1: string arg),
 	Xtruct echoXtruct(1: Xtruct arg),		
 	list<byte>  echoList(1: list<byte> arg),
+	list<Xtruct>  echoListXtruct(1: list<Xtruct> arg),
 	set<byte>  echoSet(1: set<byte> arg),
 	map<byte, byte>  echoMap(1: map<byte, byte> arg),   
 	map<byte, Xtruct>  echoMapXtruct(1: map<byte, Xtruct> arg),   
